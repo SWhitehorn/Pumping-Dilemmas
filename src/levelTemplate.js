@@ -13,6 +13,8 @@ export default class Level extends Phaser.Scene {
     computing = false;
     repeat = false;
     interactive = false;
+
+    transitions = {};
     
 
     constructor (key) {
@@ -97,6 +99,7 @@ export default class Level extends Phaser.Scene {
 
         const tri_size = this.SIZE/2;  // Scale arrowhead based on size of states
         
+        
         // Iterate through states of automata and then the transitions of each state, adding each to canvas in turn.
         for (let s in this.automata.states){            
             let state = this.automata.states[s];
@@ -148,6 +151,36 @@ export default class Level extends Phaser.Scene {
             const tri = new Phaser.Geom.Triangle.BuildEquilateral(x, y, tri_size);
             Phaser.Geom.Triangle.RotateAroundXY(tri, x, y, Phaser.Math.DegToRad(200));
             this.drawTriangle(tri);
+
+            if (this.interactive){
+                if (!this.transitions.hasOwnProperty(key)){
+                    const hitArea = line;
+                    
+                    // Connect hit area to transition
+                    hitArea.startState = startState;
+                    hitArea.input = input;
+
+                    // Create graphics object to listen for click.
+                    let hitGraphics = this.add.graphics();
+                    hitGraphics.setInteractive(hitArea, Phaser.Geom.Circle.Contains);
+                    
+                    // Store hit area and graphics object in object
+                    this.transitions[key] = {hitArea, hitGraphics};
+                    
+                    console.log(hitGraphics.z);
+
+                    // User clicks on transition. Delete transition from automata, remove hit area. 
+                    hitGraphics.on('pointerup', () => {
+                        hitGraphics.destroy();
+                        delete this.transitions[key];
+                        delete hitArea.startState.transitions[hitArea.input];
+                    })
+                }
+            }
+            // Hit area has already been created, update to new co-ords. 
+            else{
+                this.transitions[key].hitArea.setTo(points)
+            }
         }
         // Transition between states
         else{
@@ -169,21 +202,51 @@ export default class Level extends Phaser.Scene {
             Phaser.Geom.Triangle.RotateAroundXY(tri, intersectPoint.x, intersectPoint.y, angle);
             
             this.drawTriangle(tri);
-        }
 
-        if (this.interactive){
-            
-            this.interactiveGraphics = this.add.graphics({ lineStyle: { width: this.THICKNESS, color: Colours.BLACK } })
-            const rect = new Phaser.Geom.Rectangle.FromXY(line.x1, line.y1, line.x2, line.y2);
-            
-            this.interactiveGraphics.fillRectShape(rect);
+            // Allow players to remove the transition
+            if (this.interactive){
+        
+                // Get slope of line perpendicular to transition line
+                const perpSlope = Phaser.Geom.Line.NormalAngle(line);
+                let points = []
+                // Get points of polygon
+                points.push( Phaser.Geom.Line.SetToAngle(new Phaser.Geom.Line(), startState.graphic.x, startState.graphic.y, perpSlope, 20).getPointB());
+                points.push( Phaser.Geom.Line.SetToAngle(new Phaser.Geom.Line(), startState.graphic.x, startState.graphic.y, perpSlope, -20).getPointB());
+                points.push( Phaser.Geom.Line.SetToAngle(new Phaser.Geom.Line(), endState.graphic.x, endState.graphic.y, perpSlope, -20).getPointB());
+                points.push( Phaser.Geom.Line.SetToAngle(new Phaser.Geom.Line(), endState.graphic.x, endState.graphic.y, perpSlope, 20).getPointB());
 
-            this.interactiveGraphics.setInteractive(rect, Phaser.Geom.Rectangle.Contains);
-            
+                // Create new hit area
+                if (!this.transitions.hasOwnProperty(key)){
 
-            this.interactiveGraphics.on('pointerup', () => {
-                this.interactiveGraphics.clear();
-            })
+                    // Rectangle surrounding transition.
+                    const hitArea = new Phaser.Geom.Polygon(points);
+                    
+                    // Connect hit area to transition
+                    hitArea.startState = startState;
+                    hitArea.input = input;
+
+                    // Create graphics object to listen for click.
+                    let hitGraphics = this.add.graphics();
+                    hitGraphics.setInteractive(hitArea, Phaser.Geom.Polygon.Contains);
+                    
+                    // Store hit area and graphics object in object
+                    this.transitions[key] = {hitArea, hitGraphics};
+                    
+                    console.log(hitGraphics.z);
+
+                    // User clicks on transition. Delete transition from automata, remove hit area. 
+                    hitGraphics.on('pointerup', () => {
+                        hitGraphics.destroy();
+                        delete this.transitions[key];
+                        delete hitArea.startState.transitions[hitArea.input];
+                    })
+                }
+                
+                // Hit area has already been created, update to new co-ords. 
+                else{
+                    this.transitions[key].hitArea.setTo(points)
+                }
+            }
         }
     }
 

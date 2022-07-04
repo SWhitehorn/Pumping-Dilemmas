@@ -18,7 +18,8 @@ export default class Level2 extends Level {
         this.draw = false;
         this.input.mouse.disableContextMenu(); // Allow for right clicking
         this.interactive = true;
-        
+        this.interactiveGraphics = this.add.graphics({ lineStyle: { width: this.THICKNESS, color: Colours.BLACK } });
+
         super.create(automata);
         
         const getNextLetter = (letter) => {
@@ -28,6 +29,8 @@ export default class Level2 extends Level {
             return String.fromCharCode(letter.charCodeAt(0) + 1);
         }
         
+
+        // Iterate through states, adding
         for (let s in this.automata.states){
             let state = this.automata.states[s];
             this.setDrag(state);
@@ -45,6 +48,7 @@ export default class Level2 extends Level {
                     // Connect states
                     else{
                         let input = 'a';
+                        // Get first available letter
                         while (this.selectedState.transitions.hasOwnProperty(input)){
                             input = getNextLetter(input);
                         }
@@ -74,9 +78,10 @@ export default class Level2 extends Level {
             this.labels[key].destroy();
         }
         this.labels = {}
+        if (!this.draw){
+            this.graphics.clear();
+        }
         this.drawTransitions(); 
-
-        
     }
     
     setDrag(state){
