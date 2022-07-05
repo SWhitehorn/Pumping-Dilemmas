@@ -12,14 +12,17 @@ export default class Level2 extends Level {
         super('Level2');
     }
 
-    create({automata, word}){
+    create({automata, word, language}){
         
         this.inputWord = this.word = word;
-        
+        this.language = language;
+
         this.draw = false;
         this.interactive = true;
         
+        
         super.create(automata);
+        this.transitions.setInteractive();
         
         this.input.mouse.disableContextMenu(); // Allow for right clicking
         
@@ -78,7 +81,14 @@ export default class Level2 extends Level {
             // Get first available letter
             let input = 'a';
             while (this.selectedState.transitions.hasOwnProperty(input)){
-                input = getNextLetter(input);
+                input = getNextLetter(input, this.language);
+                
+                // Check for null
+                if (!input){
+                    console.log('no more letters');
+                    this.draw = false;
+                    return;
+                }
             }
             
             this.draw = false;

@@ -1,4 +1,5 @@
 import Colours from "./colours.js";
+import { getNextLetter } from "./utils.js";
 
 /* Handles drawing and interactivity of transitions */
 
@@ -61,7 +62,7 @@ export default class Transitions{
                         
                         //Create new transition
                         this.labels[key] = null;
-                        this.drawSingleTransition(state, this.automata.states[endState], tri_size, input, key);
+                        this.drawSingleTransition(state, this.automata.states[endState], tri_size, input, key, endState);
                     }
                 })
                 
@@ -76,7 +77,7 @@ export default class Transitions{
 
     }
 
-    drawSingleTransition(startState, endState, tri_size, input, key){
+    drawSingleTransition(startState, endState, tri_size, input, key, s){
 
         // Transitions is from state to itself
         if (startState === endState){
@@ -84,6 +85,7 @@ export default class Transitions{
             // Add line by adding second circle and stroking outline
             var line = new Phaser.Geom.Circle(startState.graphic.x, startState.graphic.y-this.SIZE, this.SIZE);
             this.graphics.strokeCircleShape(line);
+            
 
             const labelY = startState.graphic.y - (this.SIZE*3);
             this.labels[key] = this.scene.add.text(startState.graphic.x, labelY, input, { fontSize: '30px', color: '#ffffff' });
@@ -120,7 +122,7 @@ export default class Transitions{
             this.drawTriangle(tri);
 
             if (this.interactive){
-                this.setLineInteractivity(line, startState, endState, key, input);
+                this.setLineInteractivity(line, startState, endState, key, input, s);
             }
         }
     }
@@ -137,22 +139,25 @@ export default class Transitions{
         line.input = input;
 
         // Create graphics object to listen for click.
-        let hitGraphics = this.add.graphics();
+        let hitGraphics = this.scene.add.graphics();
         hitGraphics.setInteractive(line, Phaser.Geom.Circle.Contains);
         
         // Store hit area and graphics object in object
         this.transitions[key] = {'hitArea':line, hitGraphics};
 
         // User clicks on transition. Delete transition from automata, remove hit area. 
-        hitGraphics.on('pointerup', () => {
-            console.log('clicked');
-            hitGraphics.destroy();
-            delete this.transitions[key];
-            delete line.startState.transitions[line.input];
+        hitGraphics.on('pointerup', (pointer) => {
+            
+            if (pointer.rightButtonReleased()){
+                hitGraphics.destroy();
+                delete this.transitions[key];
+                delete line.startState.transitions[line.input];
+            }
+            
         })
     }
 
-    setLineInteractivity(line, startState, endState, key, input){
+    setLineInteractivity(line, startState, endState, key, input, endName){
         // Get slope of line perpendicular to transition line
         const perpSlope = Phaser.Geom.Line.NormalAngle(line);
         let points = []
@@ -174,20 +179,35 @@ export default class Transitions{
             hitArea.input = input;
 
             // Create graphics object to listen for click.
-            let hitGraphics = this.add.graphics();
+            let hitGraphics = this.scene.add.graphics();
             hitGraphics.setInteractive(hitArea, Phaser.Geom.Polygon.Contains);
             
             // Store hit area and graphics object in object
             this.transitions[key] = {hitArea, hitGraphics};
             
-            console.log(hitGraphics.z);
-
-            // User clicks on transition. Delete transition from automata, remove hit area. 
-            hitGraphics.on('pointerup', () => {
-                hitGraphics.destroy();
-                delete this.transitions[key];
-                delete hitArea.startState.transitions[hitArea.input];
-            })
+            // User clicks on transition
+            hitGraphics.on('pointerup', (pointer) => {
+                
+                // Delete transition if right button is clicked
+                if (pointer.rightButtonReleased()){
+                    hitGraphics.destroy();
+                    delete this.transitions[key];
+                    this.removeTransitions(hitArea, endName);
+                
+                // Left mouse: enable user to change the letters on the transition
+                } else if (!hitArea.select){
+                    hitArea.select = true;
+                    
+                    // Iterate through transitions, removing any from start state to end state
+                    this.removeTransitions(hitArea, endName);
+                    
+                    // Create blank transition
+                    hitArea.startState.transitions[""] = [endName];
+                    
+                    // Add clickable letters
+                    this.addLetterMenu(hitArea, endName, Phaser.Geom.Line.GetMidPoint(line));
+                }
+            });
         }
         
         // Hit area has already been created, update to new co-ords. 
@@ -198,5 +218,48 @@ export default class Transitions{
 
     setInteractive(){
         this.interactive = true;
+    }
+
+    removeTransitions(hitArea, endName){
+        const transitions = Object.entries(hitArea.startState.transitions);
+        transitions.forEach((t) => {
+            let [letter, states] = t;
+            let index = states.indexOf(endName);
+            if (index !== -1) {
+                // Remove element of array pointing to second state
+                console.log("Before", hitArea.startState.transitions[letter]);
+                
+                hitArea.startState.transitions[letter].splice(index, 1);
+                console.log("After", hitArea.startState.transitions[letter]);
+                
+                // Remove if empty array after deleting state pointer
+                if (!hitArea.startState.transitions[letter].length){
+                    delete hitArea.startState.transitions[letter]
+                }
+            }
+        });
+    }
+
+    addLetterMenu(hitArea, endName, mid){
+        const letterArray = []
+        
+        for (let i = 0; i < this.scene.language.length; i++){
+            letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: '#ffb700' }));
+            letterArray[i].setInteractive();
+            letterArray[i].on('pointerup', () => {
+                hitArea.select = false;
+                letterArray.forEach((letter) => {letter.destroy()})
+                delete hitArea.startState.transitions[""];
+                
+                // Input is already defined, add new state to array
+                if (hitArea.startState.transitions.hasOwnProperty(letterArray[i].text)){
+                    hitArea.startState.transitions[letterArray[i].text].splice(0,0,endName)
+                
+                // Input is not defined, create new transition
+                } else{ 
+                    hitArea.startState.transitions[letterArray[i].text] = [endName]
+                }
+            });
+        }
     }
 }
