@@ -85,7 +85,6 @@ export default class Level1 extends Level {
         this.levelObjects.repeats.text = "Repeats: " + this.levelObjects.repeats.num;
         this.drawLetters(this.textX, this.textY);
         this.decomposeWord();
-        
     }
 
     decomposeWord(){

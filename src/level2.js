@@ -1,87 +1,57 @@
 import Level from "./levelTemplate.js";
 import Colours from "./colours.js";
+import { getNextLetter } from "./utils.js";
 
 
 // Draggable automaton
 export default class Level2 extends Level {
 
-    inputWord = "bbbbab"
     inputAutomata = {}
-    word = "bbbbab"
-    draw = false;
 
     constructor(){
-        super('Level2')
+        super('Level2');
     }
 
-    create({automata}){
+    create({automata, word}){
+        
+        this.inputWord = this.word = word;
+        
         this.draw = false;
-        this.input.mouse.disableContextMenu(); // Allow for right clicking
         this.interactive = true;
-        this.interactiveGraphics = this.add.graphics({ lineStyle: { width: this.THICKNESS, color: Colours.BLACK } });
-
+        
         super.create(automata);
         
-        const getNextLetter = (letter) => {
-            if (letter === 'z'){
-                return 'a';
-            }
-            return String.fromCharCode(letter.charCodeAt(0) + 1);
-        }
+        this.input.mouse.disableContextMenu(); // Allow for right clicking
         
-
-        // Iterate through states, adding
+        // Iterate through states
         for (let s in this.automata.states){
             let state = this.automata.states[s];
             this.setDrag(state);
+            
+            // Allow player to draw transitions to connect states
             state.graphic.on('pointerup', (pointer) => {
-                
                 if (pointer.rightButtonReleased()){
-                    console.log('rightdown');
-                    
-                    // Start drawing transition
-                    if (!this.draw){
-                        this.draw = true;
-                        this.selectedState = state;
-                    }
-                    
-                    // Connect states
-                    else{
-                        let input = 'a';
-                        // Get first available letter
-                        while (this.selectedState.transitions.hasOwnProperty(input)){
-                            input = getNextLetter(input);
-                        }
-                        
-                        this.draw = false;
-                        this.selectedState.transitions[input] = [s];
-                    }
+                    this.connectStates(state, s);
                 }
             })
         }
 
         this.input.on('pointermove', (pointer) => {
-
             this.graphics.clear();
-            if (this.draw)
-            {
+            
+            // Draw line between state and pointer
+            if (this.draw) {
                 const line = new Phaser.Geom.Line (this.selectedState.graphic.x, this.selectedState.graphic.y, pointer.x, pointer.y);
                 this.graphics.strokeLineShape(line);
             }
-
-    
         }); 
     }
 
     update(){
-        for (let key in this.labels){
-            this.labels[key].destroy();
-        }
-        this.labels = {}
         if (!this.draw){
             this.graphics.clear();
         }
-        this.drawTransitions(); 
+        this.transitions.drawTransitions(); 
     }
     
     setDrag(state){
@@ -96,5 +66,23 @@ export default class Level2 extends Level {
         })
     }
 
-    
+    connectStates(state, s){      
+        
+        // Start drawing transition
+        if (!this.draw){
+            this.draw = true;
+            this.selectedState = state;
+        
+        } else { // Connect states
+            
+            // Get first available letter
+            let input = 'a';
+            while (this.selectedState.transitions.hasOwnProperty(input)){
+                input = getNextLetter(input);
+            }
+            
+            this.draw = false;
+            this.selectedState.transitions[input] = [s];
+        }
+    }
 }
