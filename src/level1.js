@@ -22,6 +22,7 @@ export default class Level1 extends Level {
         // word changes with computations, inputWord stores original value
         this.word = word
         this.inputWord = word;
+        this.interactive = false;
         
         // Level template handles drawing automaton
         super.create(automata);
@@ -96,18 +97,23 @@ export default class Level1 extends Level {
         
         // Change colour of text depending on whether it is within sliding window, add text to relevant section
          for (let letter of this.levelObjects.letters){
+            
             if (this.isContained(letter, this.levelObjects.slider)){
+                
                 letter.setColor('#d40000');
                 selected = selected.concat(letter.text)
                 before = false;
-            }
-            else{
+
+            } else {
                 letter.setColor('#ffffff');
                 if (before){
+                   
                     stringBefore += letter.text;
-                }
-                else{
+
+                } else {
+
                     stringAfter += letter.text;
+
                 }
             }
         } 
@@ -186,13 +192,15 @@ export default class Level1 extends Level {
 
     addSections(numRepeats){
         if (this.levelObjects.repeats.num > 2){
+            
             this.word = this.wordParts[0] + this.wordParts[1] + this.wordParts[2];
             const point = this.levelObjects.slider.getTopRight()
             this.levelObjects.repeatsText = this.add.text(point.x-7, point.y-5, ""+numRepeats, { fontSize: '20px', color: '#d40000' })
-        }
-        else{
+        
+        } else {
+            
             this.word = this.wordParts[0] + this.wordParts[1].repeat(numRepeats) + this.wordParts[2];
-             this.levelObjects.slider.setVisible(false);
+            this.levelObjects.slider.setVisible(false);
         }
         
     }

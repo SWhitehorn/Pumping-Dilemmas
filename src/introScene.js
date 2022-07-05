@@ -21,5 +21,11 @@ export default class IntroScene extends Phaser.Scene {
         console.log('game started click');
         this.scene.start('Level2', {automata:level2Data[0]}); 
       });
+
+      const btn3 = this.add.text(20, 100, 'Level 3', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+      btn3.on('pointerup', () => {
+        console.log('game started click');
+        this.scene.start('Level3', {automata:level1Data[0]}); 
+      });
     }
   }

@@ -43,9 +43,6 @@ export default class Level extends Phaser.Scene {
             this.drawTransitions();
         }
         
-        
-        
-        
         // Add compute button
         const compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: '#ffffff' }).setInteractive();
         
@@ -56,8 +53,8 @@ export default class Level extends Phaser.Scene {
         // Add pause button
         const pause = this.add.text(700, 20, 'Pause', { fontSize: '30px', color: '#ffffff' }).setInteractive();
         pause.on('pointerup', () => {
-            if (this.com){
-                this.com.paused = !this.com.paused;
+            if (this.computeLoop){
+                this.computeLoop.paused = !this.computeLoop.paused;
             }
         })
         const back = this.add.text(700, 60, 'Back', { fontSize: '30px', color: '#ffffff' }).setInteractive();
@@ -152,34 +149,25 @@ export default class Level extends Phaser.Scene {
             Phaser.Geom.Triangle.RotateAroundXY(tri, x, y, Phaser.Math.DegToRad(200));
             this.drawTriangle(tri);
 
-            if (this.interactive){
-                if (!this.transitions.hasOwnProperty(key)){
-                    const hitArea = line;
+            if (this.interactive){    
                     
-                    // Connect hit area to transition
-                    hitArea.startState = startState;
-                    hitArea.input = input;
+                    line.startState = startState;
+                    line.input = input;
 
                     // Create graphics object to listen for click.
                     let hitGraphics = this.add.graphics();
-                    hitGraphics.setInteractive(hitArea, Phaser.Geom.Circle.Contains);
+                    hitGraphics.setInteractive(line, Phaser.Geom.Circle.Contains);
                     
                     // Store hit area and graphics object in object
-                    this.transitions[key] = {hitArea, hitGraphics};
-                    
-                    console.log(hitGraphics.z);
+                    this.transitions[key] = {'hitArea':line, hitGraphics};
 
                     // User clicks on transition. Delete transition from automata, remove hit area. 
                     hitGraphics.on('pointerup', () => {
+                        console.log('clicked');
                         hitGraphics.destroy();
                         delete this.transitions[key];
-                        delete hitArea.startState.transitions[hitArea.input];
+                        delete line.startState.transitions[line.input];
                     })
-                }
-            }
-            // Hit area has already been created, update to new co-ords. 
-            else{
-                this.transitions[key].hitArea.setTo(points)
             }
         }
         // Transition between states
@@ -275,12 +263,10 @@ export default class Level extends Phaser.Scene {
         let symbol = this.word[0];
         this.word = this.word.slice(1);
         
-        // Index transitions of state based on symbol
-        this.currState = this.automata.states[this.currState].transitions[symbol][0];
-        
-        // No transition: computation ends, return.
-        if (!this.currState){
-            console.log('failed computation');
+        // Check whether transition for symbol is defined, exit if not.
+        if (!(symbol in this.automata.states[this.currState].transitions)){
+
+            // Colour state red
             prevState.graphic.setStrokeStyle(this.THICKNESS, Colours.RED, 1);
             if (prevState.accepting){
                 prevState.graphic.inner.setStrokeStyle(this.THICKNESS, Colours.RED, 1);
@@ -288,7 +274,9 @@ export default class Level extends Phaser.Scene {
             this.endComputation();
             return;
         }
-        
+
+        // Index transitions of state based on symbol
+        this.currState = this.automata.states[this.currState].transitions[symbol][0];
         let state = this.automata.states[this.currState];
         
         // If word is now empty, having read symbol, end computation
@@ -317,14 +305,18 @@ export default class Level extends Phaser.Scene {
         console.log('clicked');
         this.automata.states[this.automata.start].graphic.setStrokeStyle(this.THICKNESS, Colours.YELLOW, 1);
         this.computing = true; 
-        this.com = this.time.addEvent({delay: 500, callback: this.computation, callbackScope: this, loop: true})
+        this.computeLoop = this.time.addEvent({delay: 500, callback: this.computation, callbackScope: this, loop: true})
     }
 
     endComputation(){
         this.currState = this.automata.start;
         this.computing = false;
-        this.word = this.inputWord;
-        this.time.removeEvent(this.com);
+        if (this.inputWord){
+            this.word = this.inputWord;
+        } else{
+            this.word = ""
+        }
+        this.time.removeEvent(this.computeLoop);
         this.time.addEvent({delay: 500, callback: this.clearStates, callbackScope: this, loop: false})
     }
 
