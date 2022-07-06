@@ -76,23 +76,29 @@ export default class Level2 extends Level {
             this.draw = true;
             this.selectedState = state;
         
-        } else { // Connect states
+        // Drawing finished, connect states
+        } else { 
             
             // Get first available letter
-            let input = 'a';
+            let input = this.language[0];
             while (this.selectedState.transitions.hasOwnProperty(input)){
                 input = getNextLetter(input, this.language);
-                
-                // Check for null
-                if (!input){
-                    console.log('no more letters');
-                    this.draw = false;
-                    return;
+                console.log(input);
+                // Check for language wrapping around
+                if (input === this.language[0]){
+                    break;
                 }
             }
             
             this.draw = false;
-            this.selectedState.transitions[input] = [s];
+            
+            // Add input
+            if (this.selectedState.transitions.hasOwnProperty(input)){
+                this.selectedState.transitions[input].push(s)
+            
+            } else {
+                this.selectedState.transitions[input] = [s];
+            }   
         }
     }
 }

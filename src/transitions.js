@@ -15,6 +15,7 @@ export default class Transitions{
         // Required for access to scene methods e.g. adding shapes
         this.scene = scene;
         
+        // Object storing data about the transitions between states, indexed by startState + endState
         this.transitions = {};
         this.labels = {};
 
@@ -32,7 +33,9 @@ export default class Transitions{
         
         // Remove all previous labels
         for (let key in this.labels){
-            this.labels[key].destroy();
+            if (this.labels[key]){
+                this.labels[key].destroy();
+            }
         }
         this.labels = {};
 
@@ -53,11 +56,15 @@ export default class Transitions{
                     
                     // Key for transition is start state concatenated with end state
                     const key = s.concat(endState);
-                
+                    
                     // Transition already exists, just add new input to label
                     if (this.labels.hasOwnProperty(key)){
-    
-                        this.labels[key].text = this.labels[key].text.concat(",").concat(input)
+                    
+                        // Check for null before adding text
+                        if (this.labels[key]){
+                            this.labels[key].text = this.labels[key].text.concat(",").concat(input)
+                        }
+                    
                     } else {
                         
                         //Create new transition
@@ -86,10 +93,10 @@ export default class Transitions{
             var line = new Phaser.Geom.Circle(startState.graphic.x, startState.graphic.y-this.SIZE, this.SIZE);
             this.graphics.strokeCircleShape(line);
             
-
             const labelY = startState.graphic.y - (this.SIZE*3);
-            this.labels[key] = this.scene.add.text(startState.graphic.x, labelY, input, { fontSize: '30px', color: '#ffffff' });
 
+            this.addLabel(s, {x:startState.graphic.x, y:labelY}, input, key);
+        
             // Add direction arrow
             const x = startState.graphic.x + this.SIZE * Math.cos(Phaser.Math.DegToRad(30)); // Parametric equations for point on circle
             const y = startState.graphic.y - this.SIZE * Math.sin(Phaser.Math.DegToRad(30)); // Can hardcode if size is settled for speed
@@ -109,10 +116,9 @@ export default class Transitions{
             var line = new Phaser.Geom.Line (startState.graphic.x, startState.graphic.y, endState.graphic.x, endState.graphic.y);
             this.graphics.strokeLineShape(line);
 
-            // Add label
             const mid = Phaser.Geom.Line.GetMidPoint(line);
-            this.labels[key] = this.scene.add.text(mid.x, mid.y, input, { fontSize: '30px', color: '#ffffff' })
-
+            this.addLabel(s, mid, input, key);
+            
             // Add direction arrow 
             const intersectPoint = line.getPoint(1 - (this.SIZE / Phaser.Geom.Line.Length(line))); // x,y object of where line crossed edge of state circle
             const tri = new Phaser.Geom.Triangle.BuildEquilateral(intersectPoint.x, intersectPoint.y, tri_size); 
@@ -131,6 +137,20 @@ export default class Transitions{
         this.graphics.fillStyle(Colours.BLACK);
         this.graphics.fillTriangleShape(tri);
         this.graphics.strokeTriangleShape(tri);
+    }
+
+    addLabel(endName, point, input, key){
+        
+        // Add letter menu
+        if (this.interactive && this.transitions.hasOwnProperty(key) && this.transitions[key].hitArea.selected){
+
+            this.addLetterMenu(this.transitions[key].hitArea, endName, point, key)
+        
+        } else { 
+            // Add fresh label
+            console.log('adding key');
+            this.labels[key] = this.scene.add.text(point.x, point.y, input, { fontSize: '30px', color: '#ffffff' })    
+        }
     }
 
     setCircleInteractivity(line, startState, input, key){
@@ -187,12 +207,13 @@ export default class Transitions{
             
             // User clicks on transition
             hitGraphics.on('pointerup', (pointer) => {
-                
                 // Delete transition if right button is clicked
                 if (pointer.rightButtonReleased()){
-                    hitGraphics.destroy();
-                    delete this.transitions[key];
-                    this.removeTransitions(hitArea, endName);
+                    if (!this.scene.draw){
+                        hitGraphics.destroy();
+                        delete this.transitions[key];
+                        this.removeTransitions(hitArea.startState, endName);
+                    }
                 
                 // Left mouse: enable user to change the letters on the transition
                 } else if (!hitArea.selected){
@@ -200,12 +221,6 @@ export default class Transitions{
                     // Flag that the user has selected the transition
                     hitArea.selected = true;
                     
-                    this.removeTransitions(hitArea.startState, endName);
-                    
-                    // Create blank transition
-                    hitArea.startState.transitions[""] = [endName];
-                    
-                    this.addLetterMenu(hitArea, endName, Phaser.Geom.Line.GetMidPoint(line));
                 }
             });
         
@@ -225,6 +240,7 @@ export default class Transitions{
 
     // Remove all transitions from first state to second state
     removeTransitions(startState, endStateName){
+        console.log(startState);
         const transitions = Object.entries(startState.transitions);
         
         // Iterate through [letter, states], check for endState in states
@@ -243,36 +259,52 @@ export default class Transitions{
         });
     }
 
-    addLetterMenu(hitArea, endName, mid){
+    addLetterMenu(hitArea, endName, mid, key){
         
         // Update existing letters to new position
         if (hitArea.hasOwnProperty("letterArray")){
             for (let i = 0; i < this.scene.language.length; i++){
                 hitArea.letterArray[i].setPosition(mid.x + i*30, mid.y);
             }
-
         } else{ // Create new letters
             hitArea.letterArray = [];
         
             for (let i = 0; i < this.scene.language.length; i++){
                 
-                // Add pop out letter menu
-                hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: '#ffb700' }));
+                // Render letter in green if part of transition, red if not
+                if (hitArea.startState.transitions.hasOwnProperty(this.scene.language[i])
+                && hitArea.startState.transitions[this.scene.language[i]].includes(endName)){
+                    
+                    hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: '#4bb31e' }));
+                } else{
+                    hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: '#d40000' }));
+                }
+                
                 hitArea.letterArray[i].setInteractive();
+                
+                // 
                 hitArea.letterArray[i].on('pointerup', () => {
 
                     hitArea.selected = false;
+                    const transitions = hitArea.startState.transitions;
+                    let letter = hitArea.letterArray[i].text
+
+                    // Transition over input is already defined
+                    if (transitions.hasOwnProperty(letter)){
+                        
+                        // Remove state if present
+                        if (transitions[letter].includes(endName)){
+                            const index = transitions[letter].indexOf(endName);
+                            transitions[letter].splice(index, 1);
+
+                        // Add state
+                        } else {
+                            transitions[letter].splice(0,0,endName);
+                        }
                     
-                    // Remove blank transition
-                    delete hitArea.startState.transitions[""];
-                    
-                    // Transition over input is already defined, add new state to array
-                    if (hitArea.startState.transitions.hasOwnProperty(hitArea.letterArray[i].text)){
-                        hitArea.startState.transitions[hitArea.letterArray[i].text].splice(0,0,endName)
-                    
+                    } else {
                     // Transition over input is not defined, create new transition
-                    } else{ 
-                        hitArea.startState.transitions[hitArea.letterArray[i].text] = [endName];
+                        transitions[letter] = [endName];
                     }
 
                     // Remove letterArray property from hitArea
