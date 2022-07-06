@@ -67,11 +67,15 @@ export default class Level extends Phaser.Scene {
     addStateGraphic(state){   
         state.graphic = this.add.circle(state.x, state.y, this.SIZE, Colours.WHITE)
         state.graphic.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1).setInteractive();
+        state.graphic.parent = state;
 
         if (state.accepting){
             state.graphic.inner = this.add.circle(state.x, state.y, this.SIZE/1.3, Colours.WHITE);
             state.graphic.inner.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
         }
+
+        // Record of where state is connected to
+        state.keys = [];
     }
 
     setHighlights(state){

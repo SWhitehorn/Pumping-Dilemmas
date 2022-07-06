@@ -16,7 +16,7 @@ export default class Transitions{
         this.scene = scene;
         
         // Object storing data about the transitions between states, indexed by startState + endState
-        this.transitions = {};
+        this.transitionPoints = {};
         this.labels = {};
 
         this.interactive = false;
@@ -91,11 +91,12 @@ export default class Transitions{
             
             // Add line by adding second circle and stroking outline
             var line = new Phaser.Geom.Circle(startState.graphic.x, startState.graphic.y-this.SIZE, this.SIZE);
+            
             this.graphics.strokeCircleShape(line);
             
             const labelY = startState.graphic.y - (this.SIZE*3);
 
-            this.addLabel(s, {x:startState.graphic.x, y:labelY}, input, key);
+            this.addLabel(s, {x:startState.graphic.x, y:labelY}, input, key, line);
         
             // Add direction arrow
             const x = startState.graphic.x + this.SIZE * Math.cos(Phaser.Math.DegToRad(30)); // Parametric equations for point on circle
@@ -113,22 +114,37 @@ export default class Transitions{
         else{
             
             // Add line between centre of two states
-            var line = new Phaser.Geom.Line (startState.graphic.x, startState.graphic.y, endState.graphic.x, endState.graphic.y);
-            this.graphics.strokeLineShape(line);
+            //var line = new Phaser.Geom.Line (startState.graphic.x, startState.graphic.y, endState.graphic.x, endState.graphic.y);
+            
+            // Get Control points for line
+            const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
+            
+            const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
+            const mid = this.getControlPoint(null, key, startPoint, endPoint)
 
-            const mid = Phaser.Geom.Line.GetMidPoint(line);
-            this.addLabel(s, mid, input, key);
+            var line = new Phaser.Curves.QuadraticBezier(startPoint, mid, endPoint);
+
+            //this.graphics.strokeLineShape(line);
+            line.draw(this.graphics)
+
+            
+            this.addLabel(s, mid, input, key, line);
             
             // Add direction arrow 
-            const intersectPoint = line.getPoint(1 - (this.SIZE / Phaser.Geom.Line.Length(line))); // x,y object of where line crossed edge of state circle
+            const percent = this.SIZE / line.getLength();
+            const intersectPoint = line.getPointAt(1 - percent); // x,y object of where line crossed edge of state circle
+            
+            
             const tri = new Phaser.Geom.Triangle.BuildEquilateral(intersectPoint.x, intersectPoint.y, tri_size); 
-            let angle = Phaser.Geom.Line.Angle(line); // Rotate triangle to match angle of line
+            
+            const angleLine = new Phaser.Geom.Line(intersectPoint.x, intersectPoint.y, endState.graphic.x, endState.graphic.y, );
+            let angle = Phaser.Geom.Line.Angle(angleLine); // Rotate triangle to match angle of line
             angle += 1.571; // Rotate 3/4 of circle
             Phaser.Geom.Triangle.RotateAroundXY(tri, intersectPoint.x, intersectPoint.y, angle);
             this.drawTriangle(tri);
 
             if (this.interactive){
-                this.setLineInteractivity(line, startState, endState, key, input, s);
+                this.setLineInteractivity(line, startState, endState, key, input, s, mid);
             }
         }
     }
@@ -139,16 +155,16 @@ export default class Transitions{
         this.graphics.strokeTriangleShape(tri);
     }
 
-    addLabel(endName, point, input, key){
+    addLabel(endName, point, input, key, line){
         
         // Add letter menu
-        if (this.interactive && this.transitions.hasOwnProperty(key) && this.transitions[key].hitArea.selected){
-
-            this.addLetterMenu(this.transitions[key].hitArea, endName, point, key)
+        if (this.interactive && this.transitionPoints.hasOwnProperty(key) && this.transitionPoints[key].selected){
+            
+            this.addLetterMenu(this.transitionPoints[key], endName, point, key)
         
         } else { 
             // Add fresh label
-            console.log('adding key');
+            
             this.labels[key] = this.scene.add.text(point.x, point.y, input, { fontSize: '30px', color: '#ffffff' })    
         }
     }
@@ -163,14 +179,14 @@ export default class Transitions{
         hitGraphics.setInteractive(line, Phaser.Geom.Circle.Contains);
         
         // Store hit area and graphics object in object
-        this.transitions[key] = {'hitArea':line, hitGraphics};
+        this.transitionPoints[key] = {'hitArea':line, hitGraphics};
 
         // User clicks on transition. Delete transition from automata, remove hit area. 
         hitGraphics.on('pointerup', (pointer) => {
             
             if (pointer.rightButtonReleased()){
                 hitGraphics.destroy();
-                delete this.transitions[key];
+                delete this.transitionPoints[key];
                 delete line.startState.transitions[line.input];
             }
             
@@ -179,39 +195,38 @@ export default class Transitions{
 
     setLineInteractivity(line, startState, endState, key, input, endName){
         
-        // Get slope of line perpendicular to transition line
-        const perpSlope = Phaser.Geom.Line.NormalAngle(line);
-        let points = []
-        
-        // Add points of polygon by creating lines based on normal angle
-        points.push( Phaser.Geom.Line.SetToAngle(new Phaser.Geom.Line(), startState.graphic.x, startState.graphic.y, perpSlope, 20).getPointB());
-        points.push( Phaser.Geom.Line.SetToAngle(new Phaser.Geom.Line(), startState.graphic.x, startState.graphic.y, perpSlope, -20).getPointB());
-        points.push( Phaser.Geom.Line.SetToAngle(new Phaser.Geom.Line(), endState.graphic.x, endState.graphic.y, perpSlope, -20).getPointB());
-        points.push( Phaser.Geom.Line.SetToAngle(new Phaser.Geom.Line(), endState.graphic.x, endState.graphic.y, perpSlope, 20).getPointB());
-
         // Create new hit area
-        if (!this.transitions.hasOwnProperty(key)){
+        if (!this.transitionPoints.hasOwnProperty(key)){
 
-            // Rectangle surrounding transition 
-            const hitArea = new Phaser.Geom.Polygon(points);
-            
+            const mid = this.getControlPoint(line, key);
+
+            const hitArea = this.scene.add.circle(mid.x, mid.y, 5, Colours.BLACK).setInteractive();
             hitArea.startState = startState;
-            hitArea.input = input;
 
-            // Create graphics object to listen for click.
-            let hitGraphics = this.scene.add.graphics();
-            hitGraphics.setInteractive(hitArea, Phaser.Geom.Polygon.Contains);
-            
             // Store hit area and graphics object in object
-            this.transitions[key] = {hitArea, hitGraphics};
+            this.transitionPoints[key] = hitArea
+            this.scene.input.setDraggable(hitArea);
             
+            // Add key to state, avoiding duplicates
+            if (startState.keys.indexOf(key) === -1){
+                startState.keys.push(key);
+            }
+            if (endState.keys.indexOf(key) === -1){
+                endState.keys.push(key);
+            }
+            
+            
+
             // User clicks on transition
-            hitGraphics.on('pointerup', (pointer) => {
+            hitArea.on('pointerup', (pointer) => {
+                
+                console.log('clicked');
+                
                 // Delete transition if right button is clicked
                 if (pointer.rightButtonReleased()){
                     if (!this.scene.draw){
-                        hitGraphics.destroy();
-                        delete this.transitions[key];
+                        hitArea.destroy();
+                        delete this.transitionPoints[key];
                         this.removeTransitions(hitArea.startState, endName);
                     }
                 
@@ -226,10 +241,10 @@ export default class Transitions{
         
         // Update existing hit area
         } else {
-            this.transitions[key].hitArea.setTo(points);
+            //this.transitionPoints[key].setPosition(mid.x, mid.y);
             
-            if (this.transitions[key].hitArea.selected){
-                this.addLetterMenu(this.transitions[key].hitArea, endName, Phaser.Geom.Line.GetMidPoint(line));
+            if (this.transitionPoints[key].selected){
+                this.addLetterMenu(this.transitionPoints[key], endName, this.getControlPoint(line, key));
             }
         }
     }
@@ -238,7 +253,7 @@ export default class Transitions{
         this.interactive = true;
     }
 
-    // Remove all transitions from first state to second state
+    // Remove all transitionPoints from first state to second state
     removeTransitions(startState, endStateName){
         console.log(startState);
         const transitions = Object.entries(startState.transitions);
@@ -253,7 +268,9 @@ export default class Transitions{
                 
                 // Delete if empty array after deleting state pointer
                 if (!startState.transitions[letter].length){
-                    delete startState.transitions[letter]
+                    
+                    delete startState.transitions[letter];
+                    
                 }
             }
         });
@@ -261,6 +278,7 @@ export default class Transitions{
 
     addLetterMenu(hitArea, endName, mid, key){
         
+
         // Update existing letters to new position
         if (hitArea.hasOwnProperty("letterArray")){
             for (let i = 0; i < this.scene.language.length; i++){
@@ -275,9 +293,9 @@ export default class Transitions{
                 if (hitArea.startState.transitions.hasOwnProperty(this.scene.language[i])
                 && hitArea.startState.transitions[this.scene.language[i]].includes(endName)){
                     
-                    hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: '#4bb31e' }));
+                    hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: Colours.TEXTGREEN }));
                 } else{
-                    hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: '#d40000' }));
+                    hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: Colours.TEXTYELLOW }));
                 }
                 
                 hitArea.letterArray[i].setInteractive();
@@ -294,16 +312,23 @@ export default class Transitions{
                         
                         // Remove state if present
                         if (transitions[letter].includes(endName)){
+                            console.log('splicing');
                             const index = transitions[letter].indexOf(endName);
                             transitions[letter].splice(index, 1);
+                            
+                            // Delete data if array is empty
+                            if (transitions[letter].length === 0){
+                                delete transitions[letter];
+                                hitArea.destroy();
+                                delete this.transitionPoints[key];
+                            }
 
-                        // Add state
                         } else {
                             transitions[letter].splice(0,0,endName);
                         }
                     
-                    } else {
                     // Transition over input is not defined, create new transition
+                    } else {
                         transitions[letter] = [endName];
                     }
 
@@ -314,5 +339,16 @@ export default class Transitions{
             }
         }
         
+    }
+
+    // startPoint and endPoint are optional, only used if method is called without a curve
+    getControlPoint(curve, key, startPoint, endPoint){
+        if (this.transitionPoints[key]){
+            return new Phaser.Math.Vector2(this.transitionPoints[key].x, this.transitionPoints[key].y);
+        } else if (curve){
+            return new Phaser.Math.Vector2(curve.getPointAt(0.5));
+        } else {
+            return Phaser.Geom.Point.Interpolate(startPoint, endPoint)
+        }
     }
 }

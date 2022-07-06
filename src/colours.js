@@ -4,5 +4,7 @@ export default {
     YELLOW: "0xffb700", 
     BLUE: "0x0540ca",
     RED: "0xd40000",
-    GREEN: "0x4bb31e"
+    GREEN: "0x4bb31e",
+    TEXTYELLOW: "#ffb700",
+    TEXTGREEN: "#4bb31e"
 }
