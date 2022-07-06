@@ -158,6 +158,7 @@ export default class Transitions{
     }
 
     setLineInteractivity(line, startState, endState, key, input, endName){
+        
         // Get slope of line perpendicular to transition line
         const perpSlope = Phaser.Geom.Line.NormalAngle(line);
         let points = []
@@ -174,7 +175,6 @@ export default class Transitions{
             // Rectangle surrounding transition 
             const hitArea = new Phaser.Geom.Polygon(points);
             
-            // Connect hit area to transition
             hitArea.startState = startState;
             hitArea.input = input;
 
@@ -195,24 +195,27 @@ export default class Transitions{
                     this.removeTransitions(hitArea, endName);
                 
                 // Left mouse: enable user to change the letters on the transition
-                } else if (!hitArea.select){
-                    hitArea.select = true;
+                } else if (!hitArea.selected){
                     
-                    // Iterate through transitions, removing any from start state to end state
-                    this.removeTransitions(hitArea, endName);
+                    // Flag that the user has selected the transition
+                    hitArea.selected = true;
+                    
+                    this.removeTransitions(hitArea.startState, endName);
                     
                     // Create blank transition
                     hitArea.startState.transitions[""] = [endName];
                     
-                    // Add clickable letters
                     this.addLetterMenu(hitArea, endName, Phaser.Geom.Line.GetMidPoint(line));
                 }
             });
-        }
         
-        // Hit area has already been created, update to new co-ords. 
-        else{
-            this.transitions[key].hitArea.setTo(points)
+        // Update existing hit area
+        } else {
+            this.transitions[key].hitArea.setTo(points);
+            
+            if (this.transitions[key].hitArea.selected){
+                this.addLetterMenu(this.transitions[key].hitArea, endName, Phaser.Geom.Line.GetMidPoint(line));
+            }
         }
     }
 
@@ -220,46 +223,64 @@ export default class Transitions{
         this.interactive = true;
     }
 
-    removeTransitions(hitArea, endName){
-        const transitions = Object.entries(hitArea.startState.transitions);
+    // Remove all transitions from first state to second state
+    removeTransitions(startState, endStateName){
+        const transitions = Object.entries(startState.transitions);
+        
+        // Iterate through [letter, states], check for endState in states
         transitions.forEach((t) => {
             let [letter, states] = t;
-            let index = states.indexOf(endName);
+            let index = states.indexOf(endStateName);
             if (index !== -1) {
                 // Remove element of array pointing to second state
-                console.log("Before", hitArea.startState.transitions[letter]);
+                startState.transitions[letter].splice(index, 1);
                 
-                hitArea.startState.transitions[letter].splice(index, 1);
-                console.log("After", hitArea.startState.transitions[letter]);
-                
-                // Remove if empty array after deleting state pointer
-                if (!hitArea.startState.transitions[letter].length){
-                    delete hitArea.startState.transitions[letter]
+                // Delete if empty array after deleting state pointer
+                if (!startState.transitions[letter].length){
+                    delete startState.transitions[letter]
                 }
             }
         });
     }
 
     addLetterMenu(hitArea, endName, mid){
-        const letterArray = []
         
-        for (let i = 0; i < this.scene.language.length; i++){
-            letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: '#ffb700' }));
-            letterArray[i].setInteractive();
-            letterArray[i].on('pointerup', () => {
-                hitArea.select = false;
-                letterArray.forEach((letter) => {letter.destroy()})
-                delete hitArea.startState.transitions[""];
+        // Update existing letters to new position
+        if (hitArea.hasOwnProperty("letterArray")){
+            for (let i = 0; i < this.scene.language.length; i++){
+                hitArea.letterArray[i].setPosition(mid.x + i*30, mid.y);
+            }
+
+        } else{ // Create new letters
+            hitArea.letterArray = [];
+        
+            for (let i = 0; i < this.scene.language.length; i++){
                 
-                // Input is already defined, add new state to array
-                if (hitArea.startState.transitions.hasOwnProperty(letterArray[i].text)){
-                    hitArea.startState.transitions[letterArray[i].text].splice(0,0,endName)
-                
-                // Input is not defined, create new transition
-                } else{ 
-                    hitArea.startState.transitions[letterArray[i].text] = [endName]
-                }
-            });
+                // Add pop out letter menu
+                hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: '#ffb700' }));
+                hitArea.letterArray[i].setInteractive();
+                hitArea.letterArray[i].on('pointerup', () => {
+
+                    hitArea.selected = false;
+                    
+                    // Remove blank transition
+                    delete hitArea.startState.transitions[""];
+                    
+                    // Transition over input is already defined, add new state to array
+                    if (hitArea.startState.transitions.hasOwnProperty(hitArea.letterArray[i].text)){
+                        hitArea.startState.transitions[hitArea.letterArray[i].text].splice(0,0,endName)
+                    
+                    // Transition over input is not defined, create new transition
+                    } else{ 
+                        hitArea.startState.transitions[hitArea.letterArray[i].text] = [endName];
+                    }
+
+                    // Remove letterArray property from hitArea
+                    hitArea.letterArray.forEach((letter) => {letter.destroy()});
+                    delete hitArea.letterArray;
+                });
+            }
         }
+        
     }
 }
