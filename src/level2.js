@@ -14,14 +14,18 @@ export default class Level2 extends Level {
 
     create({automata, word, language}){
         
+        // Store original word and automata to allow for reseting
         this.inputWord = this.word = word;
+        this.inputAutomata = structuredClone(automata);
+        
         this.language = language;
 
-        this.draw = false;
-        this.interactive = true;
+        // Flags
+        this.draw = false; // Flag for whether the player is currently drawing transition
+        this.interactive = true; // Flag for whether player can interact with automata
         
         
-        super.create(automata);
+        super.create(this.inputAutomata);
         this.transitions.setInteractive();
         
         this.input.mouse.disableContextMenu(); // Allow for right clicking
@@ -35,6 +39,22 @@ export default class Level2 extends Level {
             state.graphic.on('pointerup', (pointer) => {
                 if (pointer.rightButtonReleased()){
                     this.connectStates(state, s);
+                } else{
+                    console.log(state.keys);
+                    for (let key of state.keys){
+                        console.log(key);
+                        console.log(this.transitions.transitionPoints)
+
+
+                        if (this.transitions.transitionPoints[key].hasOwnProperty('letterArray')){
+                            this.transitions.transitionPoints[key].letterArray.forEach((letter) => {letter.destroy()});;
+                            delete this.transitions.transitionPoints[key].letterArray;
+                        }
+                        
+                        this.transitions.transitionPoints[key].destroy();
+                        delete this.transitions.transitionPoints[key];
+                    }
+                    state.keys = [];
                 }
             })
         }
@@ -59,14 +79,18 @@ export default class Level2 extends Level {
     
     setDrag(state){
         this.input.setDraggable(state.graphic);
-        this.input.on('drag', function (pointer, graphic, dragX, dragY) {
-            graphic.x = dragX;
-            graphic.y = dragY;
-            if(graphic.inner){
-                graphic.inner.x = dragX;
-                graphic.inner.y = dragY;
+        
+        const _this = this;
+        
+        this.input.on('drag', function (pointer, object, dragX, dragY) {
+            object.x = dragX;
+            object.y = dragY;
+            if(object.inner){
+                object.inner.x = dragX;
+                object.inner.y = dragY;
             }
-        })
+        });
+
     }
 
     connectStates(state, s){      
