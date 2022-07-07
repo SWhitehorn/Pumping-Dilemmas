@@ -10,8 +10,12 @@ export default class TransitionPoint {
 
     /**
      * @property {boolean} selected - Indicates whether user has clicked on transition point
+     * @property {boolean} dragging - Indicates whether user is dragging the point 
+     * @property {number} SIZE - Pixel radius of point
      */
     selected = false;
+    dragging = false;
+    SIZE = 8;
     
     /**
      * Creates new point
@@ -28,8 +32,10 @@ export default class TransitionPoint {
         this.scene = scene;
         this.key = key;
 
-        this.graphic = this.scene.add.circle(x, y, 5, Colours.BLACK).setInteractive();
-        
+        this.graphic = this.scene.add.circle(x, y, this.SIZE, Colours.BLACK).setInteractive();
+        this.graphic.parent = this;
+        this.graphic.isTransitionPoint = true;
+
         this.graphic.on('pointerup', (pointer) => {
                 
            // Delete transition if right button is clicked
@@ -40,11 +46,16 @@ export default class TransitionPoint {
                     this.scene.transitions.removeTransitions(this.startState, this.endName);
                 }
             
+            console.log(this.dragging);
             // Left mouse: enable user to change the letters on the transition
-            } else if (!this.selected){
+            } else if (!this.dragging){
                 
-                // Flag that the user has selected the transition
-                this.selected = true;
+                if (this.selected){
+                    this.removeLetters();
+                }
+
+                this.selected = !this.selected;
+                
                 
             }
         });
@@ -141,7 +152,6 @@ export default class TransitionPoint {
                             if (isEmpty(transitions)){
                                 this.destroy();
                                 
-                                // Remove reference to object
                                 delete this.scene.transitions.transitionPoints[this.key];
                             }
                         }
@@ -156,8 +166,7 @@ export default class TransitionPoint {
                 }
 
                 // Remove letterArray property
-                this.letterArray.forEach((letter) => {letter.destroy()});
-                delete this.letterArray;
+                this.removeLetters();
             });
         }
     } 
@@ -178,5 +187,13 @@ export default class TransitionPoint {
         } else{
             this.letterArray.push(this.scene.add.text(this.x + i*30, this.y, letter, { fontSize: '30px', color: Colours.TEXTYELLOW }));
         }
+    }
+
+    /**
+     * Remove letter menu
+     */
+    removeLetters(){
+        this.letterArray.forEach((letter) => {letter.destroy()});
+        delete this.letterArray;
     }
 }

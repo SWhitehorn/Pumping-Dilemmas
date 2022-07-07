@@ -76,14 +76,32 @@ export default class Level2 extends Level {
     setDrag(state){
         this.input.setDraggable(state.graphic);
         
-        const _this = this;
+        this.input.dragDistanceThreshold = 5;
         
-        this.input.on('drag', function (pointer, object, dragX, dragY) {
+        this.input.on('drag', (pointer, object, dragX, dragY) => {
+            
             object.x = dragX;
             object.y = dragY;
-            if(object.inner){
+            
+            if (object.inner){
                 object.inner.x = dragX;
                 object.inner.y = dragY;
+            }
+
+            if (object.isTransitionPoint){
+                object.parent.setPosition(dragX, dragY);
+            }
+        });
+
+        this.input.on('dragstart', (pointer, object, dragX, dragY) => {
+            if (object.isTransitionPoint){
+                object.parent.dragging = true;
+            }
+        });
+
+        this.input.on('dragend', (pointer, object, dragX, dragY) => {
+            if (object.isTransitionPoint){
+                object.parent.dragging = false;
             }
         });
 
