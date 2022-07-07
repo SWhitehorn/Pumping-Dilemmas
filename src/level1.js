@@ -1,21 +1,32 @@
 import Level from "./levelTemplate.js";
 import Colours from "./colours.js";
+import "./typedefs/typedefs.js";
 
-// Loop finder
+/**
+ * @typedef {Object} Input
+ * @property {Automata} automata - Input automata
+ * @property {string} word - Input word
+ */
+
+/**
+ * First Level 
+ * @class
+ */
 export default class Level1 extends Level {
 
     levelObjects = {letters: []}
-
-     // Constants for letter placement
-     textX = 400;
-     textY = 400;
-     sections = []
+    textX = 400;
+    textY = 400;
+    sections = []
 
     constructor(){
         super('Level1')
     }
 
-    // Automata and word are passed in when level is created
+    /**
+     * Create level
+     * @param {Input}
+     */
     create({automata, word}){
         console.log(word);
         
@@ -121,7 +132,11 @@ export default class Level1 extends Level {
         this.wordParts = [stringBefore, selected, stringAfter];
     }
 
-    // Returns boolean value of whether slider is covering letter
+    /**
+     * Returns true is letter is contained in slider
+     * @param {Object} letter - Phaser text
+     * @param {Object} slider - Phaser rectangle
+     */
     isContained(letter, slider){
         const sliderRect = slider.getBounds();
         const letterRect = letter.getBounds();
@@ -174,6 +189,11 @@ export default class Level1 extends Level {
         }
     }
 
+    /**
+     * 
+     * @param {number} textX 
+     * @param {number} textY 
+     */
     drawLetters(textX, textY){
 
         // Remove current letters

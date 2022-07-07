@@ -8,11 +8,6 @@ import "./typedefs/typedefs.js"
  */
 export default class TransitionPoint {
 
-    /**
-     * @property {boolean} selected - Indicates whether user has clicked on transition point
-     * @property {boolean} dragging - Indicates whether user is dragging the point 
-     * @property {number} SIZE - Pixel radius of point
-     */
     selected = false;
     dragging = false;
     SIZE = 8;

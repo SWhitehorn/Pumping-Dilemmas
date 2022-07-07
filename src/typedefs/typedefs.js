@@ -21,4 +21,3 @@
  * @property {number} y - y position
  */
 
-
