@@ -1,12 +1,22 @@
 import Colours from "./colours.js";
 import { getNextLetter } from "./utils.js";
+import TransitionPoint from "./transitionPoint.js";
+import "./typedefs/typedefs.js"
 
-/* Handles drawing and interactivity of transitions */
-
+/**
+ * Handles drawing and updating of transitions
+ * @class
+ *  */ 
 export default class Transitions{    
     
     SIZE = 30;
 
+    /**
+     * 
+     * @param {Object} graphics - Phaser graphics object 
+     * @param {Automata} automata - Input automata
+     * @param {Object} scene - Game scene that transitions is attached to
+     */
     constructor(graphics, automata, scene){
         
         this.graphics = graphics;
@@ -23,7 +33,10 @@ export default class Transitions{
         
         this.drawTransitions();
     }
-
+    
+    /**
+     * Draws all transitions
+     */
     drawTransitions(){
         
         // Error handling in case of no automata
@@ -43,19 +56,19 @@ export default class Transitions{
         
         
         // Iterate through states of automata 
-        for (let s in this.automata.states){            
+        for (let startName in this.automata.states){            
             
-            let state = this.automata.states[s];
+            let state = this.automata.states[startName];
             
             // Iterate through transitions of state
             for (let input in state.transitions){
                 
                 let endStates = state.transitions[input]; // array of reachable states
                 
-                endStates.forEach((endState) => { 
+                endStates.forEach((endName) => { 
                     
                     // Key for transition is start state concatenated with end state
-                    const key = s.concat(endState);
+                    const key = startName.concat(endName);
                     
                     // Transition already exists, just add new input to label
                     if (this.labels.hasOwnProperty(key)){
@@ -69,7 +82,7 @@ export default class Transitions{
                         
                         //Create new transition
                         this.labels[key] = null;
-                        this.drawSingleTransition(state, this.automata.states[endState], tri_size, input, key, endState);
+                        this.drawSingleTransition(state, this.automata.states[endName], tri_size, input, key, endName);
                     }
                 })
                 
@@ -84,7 +97,16 @@ export default class Transitions{
 
     }
 
-    drawSingleTransition(startState, endState, tri_size, input, key, s){
+    /**
+     * Draws a transition from state state to end state, according to conditions of scene
+     * @param {State} startState - Object defining initial state of transition
+     * @param {State} endState - Object defining end state
+     * @param {number} tri_size - Size of the transition arrow heads 
+     * @param {string} input - Single char input that transition is defined over
+     * @param {string} key - String containing name of start and end states
+     * @param {string} endName - Name of end state
+     */
+    drawSingleTransition(startState, endState, tri_size, input, key, endName){
 
         // Transitions is from state to itself
         if (startState === endState){
@@ -96,7 +118,7 @@ export default class Transitions{
             
             const labelY = startState.graphic.y - (this.SIZE*3);
 
-            this.addLabel(s, {x:startState.graphic.x, y:labelY}, input, key, line);
+            this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key, line);
         
             // Add direction arrow
             const x = startState.graphic.x + this.SIZE * Math.cos(Phaser.Math.DegToRad(30)); // Parametric equations for point on circle
@@ -118,7 +140,6 @@ export default class Transitions{
             
             // Get Control points for line
             const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
-            
             const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
             const mid = this.getControlPoint(null, key, startPoint, endPoint)
 
@@ -128,7 +149,7 @@ export default class Transitions{
             line.draw(this.graphics)
 
             
-            this.addLabel(s, mid, input, key, line);
+            this.addLabel(endName, mid, input, key, line);
             
             // Add direction arrow 
             const percent = this.SIZE / line.getLength();
@@ -144,17 +165,28 @@ export default class Transitions{
             this.drawTriangle(tri);
 
             if (this.interactive){
-                this.setLineInteractivity(line, startState, endState, key, input, s, mid);
+                this.setLineInteractivity(line, startState, endState, key, input, endName);
             }
         }
     }
-
+    /**
+     * Draws the given triangle
+     * @param {Triangle} tri - Phaser Geom Triangle 
+     */
     drawTriangle(tri){
         this.graphics.fillStyle(Colours.BLACK);
         this.graphics.fillTriangleShape(tri);
         this.graphics.strokeTriangleShape(tri);
     }
 
+    /**
+     * Adds a label to the given transition
+     * @param {string} endName - String containing target state name
+     * @param {Object} point - Object with x and y properties 
+     * @param {string} input - Single char string 
+     * @param {string} key - String with name of start and end state
+     * @param {QuadtraticBezier} line - Phaser Curve QuadtraticBezier object
+     */
     addLabel(endName, point, input, key, line){
         
         // Add letter menu
@@ -169,6 +201,13 @@ export default class Transitions{
         }
     }
 
+    /**
+     * Adds interactive component to transition from state to itself
+     * @param {Arc} line 
+     * @param {State} startState 
+     * @param {string} input 
+     * @param {string} key 
+     */
     setCircleInteractivity(line, startState, input, key){
         
         line.startState = startState;
@@ -193,19 +232,28 @@ export default class Transitions{
         })
     }
 
+    /**
+     *  Adds interactive component to transition from state to different state
+     * @param {QuadtraticBezier} line - Phaser object for line 
+     * @param {State} startState - State state of transition
+     * @param {State} endState - Ending state of transition
+     * @param {string} key - String with key for transition
+     * @param {string} input - Input for transition
+     * @param {string} endName - String with name of target state
+     */
     setLineInteractivity(line, startState, endState, key, input, endName){
-        
+    
+        const mid = this.getControlPoint(line, key);
+
         // Create new hit area
         if (!this.transitionPoints.hasOwnProperty(key)){
 
-            const mid = this.getControlPoint(line, key);
-
-            const hitArea = this.scene.add.circle(mid.x, mid.y, 5, Colours.BLACK).setInteractive();
-            hitArea.startState = startState;
+            const hitArea = new TransitionPoint(mid.x, mid.y, this.scene, key);
+            hitArea.setStart(startState).setEnd(endState, endName);
 
             // Store hit area and graphics object in object
-            this.transitionPoints[key] = hitArea
-            this.scene.input.setDraggable(hitArea);
+            this.transitionPoints[key] = hitArea;
+            hitArea.setDraggable();
             
             // Add key to state, avoiding duplicates
             if (startState.keys.indexOf(key) === -1){
@@ -214,34 +262,10 @@ export default class Transitions{
             if (endState.keys.indexOf(key) === -1){
                 endState.keys.push(key);
             }
-            
-            
-
-            // User clicks on transition
-            hitArea.on('pointerup', (pointer) => {
-                
-                console.log('clicked');
-                
-                // Delete transition if right button is clicked
-                if (pointer.rightButtonReleased()){
-                    if (!this.scene.draw){
-                        hitArea.destroy();
-                        delete this.transitionPoints[key];
-                        this.removeTransitions(hitArea.startState, endName);
-                    }
-                
-                // Left mouse: enable user to change the letters on the transition
-                } else if (!hitArea.selected){
-                    
-                    // Flag that the user has selected the transition
-                    hitArea.selected = true;
-                    
-                }
-            });
         
         // Update existing hit area
         } else {
-            //this.transitionPoints[key].setPosition(mid.x, mid.y);
+            this.transitionPoints[key].setPosition(mid.x, mid.y);
             
             if (this.transitionPoints[key].selected){
                 this.addLetterMenu(this.transitionPoints[key], endName, this.getControlPoint(line, key));
@@ -249,13 +273,18 @@ export default class Transitions{
         }
     }
 
+    /** Enable player to interact with transitions */
     setInteractive(){
         this.interactive = true;
     }
 
-    // Remove all transitionPoints from first state to second state
+    /**
+     * Removes all transitions from first state to second
+     * @param {State} startState 
+     * @param {string} endStateName 
+     */
     removeTransitions(startState, endStateName){
-        console.log(startState);
+        
         const transitions = Object.entries(startState.transitions);
         
         // Iterate through [letter, states], check for endState in states
@@ -276,6 +305,13 @@ export default class Transitions{
         });
     }
 
+    /**
+     * Adds menu of letters to click at given point
+     * @param {TransitionPoint} hitArea 
+     * @param {string} endName 
+     * @param {Point} mid - object with x and y properties 
+     * @param {string} key 
+     */
     addLetterMenu(hitArea, endName, mid, key){
         
 
@@ -285,70 +321,37 @@ export default class Transitions{
                 hitArea.letterArray[i].setPosition(mid.x + i*30, mid.y);
             }
         } else{ // Create new letters
-            hitArea.letterArray = [];
-        
-            for (let i = 0; i < this.scene.language.length; i++){
-                
-                // Render letter in green if part of transition, red if not
-                if (hitArea.startState.transitions.hasOwnProperty(this.scene.language[i])
-                && hitArea.startState.transitions[this.scene.language[i]].includes(endName)){
-                    
-                    hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: Colours.TEXTGREEN }));
-                } else{
-                    hitArea.letterArray.push(this.scene.add.text(mid.x + i*30, mid.y, this.scene.language[i], { fontSize: '30px', color: Colours.TEXTYELLOW }));
-                }
-                
-                hitArea.letterArray[i].setInteractive();
-                
-                // 
-                hitArea.letterArray[i].on('pointerup', () => {
-
-                    hitArea.selected = false;
-                    const transitions = hitArea.startState.transitions;
-                    let letter = hitArea.letterArray[i].text
-
-                    // Transition over input is already defined
-                    if (transitions.hasOwnProperty(letter)){
-                        
-                        // Remove state if present
-                        if (transitions[letter].includes(endName)){
-                            console.log('splicing');
-                            const index = transitions[letter].indexOf(endName);
-                            transitions[letter].splice(index, 1);
-                            
-                            // Delete data if array is empty
-                            if (transitions[letter].length === 0){
-                                delete transitions[letter];
-                                hitArea.destroy();
-                                delete this.transitionPoints[key];
-                            }
-
-                        } else {
-                            transitions[letter].splice(0,0,endName);
-                        }
-                    
-                    // Transition over input is not defined, create new transition
-                    } else {
-                        transitions[letter] = [endName];
-                    }
-
-                    // Remove letterArray property from hitArea
-                    hitArea.letterArray.forEach((letter) => {letter.destroy()});
-                    delete hitArea.letterArray;
-                });
-            }
+            
+            hitArea.createLetters(mid);
+            
         }
-        
     }
 
-    // startPoint and endPoint are optional, only used if method is called without a curve
+    /**
+     * 
+     * @param {QuadraticBezier|Null} curve - curve to get mid point of, may be null.
+     * @param {string} key 
+     * @param {Vector2} [startPoint] - must be included if curve is null
+     * @param {Vector2} [endPoint] - must be included if curve is null
+     * @returns {Vector2} - object with x and y properties 
+     */
     getControlPoint(curve, key, startPoint, endPoint){
+        
+        // Already a point defined, return the position
         if (this.transitionPoints[key]){
-            return new Phaser.Math.Vector2(this.transitionPoints[key].x, this.transitionPoints[key].y);
+            return new Phaser.Math.Vector2(this.transitionPoints[key].getPosition());
+        
+        // 
         } else if (curve){
             return new Phaser.Math.Vector2(curve.getPointAt(0.5));
+        
+        // No transition point and curve is null 
         } else {
-            return Phaser.Geom.Point.Interpolate(startPoint, endPoint)
-        }
+            if (!startPoint || !endPoint){
+                console.error('No optional parameters')
+            } else {
+                return Phaser.Geom.Point.Interpolate(startPoint, endPoint)
+            }
+       }
     }
 }

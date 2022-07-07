@@ -1,3 +1,4 @@
+
 export const level1Data = {
     automata: {
         states: {

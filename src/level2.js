@@ -40,11 +40,7 @@ export default class Level2 extends Level {
                 if (pointer.rightButtonReleased()){
                     this.connectStates(state, s);
                 } else{
-                    console.log(state.keys);
                     for (let key of state.keys){
-                        console.log(key);
-                        console.log(this.transitions.transitionPoints)
-
 
                         if (this.transitions.transitionPoints[key].hasOwnProperty('letterArray')){
                             this.transitions.transitionPoints[key].letterArray.forEach((letter) => {letter.destroy()});;
@@ -107,7 +103,6 @@ export default class Level2 extends Level {
             let input = this.language[0];
             while (this.selectedState.transitions.hasOwnProperty(input)){
                 input = getNextLetter(input, this.language);
-                console.log(input);
                 // Check for language wrapping around
                 if (input === this.language[0]){
                     break;
