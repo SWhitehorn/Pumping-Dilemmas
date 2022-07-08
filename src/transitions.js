@@ -63,7 +63,8 @@ export default class Transitions{
             // Iterate through transitions of state
             for (let input in state.transitions){
                 
-                let endStates = state.transitions[input]; // array of reachable states
+                // Array of reachable states
+                let endStates = state.transitions[input]; 
                 
                 endStates.forEach((endName) => { 
                     
@@ -76,6 +77,9 @@ export default class Transitions{
                         // Check for null before adding text
                         if (this.labels[key]){
                             this.labels[key].text = this.labels[key].text.concat(",").concat(input)
+                        }
+                        if (this.interactive && this.transitionPoints[key].inputs.indexOf(input) === -1){
+                            this.transitionPoints[key].inputs.push()
                         }
                     
                     } else {
@@ -136,7 +140,6 @@ export default class Transitions{
         else{
             
             // Add line between centre of two states
-            //var line = new Phaser.Geom.Line (startState.graphic.x, startState.graphic.y, endState.graphic.x, endState.graphic.y);
             
             // Get Control points for line
             const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
@@ -145,7 +148,6 @@ export default class Transitions{
 
             var line = new Phaser.Curves.QuadraticBezier(startPoint, mid, endPoint);
 
-            //this.graphics.strokeLineShape(line);
             line.draw(this.graphics)
 
             
@@ -227,6 +229,11 @@ export default class Transitions{
                 delete this.transitionPoints[key];
                 delete line.startState.transitions[line.input];
             }
+            else{
+                if (this.transitionPoints[key].selected){
+                    this.addLetterMenu(this.transitionPoints[key], endName, this.getControlPoint(line, key));
+                }
+            }
             
         })
     }
@@ -248,7 +255,7 @@ export default class Transitions{
         if (!this.transitionPoints.hasOwnProperty(key)){
 
             const hitArea = new TransitionPoint(mid.x, mid.y, this.scene, key);
-            hitArea.setStart(startState).setEnd(endState, endName);
+            hitArea.setStart(startState).setEnd(endState, endName).addInput(input);
 
             // Store hit area and graphics object in object
             this.transitionPoints[key] = hitArea;
@@ -264,6 +271,7 @@ export default class Transitions{
         
         // Update existing hit area
         } else {
+            
             this.transitionPoints[key].setPosition(mid.x, mid.y);
             
             if (this.transitionPoints[key].selected){
@@ -312,22 +320,20 @@ export default class Transitions{
      * @param {string} key 
      */
     addLetterMenu(hitArea, endName, mid, key){
-        
 
         // Update existing letters to new position
         if (hitArea.hasOwnProperty("letterArray")){
             for (let i = 0; i < this.scene.language.length; i++){
                 hitArea.letterArray[i].setPosition(mid.x + i*30, mid.y);
             }
-        } else{ // Create new letters
-            
+        // Create new letters
+        } else{ 
             hitArea.createLetters(mid);
-            
         }
     }
 
     /**
-     * 
+     * Returns point for the line to be drawn through
      * @param {QuadraticBezier|Null} curve - curve to get mid point of, may be null.
      * @param {string} key 
      * @param {Vector2} [startPoint] - must be included if curve is null
@@ -337,10 +343,10 @@ export default class Transitions{
     getControlPoint(curve, key, startPoint, endPoint){
         
         // Already a point defined, return the position
-        if (this.transitionPoints[key]){
+        if (this.transitionPoints[key] && !this.transitionPoints[key].update){
             return new Phaser.Math.Vector2(this.transitionPoints[key].getPosition());
             
-        // 
+        // Curve is defined, return halfway point
         } else if (curve){
             return new Phaser.Math.Vector2(curve.getPointAt(0.5));
         
