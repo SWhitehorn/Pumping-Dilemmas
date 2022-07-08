@@ -141,7 +141,7 @@ export default class Transitions{
             // Get Control points for line
             const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
             const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
-            const mid = this.getControlPoint(null, key, startPoint, endPoint)
+            const mid = this.getControlPoint(null, key, startPoint, endPoint);
 
             var line = new Phaser.Curves.QuadraticBezier(startPoint, mid, endPoint);
 
@@ -196,7 +196,6 @@ export default class Transitions{
         
         } else { 
             // Add fresh label
-            
             this.labels[key] = this.scene.add.text(point.x, point.y, input, { fontSize: '30px', color: '#ffffff' })    
         }
     }
@@ -340,7 +339,7 @@ export default class Transitions{
         // Already a point defined, return the position
         if (this.transitionPoints[key]){
             return new Phaser.Math.Vector2(this.transitionPoints[key].getPosition());
-        
+            
         // 
         } else if (curve){
             return new Phaser.Math.Vector2(curve.getPointAt(0.5));
@@ -350,7 +349,7 @@ export default class Transitions{
             if (!startPoint || !endPoint){
                 console.error('No optional parameters')
             } else {
-                return Phaser.Geom.Point.Interpolate(startPoint, endPoint)
+                return Phaser.Geom.Point.Interpolate(startPoint, endPoint, 0.5);
             }
        }
     }
