@@ -89,22 +89,16 @@ export default class Level extends Phaser.Scene {
     }
 
     computation(){        
-        
+    
         // Set previous state to black
         const prevState = this.automata.states[this.currState];
-        console.log('word: ', this.word);
-        console.log(prevState.accepting);
-        prevState.graphic.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
-        
-        if (prevState.accepting){ // Check if state has inner ring
-            prevState.graphic.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
-            prevState.graphic.inner.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
+        prevState.graphic.setFillStyle(Colours.WHITE, 1);
+        if (prevState.accepting){ 
+            prevState.graphic.inner.setFillStyle(Colours.WHITE, 1);
         }
         
-        // Check if word is empty. If so, end and return.
+        // Check if word is empty. If so, end computation
         if (!this.word){
-            // End computation, reseting states
-            prevState.graphic.setStrokeStyle(this.THICKNESS, Colours.RED, 1);
             this.endComputation();
             return;
         } 
@@ -113,13 +107,13 @@ export default class Level extends Phaser.Scene {
         let symbol = this.word[0];
         this.word = this.word.slice(1);
         
-        // Check whether transition for symbol is defined, exit if not.
+        // Exit if transition over symbol is not defined
         if (!(symbol in this.automata.states[this.currState].transitions)){
 
             // Colour state red
-            prevState.graphic.setStrokeStyle(this.THICKNESS, Colours.RED, 1);
+            prevState.graphic.setFillStyle(Colours.RED, 1);
             if (prevState.accepting){
-                prevState.graphic.inner.setStrokeStyle(this.THICKNESS, Colours.RED, 1);
+                prevState.graphic.inner.setFillStyle(Colours.RED, 1);
             }
             this.endComputation();
             return;
@@ -129,35 +123,65 @@ export default class Level extends Phaser.Scene {
         this.currState = this.automata.states[this.currState].transitions[symbol][0];
         let state = this.automata.states[this.currState];
         
-        // If word is now empty, having read symbol, end computation
+
+        // Colour state green or red is word is empty, having taken tranition
         if (!this.word){
+            
             // Change to green if accepting, red if not
             if (state.accepting){
-                state.graphic.setStrokeStyle(this.THICKNESS, Colours.GREEN, 1);
-                state.graphic.inner.setStrokeStyle(this.THICKNESS, Colours.GREEN, 1);
+                state.graphic.setFillStyle(Colours.GREEN, 1);
+                state.graphic.inner.setFillStyle(Colours.GREEN, 1);
                 this.endComputation();
             }
             else{
-                state.graphic.setStrokeStyle(this.THICKNESS, Colours.RED, 1); 
-                this.endComputation;
+                state.graphic.setFillStyle(Colours.RED, 1); 
+                this.endComputation();
             }
         }
+        
+        // Continue computation
         else{
             // Highlight current state in yellow;
-            state.graphic.setStrokeStyle(this.THICKNESS, Colours.YELLOW, 1);
+            state.graphic.setFillStyle(Colours.YELLOW, 1);
             if (state.accepting){ // Check if state has inner ring
-                state.graphic.inner.setStrokeStyle(this.THICKNESS, Colours.YELLOW, 1);
+                state.graphic.inner.setFillStyle(this.THICKNESS, Colours.YELLOW, 1);
             }
         }
     }
 
+    /**
+     * Called to start the computation process
+     */
     startComputation(){
-        console.log('clicked');
-        this.automata.states[this.automata.start].graphic.setStrokeStyle(this.THICKNESS, Colours.YELLOW, 1);
-        this.computing = true; 
-        this.computeLoop = this.time.addEvent({delay: 500, callback: this.computation, callbackScope: this, loop: true})
+        
+        // Check for empty word
+        if (this.word){
+            this.automata.states[this.automata.start].graphic.setFillStyle(Colours.YELLOW, 1);
+            this.computing = true; 
+            this.computeLoop = this.time.addEvent({delay: 500, callback: this.computation, callbackScope: this, loop: true})
+        }
+        
+        // Handle empty word
+        else{
+            if (this.automata.states[this.automata.start].accepting){
+                this.automata.states[this.automata.start].graphic.setFillStyle(Colours.GREEN, 1);
+                this.automata.states[this.automata.start].graphic.inner.setFillStyle(Colours.GREEN, 1);
+            } else{
+                this.automata.states[this.automata.start].graphic.setFillStyle(Colours.RED, 1);
+            }
+
+            console.log('ending');
+            this.endComputation();
+            
+            
+        }
+        
+        
     }
 
+    /**
+     * Called to end the computation process
+     */
     endComputation(){
         this.currState = this.automata.start;
         this.computing = false;
@@ -170,15 +194,20 @@ export default class Level extends Phaser.Scene {
         this.time.addEvent({delay: 500, callback: this.clearStates, callbackScope: this, loop: false})
     }
 
+    /**
+     * Reset all the states to original colours
+     */
     clearStates(){
         for (let s in this.automata.states){            
             let state = this.automata.states[s];
             state.graphic.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
+            state.graphic.setFillStyle(Colours.WHITE, 1);
             if (state.accepting){
                 state.graphic.inner.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
+                state.graphic.inner.setFillStyle(Colours.WHITE, 1);
             }
         }
-        if (this.repeat){this.startComputation()};
+        if (this.repeat){this.time.addEvent({delay: 500, callback: this.startComputation, callbackScope: this, loop: false})};
     }
 }
 
