@@ -1,6 +1,6 @@
 import Level from "./levelTemplate.js";
 import Colours from "./colours.js";
-import { getNextLetter } from "./utils.js";
+import { getNextLetter, createKey } from "./utils.js";
 import "./typedefs/typedefs.js";
 
 
@@ -48,8 +48,8 @@ export default class Level2 extends Level {
         this.input.mouse.disableContextMenu(); // Allow for right clicking
         
         // Iterate through states
-        for (let s in this.automata.states){
-            let state = this.automata.states[s];
+        for (let stateName in this.automata.states){
+            let state = this.automata.states[stateName];
             this.input.setDraggable(state.graphic);
             
             state.graphic.on('pointerdown', (pointer) => {
@@ -64,8 +64,15 @@ export default class Level2 extends Level {
             // Allow player to draw transitions to connect states
             state.graphic.on('pointerup', (pointer) => {
                 if (pointer.rightButtonReleased()){
-                    this.connectStates(state, s);
-                
+                    
+                    if (!this.draw){
+                        this.draw = true;
+                        this.firstState = {state, stateName};
+                    } else {
+                        this.draw = false;
+                        this.connectStates(stateName)
+                    }
+                    
                 } else{
                     
                 }
@@ -92,7 +99,7 @@ export default class Level2 extends Level {
         if (!this.draw){
             this.graphics.clear();
         }
-        this.transitions.drawTransitions(); 
+        this.transitions.updateTransitions(); 
     }
     
     /**
@@ -114,9 +121,6 @@ export default class Level2 extends Level {
             // Object is transitionPoint
             if (object.isTransitionPoint){
                 object.parent.setPosition(pointer.x, pointer.y);
-            
-            // Object is state
-            } else {
             }
         });
 
@@ -124,17 +128,22 @@ export default class Level2 extends Level {
             
             if (object.isTransitionPoint){
                 object.parent.dragging = true;
+            
+            // Object is a state 
             } else {
+                
+                // Update transitions going to state
                 const state = object.parent;
                 for (let key of state.keys){
+                    const transitionObjects = this.transitions.getAllObjects();
 
-                    if (this.transitions.transitionPoints[key].hasOwnProperty('letterArray')){
-                        this.transitions.transitionPoints[key].letterArray.forEach((letter) => {letter.destroy()});;
-                        delete this.transitions.transitionPoints[key].letterArray;
+                    // Remove letters
+                    if (transitionObjects[key].point.hasOwnProperty('letterArray')){
+                        transitionObjects[key].removeLetterArray();
                     }
                     
                     // Flag that position needs to be updated
-                    this.transitions.transitionPoints[key].update = true;
+                    this.transitions.setToUpdate(key);
                 }
             }
         });
@@ -146,53 +155,39 @@ export default class Level2 extends Level {
             
             // Object is a state
             } else{ 
+                const transitionObjects = this.transitions.getAllObjects();
                 for (let key of object.parent.keys){                
-                    this.transitions.transitionPoints[key].update = false;
+                    this.transitions.removeFromUpdate(key);
                 }
             }
         });
     }
     
     /**
-     * 
-     * @param {State} state - State object clicked on
-     * @param {string} stateName - name of state clicked on 
+     * Adds connection to state given
+     * @param {string} targetStateName - name of state clicked on 
      */
-    connectStates(state, currStateName){      
+    connectStates(targetStateName){      
         
-        // Start drawing transition
-        if (!this.draw){
-            this.draw = true;
-            this.firstState = {state, 'stateName':currStateName};
+        // Get first available letter
+        let input = this.language[0];
+        while (this.firstState.state.transitions.hasOwnProperty(input)){
+            input = getNextLetter(input, this.language);
+            // Check for language wrapping around
+            if (input === this.language[0]){
+                break;
+            }
+        }
+
+        this.automata.addTransition(this.firstState.stateName, targetStateName, input);
         
-        // Drawing finished, connect states
-        } else { 
-            
-            // Get first available letter
-            let input = this.language[0];
-            while (this.firstState.state.transitions.hasOwnProperty(input)){
-                input = getNextLetter(input, this.language);
-                // Check for language wrapping around
-                if (input === this.language[0]){
-                    break;
-                }
-            }
-            
-            this.draw = false;
-            
-            // Add input
-            if (this.firstState.state.transitions.hasOwnProperty(input)){
-                this.firstState.state.transitions[input].push(currStateName)
-            } else {
-                this.firstState.state.transitions[input] = [currStateName];
-            }   
-
-            const key = this.firstState.stateName + currStateName;
-            if (this.transitions.transitionPoints.hasOwnProperty(key)){
-                this.transitions.transitionPoints[key].addInput(input);
-            }
-
-            
+        const key = createKey(this.firstState.stateName, targetStateName);
+        const transitionData = this.transitions.getObject(key);
+        
+        if (transitionData){
+            transitionData.point.addInput(input);
+        } else {
+            this.transitions.newTransition(key, input);
         }
     }
 }

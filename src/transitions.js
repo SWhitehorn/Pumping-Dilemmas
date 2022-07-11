@@ -1,6 +1,6 @@
 import Colours from "./colours.js";
-import { getNextLetter } from "./utils.js";
 import TransitionPoint from "./transitionPoint.js";
+import Automata from "./automata.js";
 import "./typedefs/typedefs.js"
 
 /**
@@ -10,6 +10,7 @@ import "./typedefs/typedefs.js"
 export default class Transitions{    
     
     SIZE = 30;
+    triSize = 15;
 
     /**
      * 
@@ -26,10 +27,10 @@ export default class Transitions{
         this.scene = scene;
         
         // Object storing data about the transitions between states, indexed by startState + endState
-        this.transitionPoints = {};
-        this.labels = {};
+        this.transitionObjects = {};
 
         this.interactive = false;
+
         
         this.drawTransitions();
     }
@@ -44,49 +45,37 @@ export default class Transitions{
             return;
         }
         
-        // Remove all previous labels
-        for (let key in this.labels){
-            if (this.labels[key]){
-                this.labels[key].destroy();
-            }
-        }
-        this.labels = {};
-
-        const tri_size = this.SIZE/2;  // Scale arrowhead based on size of states
-        
-        
-        // Iterate through states of automata 
+        // Iterate through transitions of each state 
         for (let startName in this.automata.states){            
-            
             let state = this.automata.states[startName];
-            
-            // Iterate through transitions of state
             for (let input in state.transitions){
-                
-                // Array of reachable states
-                let endStates = state.transitions[input]; 
-                
-                endStates.forEach((endName) => { 
+                state.transitions[input].forEach((endName) => { 
                     
                     // Key for transition is start state concatenated with end state
-                    const key = startName.concat(endName);
+                    const key = startName + "," + endName
                     
-                    // Transition already exists, just add new input to label
-                    if (this.labels.hasOwnProperty(key)){
-                    
+                    // Transition already exists, add new input to label
+                    if (this.transitionObjects.hasOwnProperty(key)){
+                        
+                        let transitionData = this.transitionObjects[key]
+
                         // Check for null before adding text
-                        if (this.labels[key]){
-                            this.labels[key].text = this.labels[key].text.concat(",").concat(input)
+                        if (transitionData.label){
+                            transitionData.label.text = transitionData.label.text.concat(",").concat(input)
                         }
-                        if (this.interactive && this.transitionPoints[key].inputs.indexOf(input) === -1){
-                            this.transitionPoints[key].inputs.push()
+                        
+                        // Prevent duplicates from being added to array
+                        if (this.interactive && !transitionData.point.definedOver(input)){
+                            this.transitionObjects[key].point.addInput(input);
                         }
                     
+                    // Create new transition
                     } else {
                         
-                        //Create new transition
-                        this.labels[key] = null;
-                        this.drawSingleTransition(state, this.automata.states[endName], tri_size, input, key, endName);
+                        // Add data to transitionObjects
+                        this.newTransition(key);
+                        this.automata.addKey(key);
+                        this.drawSingleTransition(state, this.automata.states[endName], input, key, endName);
                     }
                 })
                 
@@ -95,39 +84,85 @@ export default class Transitions{
 
         // Add input arrow to starting state 
         const startState = this.automata.states[this.automata.start] 
-        const tri = new Phaser.Geom.Triangle.BuildEquilateral(startState.graphic.x-this.SIZE, startState.graphic.y, tri_size);
+        const tri = new Phaser.Geom.Triangle.BuildEquilateral(startState.graphic.x-this.SIZE, startState.graphic.y, this.triSize);
         Phaser.Geom.Triangle.RotateAroundXY(tri, startState.graphic.x-this.SIZE, startState.graphic.y, 1.571);
         this.drawTriangle(tri); 
 
     }
 
     /**
+     * Update location of all transitions
+     */
+    updateTransitions(){
+        
+        for (let key in this.transitionObjects){
+            const transitionData = this.transitionObjects[key];
+            const stateNames = key.split(",");
+            const startState = this.automata.getState(stateNames[0]);
+            const endState = this.automata.getState(stateNames[1]);
+
+            // Line has not been created
+            if (!transitionData.line){
+                
+                this.drawSingleTransition(startState, endState, transitionData.label, key, stateNames[1]);
+            
+            // Line needs updating
+            } else if (transitionData.update){
+
+                // Transition from one state to other
+                if (stateNames[0] !== stateNames[1]){
+                    
+                    const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
+                    const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
+                    const midPoint = this.getControlPoint(null, null, startPoint, endPoint);
+                    
+                    transitionData.line.p0 = startPoint;
+                    transitionData.line.p1 = midPoint;
+                    transitionData.line.p2 = endPoint;
+
+                    transitionData.point.setPosition(midPoint);
+                    
+                    this.updateLabel(transitionData, stateNames[1], key, midPoint);
+                }
+            
+            // Draw transition based on position of transitionPoint
+            } else {
+                const controlPoint = this.getControlPoint(transitionData.line, key, null, null);
+                transitionData.line.p1 = controlPoint;
+                this.updateLabel(transitionData, stateNames[1], key, controlPoint);
+            }
+
+            transitionData.line.draw(this.graphics);
+        }
+    }
+
+    /**
      * Draws a transition from state state to end state, according to conditions of scene
      * @param {State} startState - Object defining initial state of transition
      * @param {State} endState - Object defining end state
-     * @param {number} tri_size - Size of the transition arrow heads 
      * @param {string} input - Single char input that transition is defined over
      * @param {string} key - String containing name of start and end states
      * @param {string} endName - Name of end state
      */
-    drawSingleTransition(startState, endState, tri_size, input, key, endName){
+    drawSingleTransition(startState, endState, input, key, endName){
 
         // Transitions is from state to itself
         if (startState === endState){
             
             // Add line by adding second circle and stroking outline
             var line = new Phaser.Geom.Circle(startState.graphic.x, startState.graphic.y-this.SIZE, this.SIZE);
-            
+            this.transitionObjects[key].line = line;
+
             this.graphics.strokeCircleShape(line);
             
             const labelY = startState.graphic.y - (this.SIZE*3);
 
-            this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key, line);
+            this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key);
         
             // Add direction arrow
             const x = startState.graphic.x + this.SIZE * Math.cos(Phaser.Math.DegToRad(30)); // Parametric equations for point on circle
             const y = startState.graphic.y - this.SIZE * Math.sin(Phaser.Math.DegToRad(30)); // Can hardcode if size is settled for speed
-            const tri = new Phaser.Geom.Triangle.BuildEquilateral(x, y, tri_size);
+            const tri = new Phaser.Geom.Triangle.BuildEquilateral(x, y, this.tri_size);
             Phaser.Geom.Triangle.RotateAroundXY(tri, x, y, Phaser.Math.DegToRad(200));
             this.drawTriangle(tri);
 
@@ -139,33 +174,21 @@ export default class Transitions{
         // Transition between states
         else{
             
-            // Add line between centre of two states
-            
             // Get Control points for line
             const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
             const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
             const mid = this.getControlPoint(null, key, startPoint, endPoint);
 
-            var line = new Phaser.Curves.QuadraticBezier(startPoint, mid, endPoint);
+            // Add line to objects
+            this.transitionObjects[key].line = new Phaser.Curves.QuadraticBezier(startPoint, mid, endPoint);
+            line = this.transitionObjects[key].line;
 
-            line.draw(this.graphics)
-
-            
+            // Draw line
+            line.draw(this.graphics);
             this.addLabel(endName, mid, input, key, line);
-            
-            // Add direction arrow 
-            const percent = this.SIZE / line.getLength();
-            const intersectPoint = line.getPointAt(1 - percent); // x,y object of where line crossed edge of state circle
-            
-            
-            const tri = new Phaser.Geom.Triangle.BuildEquilateral(intersectPoint.x, intersectPoint.y, tri_size); 
-            
-            const angleLine = new Phaser.Geom.Line(intersectPoint.x, intersectPoint.y, endState.graphic.x, endState.graphic.y, );
-            let angle = Phaser.Geom.Line.Angle(angleLine); // Rotate triangle to match angle of line
-            angle += 1.571; // Rotate 3/4 of circle
-            Phaser.Geom.Triangle.RotateAroundXY(tri, intersectPoint.x, intersectPoint.y, angle);
-            this.drawTriangle(tri);
+            this.addDirectionArrow(line, endState);
 
+            // Add interactive component to line
             if (this.interactive){
                 this.setLineInteractivity(line, startState, endState, key, input, endName);
             }
@@ -182,6 +205,27 @@ export default class Transitions{
     }
 
     /**
+     * Adds a direction arrow to the line
+     * @param {QuadraticBezier} line - 
+     * @param {State} endState - State to point at
+     */
+    addDirectionArrow(line, endState){
+        
+        // Calculate distance along line
+        const percent = this.SIZE / line.getLength();
+        const intersectPoint = line.getPointAt(1 - percent);
+        
+        const tri = new Phaser.Geom.Triangle.BuildEquilateral(intersectPoint.x, intersectPoint.y, this.triSize); 
+    
+        // Rotate triangle to match gradient of line
+        const angleLine = new Phaser.Geom.Line(intersectPoint.x, intersectPoint.y, endState.graphic.x, endState.graphic.y, );
+        let angle = Phaser.Geom.Line.Angle(angleLine); // Rotate triangle to match angle of line
+        angle += 1.571; // Rotate 3/4 of circle
+        Phaser.Geom.Triangle.RotateAroundXY(tri, intersectPoint.x, intersectPoint.y, angle);
+        this.drawTriangle(tri);
+    }
+
+    /**
      * Adds a label to the given transition
      * @param {string} endName - String containing target state name
      * @param {Object} point - Object with x and y properties 
@@ -192,15 +236,34 @@ export default class Transitions{
     addLabel(endName, point, input, key, line){
         
         // Add letter menu
-        if (this.interactive && this.transitionPoints.hasOwnProperty(key) && this.transitionPoints[key].selected){
-            
-            this.addLetterMenu(this.transitionPoints[key], endName, point, key)
+        if (this.interactive
+            && this.transitionObjects[key].point 
+            && this.transitionObjects[key].point.selected){
+            this.addLetterMenu(this.transitionObjects[key].point, endName, point, key)
         
         } else { 
             // Add fresh label
-            this.labels[key] = this.scene.add.text(point.x, point.y, input, { fontSize: '30px', color: '#ffffff' })    
+            this.transitionObjects[key].label = this.scene.add.text(point.x, point.y, input, { fontSize: '30px', color: '#ffffff' })    
         }
     }
+
+    /**
+     * Updates the position of labels
+     * @param {Object} transitionData 
+     * @param {string} name 
+     * @param {string} key 
+     * @param {Point} midPoint 
+     */
+    updateLabel(transitionData, name, key, midPoint){
+        if (transitionData.point.selected){
+            transitionData.label.visible = false;
+            this.addLetterMenu(transitionData.point, name, this.getControlPoint(transitionData.line, key), key);
+        } else {
+            transitionData.label.setPosition(midPoint.x, midPoint.y);
+            transitionData.label.text = transitionData.point.inputs.toString();
+        }
+    }
+    
 
     /**
      * Adds interactive component to transition from state to itself
@@ -226,7 +289,7 @@ export default class Transitions{
             
             if (pointer.rightButtonReleased()){
                 hitGraphics.destroy();
-                delete this.transitionPoints[key];
+                delete this.transitionObjects[key];
                 delete line.startState.transitions[line.input];
             }
             else{
@@ -250,35 +313,15 @@ export default class Transitions{
     setLineInteractivity(line, startState, endState, key, input, endName){
     
         const mid = this.getControlPoint(line, key);
-
-        // Create new hit area
-        if (!this.transitionPoints.hasOwnProperty(key)){
-
-            const hitArea = new TransitionPoint(mid.x, mid.y, this.scene, key);
-            hitArea.setStart(startState).setEnd(endState, endName).addInput(input);
-
-            // Store hit area and graphics object in object
-            this.transitionPoints[key] = hitArea;
-            hitArea.setDraggable();
-            
-            // Add key to state, avoiding duplicates
-            if (startState.keys.indexOf(key) === -1){
-                startState.keys.push(key);
-            }
-            if (endState.keys.indexOf(key) === -1){
-                endState.keys.push(key);
-            }
         
-        // Update existing hit area
-        } else {
-            
-            this.transitionPoints[key].setPosition(mid.x, mid.y);
-            
-            if (this.transitionPoints[key].selected){
-                this.addLetterMenu(this.transitionPoints[key], endName, this.getControlPoint(line, key));
-            }
-        }
-    }
+        // Create transition point
+        const point = new TransitionPoint(mid.x, mid.y, this.scene, key);
+        point.setStart(startState).setEnd(endState, endName).addInput(input).setDraggable();
+
+        // Add point to transitionObjects
+        this.transitionObjects[key].point = point;
+                
+       }
 
     /** Enable player to interact with transitions */
     setInteractive(){
@@ -289,8 +332,9 @@ export default class Transitions{
      * Removes all transitions from first state to second
      * @param {State} startState 
      * @param {string} endStateName 
+     * @param {string} key - key for transition
      */
-    removeTransitions(startState, endStateName){
+    removeTransitions(startState, endStateName, key){
         
         const transitions = Object.entries(startState.transitions);
         
@@ -310,6 +354,8 @@ export default class Transitions{
                 }
             }
         });
+
+        delete this.transitionObjects[key];
     }
 
     /**
@@ -319,32 +365,32 @@ export default class Transitions{
      * @param {Point} mid - object with x and y properties 
      * @param {string} key 
      */
-    addLetterMenu(hitArea, endName, mid, key){
+    addLetterMenu(point, endName, mid, key){
 
         // Update existing letters to new position
-        if (hitArea.hasOwnProperty("letterArray")){
+        if (point.hasOwnProperty("letterArray")){
             for (let i = 0; i < this.scene.language.length; i++){
-                hitArea.letterArray[i].setPosition(mid.x + i*30, mid.y);
+                point.letterArray[i].setPosition(mid.x + i*30, mid.y);
             }
         // Create new letters
         } else{ 
-            hitArea.createLetters(mid);
+            point.createLetters(mid);
         }
     }
 
     /**
      * Returns point for the line to be drawn through
-     * @param {QuadraticBezier|Null} curve - curve to get mid point of, may be null.
-     * @param {string} key 
-     * @param {Vector2} [startPoint] - must be included if curve is null
-     * @param {Vector2} [endPoint] - must be included if curve is null
+     * @param {QuadraticBezier|Null} curve - curve to get mid point of, or null
+     * @param {string} key - key for transition, or null
+     * @param {Vector2} [startPoint] - must be included if other params are null
+     * @param {Vector2} [endPoint] - must be included if other params are null
      * @returns {Vector2} - object with x and y properties 
      */
     getControlPoint(curve, key, startPoint, endPoint){
         
         // Already a point defined, return the position
-        if (this.transitionPoints[key] && !this.transitionPoints[key].update){
-            return new Phaser.Math.Vector2(this.transitionPoints[key].getPosition());
+        if (key && this.transitionObjects[key].point && !this.transitionObjects[key].point.update){
+            return new Phaser.Math.Vector2(this.transitionObjects[key].point.getPosition());
             
         // Curve is defined, return halfway point
         } else if (curve){
@@ -359,4 +405,59 @@ export default class Transitions{
             }
        }
     }
+
+    /**
+     * Allows access to data on specified transition
+     * @param {string} key - String indexing transition
+     * @returns {string} Object containing data of specified transition, or null if invalid key
+     * @public
+     */
+    getObject(key){
+        if (this.transitionObjects.hasOwnProperty(key)){
+            return this.transitionObjects[key];
+        } else {
+            return null
+        }
+    }
+    
+    /**
+     * Allows access to data on all transitions
+     * @returns Object containing data on all transitions
+     * @public
+     */
+    getAllObjects(){
+        return this.transitionObjects;
+    }
+
+    /**
+     * Removes letters from specified point
+     * @param {string} key - String indexing transition 
+     */
+    removeLetterArray(key){
+        this.transitionObjects[key].point.letterArray.forEach((letter) => {letter.destroy()});;
+        delete this.transitionObjects[key].point.letterArray;
+    }
+
+    /** 
+     * Adds new transition to transitionObjects
+     * @param {string} key - Key to add
+     * @param {string} input - Character to define transition over
+     */
+    newTransition(key, input){
+        this.transitionObjects[key] = {'line': null, 'label': input, 'point': null, 'update': false};
+        this.automata.addKey(key);
+    }
+
+    /**
+     * Flag that a transition needs updating
+     * @param {string} key - Key of transition to update 
+     */
+    setToUpdate(key){
+        this.transitionObjects[key].update = true;
+    }
+
+    removeFromUpdate(key){
+        this.transitionObjects[key].update = false;
+    }
+
 }
