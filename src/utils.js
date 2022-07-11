@@ -25,3 +25,13 @@ export const getNextLetter = (letter, language) => {
 export const isEmpty = (obj) => {
     return Object.keys(obj).length === 0;
 }
+
+
+/**
+ * @param {string} first - Name of first state
+ * @param {string} second - Name of second state
+ */
+export const createKey = (first, second) => {
+    return first + "," + second;
+}
+

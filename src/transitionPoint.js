@@ -11,6 +11,7 @@ export default class TransitionPoint {
     selected = false;
     dragging = false;
     SIZE = 8;
+    inputs = [];
     
     /**
      * Creates new point
@@ -30,28 +31,26 @@ export default class TransitionPoint {
         this.graphic = this.scene.add.circle(x, y, this.SIZE, Colours.BLACK).setInteractive();
         this.graphic.parent = this;
         this.graphic.isTransitionPoint = true;
+        this.update = false;
 
         this.graphic.on('pointerup', (pointer) => {
                 
            // Delete transition if right button is clicked
             if (pointer.rightButtonReleased()){
                 if (!this.scene.draw){
-                    this.graphic.destroy();
-                    delete this.scene.transitions.transitionPoints[this.key];
-                    this.scene.transitions.removeTransitions(this.startState, this.endName);
+                    this.destroy();
+                    this.scene.transitions.removeTransitions(this.startState, this.endName, this.key);
                 }
             
-            console.log(this.dragging);
+            
             // Left mouse: enable user to change the letters on the transition
             } else if (!this.dragging){
                 
                 if (this.selected){
                     this.removeLetters();
                 }
-
+                
                 this.selected = !this.selected;
-                
-                
             }
         });
 
@@ -73,17 +72,28 @@ export default class TransitionPoint {
      * @returns {TransitionPoint} This
      */
     setPosition(x, y){
+
+        // Allow for method to be called with object with x and y properties
+        if (!y && typeof x === 'object' && x.hasOwnProperty('y')){
+            y = x.y;
+            x = x.x;
+        }
+
         this.x = x;
         this.y = y;
+
+        this.graphic.x = x;
+        this.graphic.y = y;
+
         return this;
     }
-
 
     /**
      * Enables drag for transition point
      */
     setDraggable(){
         this.scene.input.setDraggable(this.graphic);
+        return this;
     }
 
     /**
@@ -91,6 +101,17 @@ export default class TransitionPoint {
      */
     destroy(){
         this.graphic.destroy();
+        this.scene.transitions.transitionObjects[this.key].label.destroy();
+        delete this.scene.transitions.transitionObjects[this.key];
+    }
+
+    /**
+     * Adds given input symbol to transitionPoint array
+     * @param {string} input - symbol to add to transition 
+     */
+    addInput(input){
+        this.inputs.push(input);
+        return this;
     }
 
     /**
@@ -136,28 +157,33 @@ export default class TransitionPoint {
                     
                     const index = transitions[letter].indexOf(this.endName);
 
+                    // Transition between states over letter is defined, remove it
                     if (index != -1){
+                        
                         transitions[letter].splice(index, 1);
+                        this.inputs.splice(this.inputs.indexOf(letter), 1);
                         
                         // Delete data if array is empty
                         if (transitions[letter].length === 0){
                             delete transitions[letter];
-                            
+
                             // Delete transition if empty
-                            if (isEmpty(transitions)){
-                                this.destroy();
-                                
-                                delete this.scene.transitions.transitionPoints[this.key];
+                            if (this.isEmptyTransition(transitions)){
+                                this.graphic.destroy();
+                                this.scene.transitions.removeTransitions(this.startState, this.endName, this.key);
                             }
                         }
-
+                    
+                    // Transition over input is defined, but not to end state
                     } else {
                         transitions[letter].splice(0, 0, this.endName);
+                        this.inputs.push(letter);
                     }
                 
                 // Transition over input is not defined, create new transition
                 } else {
                     transitions[letter] = [this.endName];
+                    this.inputs.push(letter);
                 }
 
                 // Remove letterArray property
@@ -185,10 +211,35 @@ export default class TransitionPoint {
     }
 
     /**
-     * Remove letter menu
+     * Remove letter menu if present
      */
     removeLetters(){
-        this.letterArray.forEach((letter) => {letter.destroy()});
-        delete this.letterArray;
+        
+        if (this.letterArray){
+            this.letterArray.forEach((letter) => {letter.destroy()});
+            delete this.letterArray;
+        }
+
+        // Set normal label to render again
+        if (this.scene.transitions.transitionObjects[this.key]){
+            this.scene.transitions.transitionObjects[this.key].label.visible = true;
+        }
+    }
+
+    /**
+     * Test whether array of inputs is empty
+     * @returns {boolean} Returns true no inputs are present in array
+     */
+    isEmptyTransition(){
+        return (this.inputs.length === 0);
+    }
+
+    /**
+     * Tests whether given input is defined for point
+     * @param {string} input - Single character representing input
+     * @returns {boolean} True if input present
+     */
+    definedOver(input){
+        return (this.inputs.indexOf(input) !== -1);
     }
 }

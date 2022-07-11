@@ -1,5 +1,6 @@
 import Colours from "./colours.js";
 import Transitions from "./transitions.js";
+import Automata from "./automata.js";
 
 export default class Level extends Phaser.Scene {
 
@@ -26,7 +27,7 @@ export default class Level extends Phaser.Scene {
 
         if (automata){
             // Automata for level is defined in seperate file
-            this.automata = automata
+            this.automata = new Automata(automata, this);
             
         
             // Used for animating computation
