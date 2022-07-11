@@ -149,7 +149,6 @@ export default class TransitionPoint {
             
             this.letterArray[i].setInteractive().on('pointerup', () => {
 
-                this.selected = false;
                 const transitions = this.startState.transitions;
                 let letter = this.letterArray[i].text
 

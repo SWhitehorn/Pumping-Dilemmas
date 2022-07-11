@@ -78,16 +78,10 @@ export default class Transitions{
                         this.drawSingleTransition(state, this.automata.states[endName], input, key, endName);
                     }
                 })
-                
             }  
         }
 
-        // Add input arrow to starting state 
-        const startState = this.automata.states[this.automata.start] 
-        const tri = new Phaser.Geom.Triangle.BuildEquilateral(startState.graphic.x-this.SIZE, startState.graphic.y, this.triSize);
-        Phaser.Geom.Triangle.RotateAroundXY(tri, startState.graphic.x-this.SIZE, startState.graphic.y, 1.571);
-        this.drawTriangle(tri); 
-
+        this.addStartArrow();
     }
 
     /**
@@ -123,6 +117,7 @@ export default class Transitions{
                     transitionData.point.setPosition(midPoint);
                     
                     this.updateLabel(transitionData, stateNames[1], key, midPoint);
+                    
                 }
             
             // Draw transition based on position of transitionPoint
@@ -132,8 +127,11 @@ export default class Transitions{
                 this.updateLabel(transitionData, stateNames[1], key, controlPoint);
             }
 
+            this.addDirectionArrow(transitionData.line, endState);
             transitionData.line.draw(this.graphics);
         }
+
+        this.addStartArrow();
     }
 
     /**
@@ -222,6 +220,15 @@ export default class Transitions{
         let angle = Phaser.Geom.Line.Angle(angleLine); // Rotate triangle to match angle of line
         angle += 1.571; // Rotate 3/4 of circle
         Phaser.Geom.Triangle.RotateAroundXY(tri, intersectPoint.x, intersectPoint.y, angle);
+        this.drawTriangle(tri);
+    }
+
+    /** Add label to start state */
+    addStartArrow(){
+        // Add input arrow to starting state 
+        const startState = this.automata.states[this.automata.start] 
+        const tri = new Phaser.Geom.Triangle.BuildEquilateral(startState.graphic.x-this.SIZE, startState.graphic.y, this.triSize);
+        Phaser.Geom.Triangle.RotateAroundXY(tri, startState.graphic.x-this.SIZE, startState.graphic.y, 1.571);
         this.drawTriangle(tri);
     }
 
