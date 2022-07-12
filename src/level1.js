@@ -144,7 +144,7 @@ export default class Level1 extends Level {
      * Calls super method, then draws letters. Extends levelTemplate method
      */
     computation(){
-        super.computation();
+        this.automata.computation();
         this.drawComputedWord();
     }
 
@@ -152,12 +152,9 @@ export default class Level1 extends Level {
      * Called to start the computation, extends levelTemplate method
      */
     startComputation(){
-        
-        
         this.word = this.selectedWord;
         this.drawComputedWord();
         super.startComputation();
-        
     }
     
     /**

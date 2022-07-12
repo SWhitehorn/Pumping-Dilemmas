@@ -8,13 +8,6 @@
  * @property {string[]} keys - Array of keys of transitions for state
  */
 
-/** 
- * Type for automata objects
- * @typedef {Object} Automata
- * @property {Object} states - Object containing the states of the automata  
- * @property {string} start - String with name of start state
- */
-
 /**
  * Type for points
  * @typedef {Object} Point

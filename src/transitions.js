@@ -127,6 +127,7 @@ export default class Transitions{
                 this.updateLabel(transitionData, stateNames[1], key, controlPoint);
             }
 
+            transitionData.line.needsUpdate = true;
             this.addDirectionArrow(transitionData.line, endState);
             transitionData.line.draw(this.graphics);
         }
@@ -211,6 +212,7 @@ export default class Transitions{
         
         // Calculate distance along line
         const percent = this.SIZE / line.getLength();
+        
         const intersectPoint = line.getPointAt(1 - percent);
         
         const tri = new Phaser.Geom.Triangle.BuildEquilateral(intersectPoint.x, intersectPoint.y, this.triSize); 
@@ -223,10 +225,9 @@ export default class Transitions{
         this.drawTriangle(tri);
     }
 
-    /** Add label to start state */
-    addStartArrow(){
-        // Add input arrow to starting state 
-        const startState = this.automata.states[this.automata.start] 
+    /** Add input arrow to start state */
+    addStartArrow(){ 
+        const startState = this.automata.getStart();
         const tri = new Phaser.Geom.Triangle.BuildEquilateral(startState.graphic.x-this.SIZE, startState.graphic.y, this.triSize);
         Phaser.Geom.Triangle.RotateAroundXY(tri, startState.graphic.x-this.SIZE, startState.graphic.y, 1.571);
         this.drawTriangle(tri);
