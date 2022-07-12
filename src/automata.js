@@ -119,7 +119,6 @@ export default class Automata {
         // If word is not empty, get first symbol
         let symbol = this.scene.word[0];
         this.scene.word = this.scene.word.slice(1);
-        console.log(this.scene.word);
         
         // Exit if transition over symbol is not defined
         if (!(symbol in this.getState(this.currState).transitions)){
@@ -145,7 +144,7 @@ export default class Automata {
             if (state.accepting){
                 state.graphic.setFillStyle(Colours.GREEN, 1);
                 state.graphic.inner.setFillStyle(Colours.GREEN, 1);
-                this.endComputation();
+                this.endComputation(true);
             }
             else{
                 state.graphic.setFillStyle(Colours.RED, 1); 
@@ -162,6 +161,7 @@ export default class Automata {
             }
         }
 
+        // Draw computed word for level one
         if (this.scene.scene.key === "Level1"){
             console.log('drawing');            
             this.scene.drawComputedWord();
@@ -180,19 +180,18 @@ export default class Automata {
                 state.graphic.inner.setFillStyle(Colours.WHITE, 1);
             }
         }
-        if (this.scene.repeat){this.scene.time.addEvent({delay: 500, callback: this.startComputation, callbackScope: this, loop: false})};
     }
 
-    /** Alias for levelTemplate endComputation */
-    endComputation(){
-        this.scene.endComputation();
+    /** 
+     * Alias for levelTemplate endComputation 
+     * @param {boolean} [accepted] - Indicates that computation ended in accepting state
+    */
+    endComputation(accepted=false){
+        this.scene.endComputation(accepted);
     }
 
     /** Alias for levelTemplate startComputation */
     startComputation(){
         this.scene.startComputation();
     }
-
-
-     
 }

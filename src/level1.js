@@ -159,9 +159,11 @@ export default class Level1 extends Level {
     
     /**
      * Called to end the computation, extends levelTemplate method
+     * @param {boolean} accepted - Indicates whether computation ended in accepting state
+     * 
      */
-    endComputation(){
-        super.endComputation();
+    endComputation(accepted){
+        super.endComputation(accepted);
         this.word = this.selectedWord;
     }
 

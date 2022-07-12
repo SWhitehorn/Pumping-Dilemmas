@@ -56,7 +56,6 @@ export default class Level extends Phaser.Scene {
         })
         const back = this.add.text(700, 60, 'Back', { fontSize: '30px', color: '#ffffff' }).setInteractive();
         back.on('pointerup', () => {
-            console.log('back it up');
             this.scene.stop('Level1');
             this.scene.stop('Level2');
             this.scene.start('IntroScene');
@@ -99,9 +98,14 @@ export default class Level extends Phaser.Scene {
         }
     }
 
-    /** Called to end the computation process */
-    endComputation(){
+    /** 
+     * Called to end the computation process 
+     * @param {boolean} accepted - Indicates whether computation ended in an accepting state. Null if not.
+    */
+    endComputation(accepted){
         
+        console.log("level", accepted);
+
         this.automata.currState = this.automata.start;
         this.computing = false;
 
@@ -109,7 +113,9 @@ export default class Level extends Phaser.Scene {
         this.word = Boolean(this.inputWord) ? this.inputWord : ""
                 
         this.time.removeEvent(this.computeLoop);
-        this.time.addEvent({delay: 500, callback: this.automata.clearStates, callbackScope: this.automata, loop: false})
+        this.time.addEvent({delay: 500, callback: this.automata.clearStates, callbackScope: this.automata, loop: false});
+        
+        if (this.repeat && !accepted){ this.time.addEvent({delay: 1000, callback: this.startComputation, callbackScope: this, loop: false}); }
     }
 
     
