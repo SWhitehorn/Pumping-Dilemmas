@@ -1,8 +1,8 @@
-import Level from "./levelTemplate.js";
-import IntroScene from "./introScene.js"
-import LoopLevel from "./loopLevel.js";
-import CreateLevel from "./createLevel.js";
-import AddWordLevel from "./addWordLevel.js";
+import Level from "./levels/levelTemplate.js";
+import IntroScene from "./levels/introScene.js"
+import LoopLevel from "./levels/loopLevel.js";
+import CreateLevel from "./levels/createLevel.js";
+import AddWordLevel from "./levels/addWordLevel.js";
 
 const config = {
     type: Phaser.AUTO,
