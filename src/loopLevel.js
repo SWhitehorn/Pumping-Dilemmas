@@ -12,7 +12,7 @@ import "./typedefs/typedefs.js";
  * First Level 
  * @class
  */
-export default class Level1 extends Level {
+export default class LoopLevel extends Level {
 
     levelObjects = {letters: [], computedLetters: []}
     textX = 450;
@@ -23,7 +23,7 @@ export default class Level1 extends Level {
     repeat = true;
 
     constructor(){
-        super('Level1')
+        super('LoopLevel')
     }
 
     /**

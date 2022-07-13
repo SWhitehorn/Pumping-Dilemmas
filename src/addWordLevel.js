@@ -1,10 +1,10 @@
 import Level from "./levelTemplate.js";
 import Colours from "./colours.js"
 
-export default class Level3 extends Level {
+export default class AddWordLevel extends Level {
 
     constructor(){
-        super('Level3');
+        super('AddWordLevel');
     }
 
     create({automata}){

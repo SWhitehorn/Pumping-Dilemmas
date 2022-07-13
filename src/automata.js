@@ -23,6 +23,7 @@ export default class Automata {
         this.states = data.states;
         this.start = data.start;
         this.scene = scene;
+        this.controlPoints = {};
 
     }
 
@@ -212,5 +213,22 @@ export default class Automata {
     /** Alias for levelTemplate startComputation */
     startComputation(){
         this.scene.startComputation();
+    }
+
+    /** Saves the current automata so it can loaded into other levels */
+    bakeAutomata(){
+        Object.values(this.states).forEach( (state) => { 
+            
+            state.x = state.graphic.x;
+            state.y = state.graphic.y;
+
+            state.keys.forEach((key) => {
+                if (!key in this.controlPoints){
+                    this.controlPoints[key] = this.scene.transitions.transitionObjects[key].point.getPosition
+                }
+                
+            });
+            
+        })
     }
 }

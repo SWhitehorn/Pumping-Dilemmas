@@ -16,12 +16,12 @@ import "./typedefs/typedefs.js";
  * @class
  * @extends Level
  */
-export default class Level2 extends Level {
+export default class CreateLevel extends Level {
 
     inputAutomata = {}
 
     constructor(){
-        super('Level2');
+        super('CreateLevel');
     }
 
     /**
@@ -47,6 +47,13 @@ export default class Level2 extends Level {
         
         this.input.mouse.disableContextMenu(); // Allow for right clicking
         
+        const save = this.add.text(700, 100, 'Save', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        
+        save.on('pointerup', () => {
+            if (!this.computing) {this.automata.bakeAutomata()};
+          });
+
+
         // Iterate through states
         for (let stateName in this.automata.states){
             let state = this.automata.states[stateName];
@@ -191,4 +198,6 @@ export default class Level2 extends Level {
             this.transitions.newTransition(key, input);
         }
     }
+
+    
 }
