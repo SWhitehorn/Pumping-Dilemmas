@@ -6,6 +6,7 @@ import "../typedefs/typedefs.js";
  * @typedef {Object} Input
  * @property {Automata} automata - Input automata
  * @property {string} word - Input word
+ * @property {string} language - Definition of language of level
  */
 
 /**
@@ -14,6 +15,8 @@ import "../typedefs/typedefs.js";
  */
 export default class LoopLevel extends Level {
 
+    // letters: array of text objects, unchanging
+    // computedLetters: array of text objects, changes with player selection
     levelObjects = {letters: [], computedLetters: []}
     textX = 450;
     textY = 375;
@@ -30,7 +33,7 @@ export default class LoopLevel extends Level {
      * Create level
      * @param {Input}
      */
-    create({automata, word}){
+    create({automata, word, language}){
         
         // Original value of input word
         this.inputWord = word
@@ -42,7 +45,7 @@ export default class LoopLevel extends Level {
         this.word = word;
         
         // Level template handles drawing automaton
-        super.create(automata);
+        super.create(automata, language);
        
         const alpha = 0.5;
         
@@ -101,6 +104,12 @@ export default class LoopLevel extends Level {
     update(){
         this.updateBox();
         this.selectedWord = this.addSections(this.levelObjects.repeats.num);
+        if (this.computing){
+            this.drawComputedWord();
+        } else {
+            this.drawSelectedWord();
+        }
+        
     }
 
     /**
@@ -201,6 +210,22 @@ export default class LoopLevel extends Level {
             // Count backwards through letters
             let place = this.word.length - 1 - i
             this.levelObjects.computedLetters.unshift(this.add.text(this.textX-(i*20), this.textY+50, this.word[place], { fontSize: '20px', color: '#ffffff' }))
+        }
+    }
+
+    drawSelectedWord(){
+
+        // Remove current letters
+        this.levelObjects.computedLetters.forEach((letter) => {
+            letter.destroy();
+        });
+        
+        this.levelObjects.computedLetters = [];
+        
+        for (let i = 0; i < this.selectedWord.length; i++){
+            // Count backwards through letters
+            let place = this.selectedWord.length - 1 - i
+            this.levelObjects.computedLetters.unshift(this.add.text(this.textX-(i*20), this.textY+50, this.selectedWord[place], { fontSize: '20px', color: '#ffffff' }))
         }
     }
 

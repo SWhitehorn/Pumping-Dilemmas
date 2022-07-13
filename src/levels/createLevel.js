@@ -51,7 +51,12 @@ export default class CreateLevel extends Level {
         this.save = this.add.text(700, 100, "", { fontSize: '30px', color: '#ffffff' }).setInteractive();
         
         this.save.on('pointerup', () => {
-            if (!this.computing) {this.automata.bakeAutomata()};
+            if (!this.computing) {
+                this.automata.bakeAutomata();
+                this.scene.stop();
+                this.scene.start('LoopLevel', {automata:this.automata, word:this.word, language}); 
+
+            };
           });
 
 

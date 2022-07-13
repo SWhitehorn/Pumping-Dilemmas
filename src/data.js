@@ -27,6 +27,7 @@ export const level1Data = {
         },
     word: ["bbbaaa"],
     alphabet: ['a','b'],
+    language: "L = {b\u{207F}a\u{1D50}|n>0,m>0}" 
 }
 
 export const level2Data = {
@@ -55,7 +56,7 @@ export const level2Data = {
             },
         start: 'q1'
         },
-    word: ["bbbaaa"],
+    word: ["aaabbb"],
     alphabet: ['a', 'b'],
     language: "L = {a\u{207F}b\u{1D50}|n>0,m>0}" 
 }
