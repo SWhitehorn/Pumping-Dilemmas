@@ -1,7 +1,9 @@
 import Colours from "./colours.js";
 import TransitionPoint from "./transitionPoint.js";
 import Automata from "./automata.js";
+import { sameState, splitKey } from "./utils.js";
 import "./typedefs/typedefs.js"
+
 
 /**
  * Handles drawing and updating of transitions
@@ -10,7 +12,7 @@ import "./typedefs/typedefs.js"
 export default class Transitions{    
     
     SIZE = 30;
-    triSize = 15;
+    TRISIZE = 15;
 
     /**
      * 
@@ -91,7 +93,7 @@ export default class Transitions{
         
         for (let key in this.transitionObjects){
             const transitionData = this.transitionObjects[key];
-            const stateNames = key.split(",");
+            const stateNames = splitKey(key);
             const startState = this.automata.getState(stateNames[0]);
             const endState = this.automata.getState(stateNames[1]);
 
@@ -106,30 +108,56 @@ export default class Transitions{
                 // Transition from one state to other
                 if (stateNames[0] !== stateNames[1]){
                     
+                    // Get vector points
                     const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
                     const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
                     const midPoint = this.getControlPoint(null, null, startPoint, endPoint);
                     
+                    // Set control points of line
                     transitionData.line.p0 = startPoint;
                     transitionData.line.p1 = midPoint;
                     transitionData.line.p2 = endPoint;
 
+                    // Update position of interactive point
                     transitionData.point.setPosition(midPoint);
                     
                     this.updateLabel(transitionData, stateNames[1], key, midPoint);
+                    transitionData.line.draw(this.graphics);
+                
+                // Circle transition
+                } else {
                     
+                    // Set position of line and point
+                    transitionData.line.setPosition(startState.graphic.x, startState.graphic.y-this.SIZE);
+                    transitionData.point.setPosition(transitionData.line.x, transitionData.line.y-this.SIZE)
+                    
+                    this.updateLabel(transitionData, stateNames[1], key, transitionData.point.getPosition());
+                    this.graphics.strokeCircleShape(transitionData.line);
                 }
             
             // Draw transition based on position of transitionPoint
             } else {
-                const controlPoint = this.getControlPoint(transitionData.line, key, null, null);
-                transitionData.line.p1 = controlPoint;
-                this.updateLabel(transitionData, stateNames[1], key, controlPoint);
+                
+                // Normal transition
+                if (stateNames[0] !== stateNames[1]){
+                    
+                    // Update control point of line
+                    const controlPoint = this.getControlPoint(transitionData.line, key, null, null);
+                    transitionData.line.p1 = controlPoint;
+                    this.updateLabel(transitionData, stateNames[1], key, controlPoint);
+                    transitionData.line.draw(this.graphics);
+                
+                // Circle transition
+                } else {
+                    this.updateLabel(transitionData, stateNames[1], key, transitionData.point.getPosition());
+                    this.graphics.strokeCircleShape(transitionData.line);
+                    
+                }
+                
             }
 
             transitionData.line.needsUpdate = true;
             this.addDirectionArrow(transitionData.line, endState);
-            transitionData.line.draw(this.graphics);
         }
 
         this.addStartArrow();
@@ -149,7 +177,7 @@ export default class Transitions{
         if (startState === endState){
             
             // Add line by adding second circle and stroking outline
-            var line = new Phaser.Geom.Circle(startState.graphic.x, startState.graphic.y-this.SIZE, this.SIZE);
+            const line = new Phaser.Geom.Circle(startState.graphic.x, startState.graphic.y-this.SIZE, this.SIZE);
             this.transitionObjects[key].line = line;
 
             this.graphics.strokeCircleShape(line);
@@ -159,15 +187,11 @@ export default class Transitions{
             this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key);
         
             // Add direction arrow
-            const x = startState.graphic.x + this.SIZE * Math.cos(Phaser.Math.DegToRad(30)); // Parametric equations for point on circle
-            const y = startState.graphic.y - this.SIZE * Math.sin(Phaser.Math.DegToRad(30)); // Can hardcode if size is settled for speed
-            const tri = new Phaser.Geom.Triangle.BuildEquilateral(x, y, this.tri_size);
-            Phaser.Geom.Triangle.RotateAroundXY(tri, x, y, Phaser.Math.DegToRad(200));
-            this.drawTriangle(tri);
+            this.addDirectionArrow(line, endState);
 
             // Allow players to remove the transition
             if (this.interactive){    
-                this.setCircleInteractivity(line, startState, input, key);
+                this.setCircleInteractivity(line, startState, input, key, endName);
             }
         }
         // Transition between states
@@ -180,7 +204,7 @@ export default class Transitions{
 
             // Add line to objects
             this.transitionObjects[key].line = new Phaser.Curves.QuadraticBezier(startPoint, mid, endPoint);
-            line = this.transitionObjects[key].line;
+            const line = this.transitionObjects[key].line;
 
             // Draw line
             line.draw(this.graphics);
@@ -205,30 +229,46 @@ export default class Transitions{
 
     /**
      * Adds a direction arrow to the line
-     * @param {QuadraticBezier} line - 
+     * @param {QuadraticBezier|Arc} line - Phaser object for visual transition
      * @param {State} endState - State to point at
      */
     addDirectionArrow(line, endState){
         
-        // Calculate distance along line
-        const percent = this.SIZE / line.getLength();
+        // Transition from one state to other
+        if (line.type === "QuadraticBezier"){
+            // Calculate distance along line
+            const percent = this.SIZE / line.getLength();
         
-        const intersectPoint = line.getPointAt(1 - percent);
+            const intersectPoint = line.getPointAt(1 - percent);
         
-        const tri = new Phaser.Geom.Triangle.BuildEquilateral(intersectPoint.x, intersectPoint.y, this.triSize); 
+            const tri = new Phaser.Geom.Triangle.BuildEquilateral(intersectPoint.x, intersectPoint.y, this.TRISIZE); 
     
-        // Rotate triangle to match gradient of line
-        const angleLine = new Phaser.Geom.Line(intersectPoint.x, intersectPoint.y, endState.graphic.x, endState.graphic.y, );
-        let angle = Phaser.Geom.Line.Angle(angleLine); // Rotate triangle to match angle of line
-        angle += 1.571; // Rotate 3/4 of circle
-        Phaser.Geom.Triangle.RotateAroundXY(tri, intersectPoint.x, intersectPoint.y, angle);
-        this.drawTriangle(tri);
+            // Rotate triangle to match gradient of line
+            const angleLine = new Phaser.Geom.Line(intersectPoint.x, intersectPoint.y, endState.graphic.x, endState.graphic.y, );
+            let angle = Phaser.Geom.Line.Angle(angleLine); // Rotate triangle to match angle of line
+            angle += 1.571; // Rotate 3/4 of circle
+            Phaser.Geom.Triangle.RotateAroundXY(tri, intersectPoint.x, intersectPoint.y, angle);
+            this.drawTriangle(tri);
+        
+        // Circular transition
+        } else {
+            
+            // Parametric equations for point on circle
+            const x = endState.graphic.x + this.SIZE * Math.cos(Phaser.Math.DegToRad(30)); 
+            const y = endState.graphic.y - this.SIZE * Math.sin(Phaser.Math.DegToRad(30)); 
+            const tri = new Phaser.Geom.Triangle.BuildEquilateral(x, y, this.TRISIZE);
+            
+            // Rotate triangle
+            Phaser.Geom.Triangle.RotateAroundXY(tri, x, y, Phaser.Math.DegToRad(200));
+            
+            this.drawTriangle(tri);
+        }
     }
 
     /** Add input arrow to start state */
     addStartArrow(){ 
         const startState = this.automata.getStart();
-        const tri = new Phaser.Geom.Triangle.BuildEquilateral(startState.graphic.x-this.SIZE, startState.graphic.y, this.triSize);
+        const tri = new Phaser.Geom.Triangle.BuildEquilateral(startState.graphic.x-this.SIZE, startState.graphic.y, this.TRISIZE);
         Phaser.Geom.Triangle.RotateAroundXY(tri, startState.graphic.x-this.SIZE, startState.graphic.y, 1.571);
         this.drawTriangle(tri);
     }
@@ -257,58 +297,38 @@ export default class Transitions{
 
     /**
      * Updates the position of labels
-     * @param {Object} transitionData 
-     * @param {string} name 
-     * @param {string} key 
-     * @param {Point} midPoint 
+     * @param {Object} transitionData - Object containing data for transition
+     * @param {string} name - Name of target state
+     * @param {string} key - Key for transition
+     * @param {Point} point - Object with x and y properties
      */
-    updateLabel(transitionData, name, key, midPoint){
+    updateLabel(transitionData, name, key, point){
         
         if (transitionData.point.selected){
             transitionData.label.visible = false;
             this.addLetterMenu(transitionData.point, name, this.getControlPoint(transitionData.line, key), key);
         } else {
-            transitionData.label.setPosition(midPoint.x, midPoint.y);
-            transitionData.label.text = transitionData.point.inputs.toString();
-            
+            const y = sameState(key) ? point.y-this.SIZE : point.y;
+            transitionData.label.setPosition(point.x+10, y);
+            transitionData.label.text = transitionData.point.inputs.toString();   
         }
     }
     
 
     /**
      * Adds interactive component to transition from state to itself
-     * @param {Arc} line 
-     * @param {State} startState 
-     * @param {string} input 
-     * @param {string} key 
+     * @param {Arc} line - Phaser object for transition
+     * @param {State} state - State containing transition
+     * @param {string} input - Input for transition
+     * @param {string} key - Key for transition
+     * @param {string} name - Name of state 
      */
-    setCircleInteractivity(line, startState, input, key){
+    setCircleInteractivity(line, state, input, key, name){
         
-        line.startState = startState;
-        line.input = input;
-
-        // Create graphics object to listen for click.
-        let hitGraphics = this.scene.add.graphics();
-        hitGraphics.setInteractive(line, Phaser.Geom.Circle.Contains);
+        const point = new TransitionPoint(line.x, line.y-this.SIZE, this.scene, key);
+        point.setStart(state).setEnd(state, name).addInput(input);
         
-        // Store hit area and graphics object in object
-        this.transitionPoints[key] = {'hitArea':line, hitGraphics};
-
-        // User clicks on transition. Delete transition from automata, remove hit area. 
-        hitGraphics.on('pointerup', (pointer) => {
-            
-            if (pointer.rightButtonReleased()){
-                hitGraphics.destroy();
-                delete this.transitionObjects[key];
-                delete line.startState.transitions[line.input];
-            }
-            else{
-                if (this.transitionPoints[key].selected){
-                    this.addLetterMenu(this.transitionPoints[key], endName, this.getControlPoint(line, key));
-                }
-            }
-            
-        })
+        this.transitionObjects[key].point = point;
     }
 
     /**
@@ -370,21 +390,23 @@ export default class Transitions{
 
     /**
      * Adds menu of letters to click at given point
-     * @param {TransitionPoint} hitArea 
+     * @param {TransitionPoint} point 
      * @param {string} endName 
-     * @param {Point} mid - object with x and y properties 
+     * @param {Point} coord - object with x and y properties 
      * @param {string} key 
      */
-    addLetterMenu(point, endName, mid, key){
+    addLetterMenu(point, endName, coord, key){
+
+        const y = sameState(key) ? coord.y-this.SIZE : coord.y;
 
         // Update existing letters to new position
         if (point.hasOwnProperty("letterArray")){
-            for (let i = 0; i < this.scene.language.length; i++){
-                point.letterArray[i].setPosition(mid.x + i*30, mid.y);
+            for (let i = 0; i < this.scene.alphabet.length; i++){
+                point.letterArray[i].setPosition(coord.x+10 + i*30, y);
             }
         // Create new letters
         } else{ 
-            point.createLetters(mid);
+            point.createLetters(coord);
         }
     }
 

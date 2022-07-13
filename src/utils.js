@@ -35,3 +35,12 @@ export const createKey = (first, second) => {
     return first + "," + second;
 }
 
+export const sameState = (key) => {
+    const states = splitKey(key);
+    return (states[0] === states[1]);
+}
+
+export const splitKey = (key) => {
+    return key.split(",");
+}
+

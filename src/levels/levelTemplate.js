@@ -18,12 +18,9 @@ export default class Level extends Phaser.Scene {
     }
       
     // Called with automata for level in object literal format
-    create (automata) {
+    create (automata, language) {
         
         this.graphics = this.add.graphics({ lineStyle: { width: 3, color: Colours.BLACK } });
-        
-
-        const language = "L = {a\u{207F}b\u{207F}|n\u{2265}0}"
         
         const text = this.add.text(400, 30, language, { fontSize: '30px', color: '#ffffff' }).setOrigin(0.5);
         

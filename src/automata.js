@@ -231,4 +231,16 @@ export default class Automata {
             
         })
     }
+
+    /** 
+     * Check whether all states have been used  
+     * @returns {boolean} True if all states have a transition coming to/from them, false if not.
+    */
+    allStatesUsed(){
+        for (let s in this.states){
+            let state = this.states[s];
+            if (state.keys.length === 0) { return false }
+        }
+        return true;
+    }
 }

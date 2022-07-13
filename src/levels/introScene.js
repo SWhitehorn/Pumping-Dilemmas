@@ -1,4 +1,4 @@
-import { level1Data, level2Data } from "../dfa.js";
+import { level1Data, level2Data } from "../data.js";
 
 
 export default class IntroScene extends Phaser.Scene {
@@ -13,19 +13,19 @@ export default class IntroScene extends Phaser.Scene {
       btn1.on('pointerup', () => {
         console.log('game started click');
         const word = "abbab"
-        this.scene.start('LoopLevel', {automata:level1Data.automata, word:level1Data.word[0]})
+        this.scene.start('LoopLevel', {automata:level1Data.automata, word:level1Data.word[0], language:level1Data.language})
       });
 
       const btn2 = this.add.text(20, 60, 'Level 2', { fontSize: '30px', color: '#ffffff' }).setInteractive();
       btn2.on('pointerup', () => {
         console.log('game started click');
-        this.scene.start('CreateLevel', {automata:level2Data.automata, word:level2Data.word[0], language:level2Data.language}); 
+        this.scene.start('CreateLevel', {automata:level2Data.automata, word:level2Data.word[0], alphabet:level2Data.alphabet, language:level2Data.language}); 
       });
 
       const btn3 = this.add.text(20, 100, 'Level 3', { fontSize: '30px', color: '#ffffff' }).setInteractive();
       btn3.on('pointerup', () => {
         console.log('game started click');
-        this.scene.start('AddWordLevel', {automata:level1Data.automata}); 
+        this.scene.start('AddWordLevel', {automata:level1Data.automata, language:level1Data.language}); 
       });
     }
   }

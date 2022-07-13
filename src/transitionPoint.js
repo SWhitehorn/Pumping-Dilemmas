@@ -1,6 +1,7 @@
 import Colours from "./colours.js";
 import { isEmpty } from "./utils.js";
 import "./typedefs/typedefs.js"
+import { sameState } from "./utils.js";
 
 /**
  * Class defining interactive points on transition
@@ -49,6 +50,8 @@ export default class TransitionPoint {
             // Left mouse: enable user to change the letters on the transition
             } else if (!this.dragging){
                 
+                console.log('clicked');
+
                 if (this.selected){
                     this.removeLetters();
                     
@@ -153,9 +156,9 @@ export default class TransitionPoint {
         
         this.letterArray = [];
         
-        for (let i = 0; i < this.scene.language.length; i++){
+        for (let i = 0; i < this.scene.alphabet.length; i++){
         
-            this.renderLetter(this.scene.language[i], i);
+            this.renderLetter(this.scene.alphabet[i], i);
             
             this.letterArray[i].setInteractive().on('pointerup', () => {
 
@@ -204,14 +207,15 @@ export default class TransitionPoint {
      */
     renderLetter(letter, i){
         
+        const y = sameState(this.key) ? this.y-30 : this.y;
+        
         // Render letter in green if included in transition
         if (this.startState.transitions.hasOwnProperty(letter) && this.startState.transitions[letter].includes(this.endName)){
-            
-            this.letterArray.push(this.scene.add.text(this.x+30 + i*30, this.y, letter, { fontSize: '30px', color: Colours.TEXTGREEN }));
+            this.letterArray.push(this.scene.add.text(this.x+10 + i*30, y, letter, { fontSize: '30px', color: Colours.TEXTWHITE }));
         
         // Render letter in yellow if not
         } else{
-            this.letterArray.push(this.scene.add.text(this.x+30 + i*30, this.y, letter, { fontSize: '30px', color: Colours.TEXTYELLOW }));
+            this.letterArray.push(this.scene.add.text(this.x+10 + i*30, y, letter, { fontSize: '30px', color: "#000000" }));
         }
     }
 

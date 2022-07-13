@@ -8,7 +8,8 @@ import "../typedefs/typedefs.js";
  * @typedef {Object} Input
  * @property {Automata} automata - Input automata
  * @property {string} word - Input word
- * @property {string[]} language - Array of characters allowed in language
+ * @property {string[]} alphabet - Array of characters allowed in alphabet
+ * @property {string} language - String defining the language for the level
  */
 
 /**
@@ -29,27 +30,27 @@ export default class CreateLevel extends Level {
      * @param {Input}
      * @extends Level.create 
      */
-    create({automata, word, language}){
+    create({automata, word, alphabet, language}){
         
         // Store original word and automata to allow for reseting
         this.inputWord = this.word = word;
         this.inputAutomata = structuredClone(automata);
         
-        this.language = language;
+        this.alphabet = alphabet;
 
         // Flags
         this.draw = false; // Flag for whether the player is currently drawing transition
         this.interactive = true; // Flag for whether player can interact with automata
         
         
-        super.create(this.inputAutomata);
+        super.create(this.inputAutomata, language);
         this.transitions.setInteractive();
         
         this.input.mouse.disableContextMenu(); // Allow for right clicking
         
-        const save = this.add.text(700, 100, 'Save', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.save = this.add.text(700, 100, "", { fontSize: '30px', color: '#ffffff' }).setInteractive();
         
-        save.on('pointerup', () => {
+        this.save.on('pointerup', () => {
             if (!this.computing) {this.automata.bakeAutomata()};
           });
 
@@ -107,6 +108,12 @@ export default class CreateLevel extends Level {
             this.graphics.clear();
         }
         this.transitions.updateTransitions(); 
+
+        if (this.automata.allStatesUsed()){
+            this.save.text = "Save";
+        } else {
+            this.save.text = "";
+        }
     }
     
     /**
@@ -178,11 +185,11 @@ export default class CreateLevel extends Level {
     connectStates(targetStateName){      
         
         // Get first available letter
-        let input = this.language[0];
+        let input = this.alphabet[0];
         while (this.firstState.state.transitions.hasOwnProperty(input)){
-            input = getNextLetter(input, this.language);
-            // Check for language wrapping around
-            if (input === this.language[0]){
+            input = getNextLetter(input, this.alphabet);
+            // Check for alphabet wrapping around
+            if (input === this.alphabet[0]){
                 break;
             }
         }
@@ -198,6 +205,7 @@ export default class CreateLevel extends Level {
             this.transitions.newTransition(key, input);
         }
     }
+    
 
     
 }

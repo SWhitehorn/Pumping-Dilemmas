@@ -1,4 +1,3 @@
-import Level from "./levels/levelTemplate.js";
 import IntroScene from "./levels/introScene.js"
 import LoopLevel from "./levels/loopLevel.js";
 import CreateLevel from "./levels/createLevel.js";
