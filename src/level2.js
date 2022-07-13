@@ -135,11 +135,12 @@ export default class Level2 extends Level {
                 // Update transitions going to state
                 const state = object.parent;
                 for (let key of state.keys){
+                    console.log(key);
                     const transitionObjects = this.transitions.getAllObjects();
 
                     // Remove letters
                     if (transitionObjects[key].point.hasOwnProperty('letterArray')){
-                        transitionObjects[key].removeLetterArray();
+                        transitionObjects[key].point.removeLetters();
                     }
                     
                     // Flag that position needs to be updated

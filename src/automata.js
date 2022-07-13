@@ -59,6 +59,25 @@ export default class Automata {
     }
 
     /**
+     * Removes key from automata
+     * @param {string} key - Key of transition to remove 
+     */
+    removeKey(key){
+        
+        const stateNames = key.split(",");
+        const start = this.states[stateNames[0]];
+        const end = this.states[stateNames[1]];
+
+        if (start.keys.indexOf(key) !== -1){
+            start.keys.splice(start.keys.indexOf(key), 1);
+        } 
+        if (end.keys.indexOf(key) !== -1){
+            end.keys.splice(end.keys.indexOf(key), 1);
+        } 
+
+    }
+
+    /**
      * Defines a transition between given states over input
      * @param {string} firstStateName - Name of first state
      * @param {string} secondStateName - Name of second state

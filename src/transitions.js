@@ -251,7 +251,7 @@ export default class Transitions{
         
         } else { 
             // Add fresh label
-            this.transitionObjects[key].label = this.scene.add.text(point.x, point.y, input, { fontSize: '30px', color: '#ffffff' })    
+            this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: '#ffffff' })    
         }
     }
 
@@ -263,12 +263,14 @@ export default class Transitions{
      * @param {Point} midPoint 
      */
     updateLabel(transitionData, name, key, midPoint){
+        
         if (transitionData.point.selected){
             transitionData.label.visible = false;
             this.addLetterMenu(transitionData.point, name, this.getControlPoint(transitionData.line, key), key);
         } else {
             transitionData.label.setPosition(midPoint.x, midPoint.y);
             transitionData.label.text = transitionData.point.inputs.toString();
+            
         }
     }
     

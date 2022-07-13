@@ -37,8 +37,11 @@ export default class TransitionPoint {
                 
            // Delete transition if right button is clicked
             if (pointer.rightButtonReleased()){
+                
+                console.log('rightbutton');
                 if (!this.scene.draw){
                     this.destroy();
+
                     this.scene.transitions.removeTransitions(this.startState, this.endName, this.key);
                 }
             
@@ -48,6 +51,11 @@ export default class TransitionPoint {
                 
                 if (this.selected){
                     this.removeLetters();
+                    
+                    // Delete transition if empty
+                    if (this.isEmptyTransition(this.startState.transitions)){
+                        this.destroy();
+                    }
                 }
                 
                 this.selected = !this.selected;
@@ -100,6 +108,8 @@ export default class TransitionPoint {
      * Destroys point
      */
     destroy(){
+        this.removeLetters();
+        this.scene.automata.removeKey(this.key);
         this.graphic.destroy();
         this.scene.transitions.transitionObjects[this.key].label.destroy();
         delete this.scene.transitions.transitionObjects[this.key];
@@ -166,11 +176,6 @@ export default class TransitionPoint {
                         if (transitions[letter].length === 0){
                             delete transitions[letter];
 
-                            // Delete transition if empty
-                            if (this.isEmptyTransition(transitions)){
-                                this.graphic.destroy();
-                                this.scene.transitions.removeTransitions(this.startState, this.endName, this.key);
-                            }
                         }
                     
                     // Transition over input is defined, but not to end state
@@ -199,13 +204,14 @@ export default class TransitionPoint {
      */
     renderLetter(letter, i){
         
-        // Check for transition over letter
+        // Render letter in green if included in transition
         if (this.startState.transitions.hasOwnProperty(letter) && this.startState.transitions[letter].includes(this.endName)){
             
-            this.letterArray.push(this.scene.add.text(this.x + i*30, this.y, letter, { fontSize: '30px', color: Colours.TEXTGREEN }));
+            this.letterArray.push(this.scene.add.text(this.x+30 + i*30, this.y, letter, { fontSize: '30px', color: Colours.TEXTGREEN }));
         
+        // Render letter in yellow if not
         } else{
-            this.letterArray.push(this.scene.add.text(this.x + i*30, this.y, letter, { fontSize: '30px', color: Colours.TEXTYELLOW }));
+            this.letterArray.push(this.scene.add.text(this.x+30 + i*30, this.y, letter, { fontSize: '30px', color: Colours.TEXTYELLOW }));
         }
     }
 
