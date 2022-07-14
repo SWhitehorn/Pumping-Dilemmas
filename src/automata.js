@@ -199,8 +199,7 @@ export default class Automata {
             console.log('drawing');            
             this.scene.drawComputedWord();
         }
-
-        
+    
     }
     
     /** Reset all states to standard colours */

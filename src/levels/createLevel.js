@@ -54,7 +54,7 @@ export default class CreateLevel extends Level {
             if (!this.computing) {
                 this.automata.bakeAutomata();
                 this.scene.stop();
-                this.scene.start('LoopLevel', {automata:this.automata, word:this.word, language}); 
+                this.scene.start('ComputerLoopLevel', {automata:this.automata, word:this.word, language}); 
 
             };
           });

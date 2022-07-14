@@ -25,9 +25,6 @@ export default class Level extends Phaser.Scene {
         // Create automata
         this.automata = new Automata(automata, this);
         
-        // Used for animating computation
-        
-
         // Render each state on canvas, set interactivity
         for (let s in this.automata.states){
             this.automata.addStateGraphic(s);
@@ -35,13 +32,6 @@ export default class Level extends Phaser.Scene {
 
         this.transitions = new Transitions(this.graphics, this.automata, this);
         
-        
-        // Add compute button
-        this.textObjects.compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: '#ffffff' }).setInteractive();
-        
-        this.textObjects.compute.on('pointerup', () => {
-            if (!this.computing) {this.startComputation()};
-          });
         
         // Add pause button
         this.textObjects.pause = this.add.text(700, 20, 'Pause', { fontSize: '30px', color: '#ffffff' }).setInteractive();
@@ -79,7 +69,7 @@ export default class Level extends Phaser.Scene {
             this.automata.getStart().graphic.setFillStyle(Colours.YELLOW, 1);
             this.computing = true;
             this.automata.currState = this.automata.start;
-            this.time.delayedCall(500, this.automata.resetPreviousState, [], this.automata);
+            console.log(this.time.delayedCall(500, this.automata.resetPreviousState, [], this.automata));
         }
         
         // Handle empty word

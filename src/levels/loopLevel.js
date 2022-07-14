@@ -19,8 +19,12 @@ export default class LoopLevel extends Level {
     textY = 400;
     
 
-    constructor(){
-        super('LoopLevel')
+    constructor(key){
+        if (key){
+            super(key);
+        } else {
+            super('LoopLevel')
+        }
     }
 
     /**
@@ -28,8 +32,6 @@ export default class LoopLevel extends Level {
      * @param {Input}
      */
     create({automata, word, language}){
-        
-    
         
         // Level template handles drawing automaton
         super.create(automata, language);
@@ -53,6 +55,9 @@ export default class LoopLevel extends Level {
         // Add text for selected text and number of repeats
         this.textObjects.selected = this.add.text(20, 60, "", { fontSize: '30px', color: '#ffffff' });
         
+        // Add compute button
+        this.textObjects.compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+
         // Remove compute button until word has rendered
         this.textObjects.compute.visible = false;
 
@@ -60,19 +65,6 @@ export default class LoopLevel extends Level {
         this.levelObjects.repeats = this.add.text(0, 0, "", { fontSize: '20px', color: colours.TEXTRED })
         this.levelObjects.repeats.num = 1;
 
-        // Increase button
-        this.textObjects.increase = this.add.text(650, 400, "Increase", {fontSize: '30px', color: '#ffffff'}).setInteractive();
-        this.textObjects.increase.on('pointerup', () => {
-            // Cap at 4
-            if (this.levelObjects.repeats.num < 4) {this.levelObjects.repeats.num += 1};
-        });
-        
-        // Decrease button
-        this.textObjects.decrease = this.add.text(650, 450, "Decrease", {fontSize: '30px', color: '#ffffff'}).setInteractive();
-        this.textObjects.decrease.on('pointerup', () => {
-            console.log('click')
-            if (this.levelObjects.repeats.num > 0){ this.levelObjects.repeats.num -= 1; }
-        });
     }
 
     /** Called every frame to update game objects */
@@ -85,8 +77,8 @@ export default class LoopLevel extends Level {
             } else {
                 this.drawSelectedWord();
             }
-        
         }    
+        this.children.bringToTop(this.levelObjects.repeats);
     }
 
     /**
