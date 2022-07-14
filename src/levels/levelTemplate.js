@@ -5,9 +5,6 @@ import "../typedefs/typedefs.js"
 
 export default class Level extends Phaser.Scene {
 
-    // Level data
-    timer = 0;
-
     // Flags
     computing = false;
     repeat = false;
@@ -22,8 +19,9 @@ export default class Level extends Phaser.Scene {
         
         this.graphics = this.add.graphics({ lineStyle: { width: 3, color: Colours.BLACK } });
         
-        const text = this.add.text(400, 30, language, { fontSize: '30px', color: '#ffffff' }).setOrigin(0.5);
-        
+        this.textObjects = {};
+        this.textObjects.language = this.add.text(400, 30, language, { fontSize: '30px', color: '#ffffff' }).setOrigin(0.5);
+
         // Create automata
         this.automata = new Automata(automata, this);
         
@@ -39,21 +37,21 @@ export default class Level extends Phaser.Scene {
         
         
         // Add compute button
-        const compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.textObjects.compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: '#ffffff' }).setInteractive();
         
-        compute.on('pointerup', () => {
+        this.textObjects.compute.on('pointerup', () => {
             if (!this.computing) {this.startComputation()};
           });
         
         // Add pause button
-        const pause = this.add.text(700, 20, 'Pause', { fontSize: '30px', color: '#ffffff' }).setInteractive();
-        pause.on('pointerup', () => {
+        this.textObjects.pause = this.add.text(700, 20, 'Pause', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.textObjects.pause.on('pointerup', () => {
             if (this.computeLoop){
                 this.computeLoop.paused = !this.computeLoop.paused;
             }
         })
-        const back = this.add.text(700, 60, 'Back', { fontSize: '30px', color: '#ffffff' }).setInteractive();
-        back.on('pointerup', () => {
+        this.textObjects.back = this.add.text(700, 60, 'Back', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.textObjects.back.on('pointerup', () => {
             this.scene.stop('Level1');
             this.scene.stop('Level2');
             this.scene.start('IntroScene');
@@ -81,7 +79,7 @@ export default class Level extends Phaser.Scene {
             this.automata.getStart().graphic.setFillStyle(Colours.YELLOW, 1);
             this.computing = true;
             this.automata.currState = this.automata.start;
-            this.computeLoop = this.time.addEvent({delay: 500, callback: this.automata.computation, callbackScope: this.automata, loop: true})
+            this.time.delayedCall(500, this.automata.resetPreviousState, [], this.automata);
         }
         
         // Handle empty word
@@ -110,10 +108,11 @@ export default class Level extends Phaser.Scene {
         // Reset word
         this.word = Boolean(this.inputWord) ? this.inputWord : ""
                 
-        this.time.removeEvent(this.computeLoop);
-        this.time.addEvent({delay: 500, callback: this.automata.clearStates, callbackScope: this.automata, loop: false});
+        this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
         
-        if (this.repeat && !accepted){ this.time.addEvent({delay: 1000, callback: this.startComputation, callbackScope: this, loop: false}); }
+        if (this.repeat && !accepted){ 
+            this.time.delayedCall(1000, this.startComputation, [], this); 
+        }
     }
 
     

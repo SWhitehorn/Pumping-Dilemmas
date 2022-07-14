@@ -1,5 +1,5 @@
 import Level from "./levelTemplate.js";
-import Colours from "../colours.js";
+import colours from "../colours.js";
 import "../typedefs/typedefs.js";
 
 /**
@@ -15,101 +15,78 @@ import "../typedefs/typedefs.js";
  */
 export default class LoopLevel extends Level {
 
-    // letters: array of text objects, unchanging
-    // computedLetters: array of text objects, changes with player selection
-    levelObjects = {letters: [], computedLetters: []}
-    textX = 450;
-    textY = 375;
-    sections = []
-
-    interactive = false;
-    repeat = true;
+    startingX = 300;
+    textY = 400;
+    
 
     constructor(){
         super('LoopLevel')
     }
 
     /**
-     * Create level
+     * Create level, initialising level objects and flags
      * @param {Input}
      */
     create({automata, word, language}){
         
-        // Original value of input word
-        this.inputWord = word
-        
-        // Word the player has selected, including repeats
-        //this.selectedWord = word;
-
-        // Word that computation is performed on
-        this.word = word;
+    
         
         // Level template handles drawing automaton
         super.create(automata, language);
+
+        // letters: array of text objects, unchanging
+        // computedLetters: array of text objects, changes with player selection
+        this.levelObjects = {letters: [], computedLetters: []}
+    
+        //Flags
+        this.interactive = false;
+        this.repeat = true;
+        this.finishedAddingWord = false;
+
+        // Set words
+        this.inputWord = word // Original value of input word
+        this.word = word; // Word that computation is performed on
        
-        const alpha = 0.5;
-        
         // Add letters individually
-        this.drawLetters(this.textX, this.textY);
-
-        // Add left bar
-        const leftTop = this.levelObjects.letters[0].getTopLeft();
-        this.levelObjects.leftBar = this.add.rectangle(leftTop.x-20, leftTop.y, 20, 50, Colours.WHITE).setAlpha(alpha).setOrigin(0).setInteractive();
-        
-        // Add right bar
-        const rightTop = this.levelObjects.letters.at(-1).getTopRight();
-        this.levelObjects.rightBar = this.add.rectangle(rightTop.x, rightTop.y, 20, 50, Colours.WHITE).setAlpha(alpha).setOrigin(0).setInteractive();
-
-        // Word is added from end, so position of first letter is variable
-        const letterBounds = this.levelObjects.letters[0].getBounds();
-
-        // Enabling dragging on bars
-        this.input.setDraggable(this.levelObjects.leftBar);
-        this.input.setDraggable(this.levelObjects.rightBar);
-        const _this = this
-        this.input.on('drag', function(pointer, line, dragX, dragY){
-            // Set bounds for dragging
-            if (dragX >= letterBounds.x -20 && dragX <= _this.textX + 30){
-                line.x = dragX;
-            }
-        })
-        this.drawBox();
+        this.drawLetters(0);
         
         // Add text for selected text and number of repeats
-        this.selected = this.add.text(20, 60, "", { fontSize: '30px', color: '#ffffff' });
+        this.textObjects.selected = this.add.text(20, 60, "", { fontSize: '30px', color: '#ffffff' });
+        
+        // Remove compute button until word has rendered
+        this.textObjects.compute.visible = false;
 
         // Add label for number of repeats
-        this.levelObjects.repeats = this.add.text(0, 0, "", { fontSize: '20px', color: '#d40000' })
+        this.levelObjects.repeats = this.add.text(0, 0, "", { fontSize: '20px', color: colours.TEXTRED })
         this.levelObjects.repeats.num = 1;
 
         // Increase button
-        const increase = this.add.text(650, 400, "Increase", {fontSize: '30px', color: '#ffffff'}).setInteractive();
-        increase.on('pointerup', () => {
-            
+        this.textObjects.increase = this.add.text(650, 400, "Increase", {fontSize: '30px', color: '#ffffff'}).setInteractive();
+        this.textObjects.increase.on('pointerup', () => {
             // Cap at 4
             if (this.levelObjects.repeats.num < 4) {this.levelObjects.repeats.num += 1};
         });
         
         // Decrease button
-        const decrease = this.add.text(650, 450, "Decrease", {fontSize: '30px', color: '#ffffff'}).setInteractive();
-        decrease.on('pointerup', () => {
+        this.textObjects.decrease = this.add.text(650, 450, "Decrease", {fontSize: '30px', color: '#ffffff'}).setInteractive();
+        this.textObjects.decrease.on('pointerup', () => {
             console.log('click')
             if (this.levelObjects.repeats.num > 0){ this.levelObjects.repeats.num -= 1; }
         });
     }
 
-    /**
-     * Called every frame to update game objects
-     */
+    /** Called every frame to update game objects */
     update(){
-        this.updateBox();
-        this.selectedWord = this.addSections(this.levelObjects.repeats.num);
-        if (this.computing){
-            this.drawComputedWord();
-        } else {
-            this.drawSelectedWord();
-        }
+        if (this.finishedAddingWord){
+            this.updateBox();
+            this.selectedWord = this.addSections(this.levelObjects.repeats.num);
+            if (this.computing){
+                this.drawComputedWord();
+            } else {
+                this.drawSelectedWord();
+            }
         
+        }    
     }
 
     /**
@@ -131,7 +108,7 @@ export default class LoopLevel extends Level {
         const origin = this.levelObjects.leftBar.getTopRight();
         const width = this.levelObjects.rightBar.getTopLeft().x - origin.x;
         const height = this.levelObjects.leftBar.getBottomLeft().y - origin.y; 
-        this.levelObjects.slider = this.add.rectangle(origin.x, origin.y, width, height, Colours.WHITE).setOrigin(0).setAlpha(0.2);
+        this.levelObjects.slider = this.add.rectangle(origin.x, origin.y, width, height, colours.WHITE).setOrigin(0).setAlpha(0.2);
     }
 
     /**
@@ -177,34 +154,33 @@ export default class LoopLevel extends Level {
     }
 
     /**
-     * Render the letters of the word on screen
-     * @param {number} textX 
-     * @param {number} textY 
+     * Recursively render the letters of the word on screen, one at a time
+     * @param {number} i - Index of letter to draw
      */
-    drawLetters(textX, textY){
+    drawLetters(i){
 
-        // Remove current letters
-        this.levelObjects.letters.forEach((letter) => {
-            letter.destroy();
-        })
-        this.levelObjects.letters = [];
-        for (let i = 0; i < this.inputWord.length; i++){
-    
-            // Count backwards through letters
-            let place = this.inputWord.length - 1 - i
-            this.levelObjects.letters.unshift(this.add.text(textX-(i*35), textY, this.inputWord[place], { fontSize: '50px', color: '#ffffff' }))
+        // Base case 
+        if (i === this.inputWord.length){
+            
+            this.textX = this.levelObjects.letters.at(-1).getTopLeft().x;
+            this.addSlidingWindow();
+            this.finishedAddingWord = true;
+            this.textObjects.compute.visible = true;
+            return;
         }
+
+        this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.inputWord[i], { fontSize: '50px', color: '#ffffff' }))
+        this.time.delayedCall(400, this.drawLetters, [i+1], this);
     }
 
-    /**
-     * Draws the word as it is being computed
-     */
+    /** Draws the word as it is being computed */
     drawComputedWord(){
         // Remove current letters
         this.levelObjects.computedLetters.forEach((letter) => {
             letter.destroy();
         })
         this.levelObjects.computedLetters = [];
+        
         for (let i = 0; i < this.word.length; i++){
     
             // Count backwards through letters
@@ -213,6 +189,7 @@ export default class LoopLevel extends Level {
         }
     }
 
+    /** Draws the word the player has selected */
     drawSelectedWord(){
 
         // Remove current letters
@@ -255,7 +232,7 @@ export default class LoopLevel extends Level {
             
             // Letter is selected
             if (this.isContained(letter, this.levelObjects.slider)){
-                letter.setColor('#d40000');
+                letter.setColor(colours.TEXTRED);
                 selected = selected.concat(letter.text)
                 before = false;
 
@@ -271,7 +248,35 @@ export default class LoopLevel extends Level {
             }
         } 
 
-        this.selected.text = "Selected: " + selected;
+        this.textObjects.selected.text = "Selected: " + selected;
         return [stringBefore, selected, stringAfter];
+    }
+
+    /** Adds the window for the player to drag */
+    addSlidingWindow(){
+        const alpha = 0.5;
+
+        // Add left bar
+        const leftTop = this.levelObjects.letters[0].getTopLeft();
+        this.levelObjects.leftBar = this.add.rectangle(leftTop.x-20, leftTop.y, 20, 50, colours.WHITE).setAlpha(alpha).setOrigin(0).setInteractive();
+        
+        // Add right bar
+        const rightTop = this.levelObjects.letters.at(-1).getTopRight();
+        this.levelObjects.rightBar = this.add.rectangle(rightTop.x, rightTop.y, 20, 50, colours.WHITE).setAlpha(alpha).setOrigin(0).setInteractive();
+
+        // Word is added from end, so position of first letter is variable
+        const letterBounds = this.levelObjects.letters[0].getBounds();
+
+        // Enabling dragging on bars
+        this.input.setDraggable(this.levelObjects.leftBar);
+        this.input.setDraggable(this.levelObjects.rightBar);
+        const _this = this
+        this.input.on('drag', function(pointer, line, dragX, dragY){
+            // Set bounds for dragging
+            if (dragX >= letterBounds.x -20 && dragX <= _this.textX + 30){
+                line.x = dragX;
+            }
+        })
+        this.drawBox();
     }
 }

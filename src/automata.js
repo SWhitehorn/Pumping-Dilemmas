@@ -120,23 +120,32 @@ export default class Automata {
         state.keys = [];
     }
 
-    /** Peform a single step of computation */
-    computation(){        
-    
+    /** First half of computation, resets previous state and checks for empty word */
+    resetPreviousState(){
+        
         // Set previous state to black
         const prevState = this.states[this.currState];
         prevState.graphic.setFillStyle(Colours.WHITE, 1);
         if (prevState.accepting){ 
             prevState.graphic.inner.setFillStyle(Colours.WHITE, 1);
         }
-        
+
         // Check if word is empty. If so, end computation
         if (!this.scene.word){
             this.endComputation();
             return;
         } 
         
-        // If word is not empty, get first symbol
+        
+        this.scene.time.delayedCall(60, this.computation, [], this);
+    }
+
+    /** Peform a single step of computation */
+    computation(){        
+
+        console.log(this.scene.word, this.currState);
+
+        // Get first symbol of word
         let symbol = this.scene.word[0];
         this.scene.word = this.scene.word.slice(1);
         
@@ -151,7 +160,7 @@ export default class Automata {
             this.endComputation();
             return;
         }
-
+        
         // Index transitions of state based on symbol
         this.currState = this.getState(this.currState).transitions[symbol][0];
         let state = this.getState(this.currState);
@@ -179,6 +188,10 @@ export default class Automata {
             if (state.accepting){ // Check if state has inner ring
                 state.graphic.inner.setFillStyle(this.THICKNESS, Colours.YELLOW, 1);
             }
+            
+            // Delay next step of compuation to allow for visual display
+            this.scene.time.delayedCall(500, this.resetPreviousState, [], this);
+
         }
 
         // Draw computed word for level one
@@ -186,6 +199,8 @@ export default class Automata {
             console.log('drawing');            
             this.scene.drawComputedWord();
         }
+
+        
     }
     
     /** Reset all states to standard colours */

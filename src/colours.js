@@ -7,5 +7,6 @@ export default {
     GREEN: "0x4bb31e",
     TEXTYELLOW: "#ffb700",
     TEXTGREEN: "#4bb31e",
-    TEXTWHITE: "#ffffff"
+    TEXTWHITE: "#ffffff",
+    TEXTRED: "#d40000"
 }
