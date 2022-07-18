@@ -1,4 +1,4 @@
-import { level1Data, level2Data } from "../data.js";
+import { level1Data, level2Data, level3Data } from "../data.js";
 
 
 export default class IntroScene extends Phaser.Scene {
@@ -22,7 +22,8 @@ export default class IntroScene extends Phaser.Scene {
 
       const btn3 = this.add.text(20, 100, 'Level 3', { fontSize: '30px', color: '#ffffff' }).setInteractive();
       btn3.on('pointerup', () => {
-        this.scene.start('AddWordLevel', {automata:level1Data.automata, language:level1Data.language}); 
+        this.scene.start('Non_RegularLevel', {language:level3Data.language}); 
       });
+      
     }
   }

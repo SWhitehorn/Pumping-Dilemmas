@@ -214,6 +214,7 @@ export default class Automata {
                 state.graphic.inner.setFillStyle(Colours.WHITE, 1);
             }
         }
+        this.scene.computing = false;
     }
 
     /** 

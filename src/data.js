@@ -60,3 +60,7 @@ export const level2Data = {
     alphabet: ['a', 'b'],
     language: "L = {a\u{207F}b\u{1D50}|n>0,m>0}" 
 }
+
+export const level3Data = {
+    language: "L = {a\u{207F}b\u{207F}|n>0}"
+}

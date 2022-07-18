@@ -22,32 +22,33 @@ export default class Level extends Phaser.Scene {
         this.textObjects = {};
         this.textObjects.language = this.add.text(400, 30, language, { fontSize: '30px', color: '#ffffff' }).setOrigin(0.5);
 
-        // Create automata
-        this.automata = new Automata(automata, this);
+        // Render automata to screen
+        if (automata){
+            // Create automata
+            this.automata = new Automata(automata, this);
         
-        // Render each state on canvas, set interactivity
-        for (let s in this.automata.states){
-            this.automata.addStateGraphic(s);
-        }
-
-        this.transitions = new Transitions(this.graphics, this.automata, this);
-        
-        
-        // Add pause button
-        this.textObjects.pause = this.add.text(700, 20, 'Pause', { fontSize: '30px', color: '#ffffff' }).setInteractive();
-        this.textObjects.pause.on('pointerup', () => {
-            if (this.computeLoop){
-                this.computeLoop.paused = !this.computeLoop.paused;
+            // Render each state on canvas, set interactivity
+            for (let s in this.automata.states){
+                this.automata.addStateGraphic(s);
             }
-        })
+
+            this.transitions = new Transitions(this.graphics, this.automata, this);
+            
+            // Add pause button
+            this.textObjects.pause = this.add.text(700, 20, 'Pause', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+            this.textObjects.pause.on('pointerup', () => {
+                if (this.computeLoop){
+                    this.computeLoop.paused = !this.computeLoop.paused;
+                }
+            })
+        }
+        
         this.textObjects.back = this.add.text(700, 60, 'Back', { fontSize: '30px', color: '#ffffff' }).setInteractive();
         this.textObjects.back.on('pointerup', () => {
             this.scene.stop('Level1');
             this.scene.stop('Level2');
             this.scene.start('IntroScene');
-        })
-
-        
+        })    
     }
 
     setHighlights(state){
@@ -69,7 +70,7 @@ export default class Level extends Phaser.Scene {
             this.automata.getStart().graphic.setFillStyle(Colours.YELLOW, 1);
             this.computing = true;
             this.automata.currState = this.automata.start;
-            console.log(this.time.delayedCall(500, this.automata.resetPreviousState, [], this.automata));
+            this.time.delayedCall(500, this.automata.resetPreviousState, [], this.automata);
         }
         
         // Handle empty word
@@ -93,7 +94,6 @@ export default class Level extends Phaser.Scene {
         console.log("level", accepted);
 
         this.automata.currState = this.automata.start;
-        this.computing = false;
 
         // Reset word
         this.word = Boolean(this.inputWord) ? this.inputWord : ""
