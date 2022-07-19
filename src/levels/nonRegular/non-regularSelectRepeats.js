@@ -1,6 +1,7 @@
 import LoopLevel from "../loopLevel.js";
 import { randomNumber } from "../../utils.js";
 import colours from "../../colours.js";
+import { CYK } from "../../CYK.js";
 
 export default class Non_RegularSelectRepeats extends LoopLevel {
     
@@ -11,9 +12,10 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         super("Non_RegularSelectRepeats");
     }
 
-    create({language, word}){  
+    create({language, word, grammar}){  
         
         this.word = word;
+        this.CYK = new CYK(grammar);
 
         //Flags 
         this.chosenLoops = false;
@@ -36,6 +38,20 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
             this.scene.start("Non_RegularLevel", {language})
         })
 
+        this.textObjects.testMembership = this.add.text(650, 350, "Test", {fontSize: '30px', color: colours.TEXTWHITE}).setInteractive();
+        this.textObjects.testMembership.visible = false;
+        this.textObjects.testMembership.on('pointerup', () => {
+            const result = this.CYK.testMembership(this.selectedWord);
+            console.log(result, this.selectedWord);
+            if (result) {
+                alert("Still in the language!");
+            } else {
+                alert ("Success! That word is not in the language");
+                this.scene.stop("Non_RegularSelectRepeats");
+                this.scene.start("IntroScene");
+
+            }
+        })
 
         // Animate bars moving
         this.moveBars();
@@ -47,6 +63,8 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         if (this.chosenLoops){
             this.textObjects.increase.visible = true;
             this.textObjects.decrease.visible = true;
+            this.textObjects.testMembership.visible = true;
+
         }
         
     }

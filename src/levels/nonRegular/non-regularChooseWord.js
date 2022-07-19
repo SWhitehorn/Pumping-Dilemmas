@@ -1,13 +1,16 @@
 import Level from "../levelTemplate.js";
 import colours from "../../colours.js";
 import { randomNumber } from "../../utils.js";
+import { CYK } from "../../CYK.js";
 
 export default class Non_RegularLevel extends Level {
 
     textSettings = {fontSize: '30px', color: colours.TEXTWHITE}
+    grammar = "A -> ε | 2 1 | 2 3, S -> 2 1 | 2 3, 1 -> S3, 2 -> a, 3 -> b"
 
     constructor(){
         super("Non_RegularLevel");
+        this.CYK = new CYK(this.grammar);
     }
 
     create({language}){
@@ -39,9 +42,16 @@ export default class Non_RegularLevel extends Level {
 
         done.on('pointerup', () => {
             const word = this.word;
+            const grammar = this.grammar;
             if (word.length > numStates){
-                this.scene.stop(this.sceneName);
-                this.scene.start('Non_RegularSelectRepeats', {language, word});
+
+                if (this.CYK.testMembership(word)){
+                    this.scene.stop(this.sceneName);
+                    this.scene.start('Non_RegularSelectRepeats', {language, word, grammar});
+                } else {
+                    alert("Not a valid word!")
+                }
+                
             }
             
         })
