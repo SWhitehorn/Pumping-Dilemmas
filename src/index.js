@@ -8,7 +8,7 @@ import Non_RegularLevel from "./levels/addWord/non-regularChooseWord.js";
 import Non_RegularSelectRepeats from "./levels/loopScenes/non-regularSelectRepeats.js";
 
 
-const scenes = [LevelSelect, ControlLoopLevel, CreateLevel, AddWordLevel, ComputerLoopLevel, Non_RegularLevel, Non_RegularSelectRepeats]
+const scenes = [IntroScene, LevelSelect, ControlLoopLevel, CreateLevel, AddWordLevel, ComputerLoopLevel, Non_RegularLevel, Non_RegularSelectRepeats]
 
 const config = {
     type: Phaser.AUTO,

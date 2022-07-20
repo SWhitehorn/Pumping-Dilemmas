@@ -86,8 +86,6 @@ export default class Level extends Phaser.Scene {
     */
     endComputation(accepted){
         
-        console.log("level", accepted);
-
         this.automata.currState = this.automata.start;
 
         // Reset word

@@ -1,28 +1,63 @@
 import colours from "../colours.js";
 import LevelNode from "./levelNode.js";
-import data from "../data.js";
+import menuData from "./menuData.js";
+
+/**
+ * @typedef {Object} Input
+ * @property {boolean} passed - Indicates whether player passed previous level
+ */
 
 export default class LevelSelect extends Phaser.Scene {
+
+    count = []
+    nodes = {}
+    created = false
+    prevNode = null;
 
     constructor(){
         super('LevelSelect');
     }
 
-    create(){
+    preload(){
+        this.load.plugin('rexdropshadowpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexdropshadowpipelineplugin.min.js', true);
+    }
+
+    /**
+     * 
+     * @param {} accepted 
+     */
+    create({passed}){
         
-        this.graphics = this.add.graphics({ lineStyle: { width: 4, color: colours.BLACK } })
+        console.log(passed);
 
-        const [width, height] = [800, 600];
-        this.cameras.main.setBounds(0, 0, width*2, height*2);
-        //this.cameras.main.centerOn(600, 300)
+        // Prevent objects being recreated
+        if (!this.created){
+            this.graphics = this.add.graphics({ lineStyle: { width: 3, color: colours.BLACK } })
+            const [width, height] = [800, 600];
+            this.cameras.main.setBounds(0, 0, width*2, height*2);
+            //this.cameras.main.centerOn(600, 300)
 
-        let prevCircle;
+            
+            for (let key in menuData){
+                const data = menuData[key];
+                console.log(data);
+                this.nodes[data.name] = new LevelNode(this, data);
+            }
+            
+            const start = this.nodes['node0'];
+            start.enable();  
+            const tri = new Phaser.Geom.Triangle.BuildEquilateral(start.x-30, start.y, 16);
+            Phaser.Geom.Triangle.RotateAroundXY(tri, start.x-30, start.y, 1.571);
+            this.graphics.fillStyle(colours.BLACK);
+            this.graphics.fillTriangleShape(tri);
+            this.graphics.strokeTriangleShape(tri);
+            
+            this.created = true;  
+        }
 
-        let circle2 = new LevelNode(400+500, 100+200, this, [])
-        let circle1 = new LevelNode(100+500, 100+200, this, [circle2], data[0], 'loop')
-        
-
-        circle1.enable();        
+        if (passed){
+            this.prevNode.enableNextStates()
+        }
     }
 
     update(){

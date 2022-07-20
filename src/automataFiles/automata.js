@@ -1,5 +1,5 @@
 import "../typedefs/typedefs.js";
-import Colours from "../colours.js";
+import colours from "../colours.js";
 import { createKey } from "../utils.js";
 
 /**
@@ -107,13 +107,15 @@ export default class Automata {
         
         const state = this.states[s];
 
-        state.graphic = this.scene.add.circle(state.x, state.y, this.SIZE, Colours.WHITE)
-        state.graphic.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1).setInteractive();
+        state.shadow = this.scene.add.circle(state.x+5, state.y+10, this.SIZE, colours.BLACK).setAlpha(0.3);
+        state.graphic = this.scene.add.circle(state.x, state.y, this.SIZE, colours.WHITE);
+        state.graphic.setStrokeStyle(this.THICKNESS, colours.BLACK, 1).setInteractive();
         state.graphic.parent = state;
+        
 
         if (state.accepting){
-            state.graphic.inner = this.scene.add.circle(state.x, state.y, this.SIZE/1.3, Colours.WHITE);
-            state.graphic.inner.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
+            state.graphic.inner = this.scene.add.circle(state.x, state.y, this.SIZE/1.3, colours.WHITE);
+            state.graphic.inner.setStrokeStyle(this.THICKNESS, colours.BLACK, 1);
         }
 
         // Record of where state is connected to
@@ -125,9 +127,9 @@ export default class Automata {
         
         // Set previous state to black
         const prevState = this.states[this.currState];
-        prevState.graphic.setFillStyle(Colours.WHITE, 1);
+        prevState.graphic.setFillStyle(colours.WHITE, 1);
         if (prevState.accepting){ 
-            prevState.graphic.inner.setFillStyle(Colours.WHITE, 1);
+            prevState.graphic.inner.setFillStyle(colours.WHITE, 1);
         }
 
         // Check if word is empty. If so, end computation
@@ -153,9 +155,9 @@ export default class Automata {
         if (!(symbol in this.getState(this.currState).transitions)){
 
             // Colour state red
-            prevState.graphic.setFillStyle(Colours.RED, 1);
+            prevState.graphic.setFillStyle(colours.RED, 1);
             if (prevState.accepting){
-                prevState.graphic.inner.setFillStyle(Colours.RED, 1);
+                prevState.graphic.inner.setFillStyle(colours.RED, 1);
             }
             this.endComputation();
             return;
@@ -171,12 +173,12 @@ export default class Automata {
             
             // Change to green if accepting, red if not
             if (state.accepting){
-                state.graphic.setFillStyle(Colours.GREEN, 1);
-                state.graphic.inner.setFillStyle(Colours.GREEN, 1);
+                state.graphic.setFillStyle(colours.GREEN, 1);
+                state.graphic.inner.setFillStyle(colours.GREEN, 1);
                 this.endComputation(true);
             }
             else{
-                state.graphic.setFillStyle(Colours.RED, 1); 
+                state.graphic.setFillStyle(colours.RED, 1); 
                 this.endComputation();
             }
         }
@@ -184,9 +186,9 @@ export default class Automata {
         // Continue computation
         else{
             // Highlight current state in yellow;
-            state.graphic.setFillStyle(Colours.YELLOW, 1);
+            state.graphic.setFillStyle(colours.YELLOW, 1);
             if (state.accepting){ // Check if state has inner ring
-                state.graphic.inner.setFillStyle(this.THICKNESS, Colours.YELLOW, 1);
+                state.graphic.inner.setFillStyle(this.THICKNESS, colours.YELLOW, 1);
             }
             
             // Delay next step of compuation to allow for visual display
@@ -207,11 +209,11 @@ export default class Automata {
         for (let s in this.states){            
             
             let state = this.states[s];
-            state.graphic.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
-            state.graphic.setFillStyle(Colours.WHITE, 1);
+            state.graphic.setStrokeStyle(this.THICKNESS, colours.BLACK, 1);
+            state.graphic.setFillStyle(colours.WHITE, 1);
             if (state.accepting){
-                state.graphic.inner.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
-                state.graphic.inner.setFillStyle(Colours.WHITE, 1);
+                state.graphic.inner.setStrokeStyle(this.THICKNESS, colours.BLACK, 1);
+                state.graphic.inner.setFillStyle(colours.WHITE, 1);
             }
         }
         this.scene.computing = false;

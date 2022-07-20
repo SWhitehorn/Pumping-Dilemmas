@@ -4,24 +4,25 @@ export default class LevelNode {
     
     /**
      * Creates new level node instance
-     * @param {number} x - x position to render node at
-     * @param {number} y - y position to render node at
      * @param {Scene} scene - Phaser scene
-     * @param {LevelNode[]} children - Array of nodes that this node points to
-     * @param {Object} data - Data to load the level with
-     * @param {String} type - type of level to load
+     * @param {Object} data - Object containing data for level
      */
-    constructor(x, y, scene, children, data, type){
-        this.x = x;
-        this.y = y;
+    constructor(scene, data){
+        this.x = data.x;
+        this.y = data.y;
         this.scene = scene;
-        this.children = children;
+        this.children = data.children;
+        this.type = data.type;
+        this.data = data.data;
         
         this.active = false;
+        
+        let shadow = this.scene.add.circle(this.x+5, this.y+10, 31, colours.BLACK).setAlpha(0.3);
+        this.graphic = this.scene.add.circle(this.x, this.y, 30, colours.BLACK).setInteractive();
+        
 
-        this.shadow = this.scene.add.circle(x+10, y+10, 31, colours.BLACK).setAlpha(0.2);
-        this.graphic = this.scene.add.circle(x, y, 30, colours.BLACK).setInteractive();
         this.graphic.setStrokeStyle(3, colours.BLACK, 1);
+        
         
 
         // Interactivity
@@ -31,7 +32,7 @@ export default class LevelNode {
             if (scene.prevNode){
                 if (scene.prevNode === this && this.active){
                     this.scene.scene.sleep('LevelSelect');
-                    this.scene.scene.run('ControlLoopLevel', {automata:data.automata, word:data.word[0], language:data.language});
+                    this.scene.scene.run('ControlLoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language});
                 } else {
                     scene.prevNode = this;
                 }
@@ -50,7 +51,10 @@ export default class LevelNode {
 
     enableNextStates(){
         
-        for (let child of this.children){
+        for (let node of this.children){
+            console.log(node);
+            let child = this.scene.nodes[node]
+            console.log(child);
             child.enable();
             const line = new Phaser.Geom.Line(this.x, this.y, child.x, child.y);
             this.scene.graphics.strokeLineShape(line);
@@ -60,6 +64,7 @@ export default class LevelNode {
             Phaser.Geom.Triangle.RotateAroundXY(tri, child.x-29, child.y, Phaser.Math.DegToRad(90));
             this.scene.graphics.fillStyle(colours.BLACK);
             this.scene.graphics.fillTriangleShape(tri);
+            this.scene.graphics.strokeTriangleShape(tri);
         }
     }
 }

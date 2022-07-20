@@ -138,11 +138,14 @@ export default class LoopLevel extends Level {
     /**
      * Called to end the computation, extends levelTemplate method
      * @param {boolean} accepted - Indicates whether computation ended in accepting state
-     * 
      */
     endComputation(accepted){
         super.endComputation(accepted);
         this.word = this.selectedWord;
+
+        if (accepted){
+            this.time.delayedCall(1000, () => {alert('Correct!'); this.scene.start('LevelSelect', {passed:true})}, [], this)
+        }
     }
 
     /**

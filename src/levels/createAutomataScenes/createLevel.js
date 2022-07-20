@@ -139,6 +139,9 @@ export default class CreateLevel extends Level {
             // Object is transitionPoint
             if (object.isTransitionPoint){
                 object.parent.setPosition(pointer.x, pointer.y);
+            } else {
+                object.parent.shadow.x = pointer.x+5;
+                object.parent.shadow.y = pointer.y+10;
             }
         });
 
