@@ -1,6 +1,4 @@
-import Level from "./levelTemplate.js";
-import colours from "../colours.js";
-import "../typedefs/typedefs.js";
+import "../../typedefs/typedefs.js";
 import LoopLevel from "./loopLevel.js";
 
 /** 

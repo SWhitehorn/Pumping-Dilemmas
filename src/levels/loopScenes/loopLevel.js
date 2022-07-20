@@ -1,6 +1,6 @@
-import Level from "./levelTemplate.js";
-import colours from "../colours.js";
-import "../typedefs/typedefs.js";
+import Level from "../levelTemplate.js";
+import colours from "../../colours.js";
+import "../../typedefs/typedefs.js";
 
 /**
  * @typedef {Object} Input
@@ -53,7 +53,7 @@ export default class LoopLevel extends Level {
         this.drawLetters(0);
         
         // Add text for selected text and number of repeats
-        this.textObjects.selected = this.add.text(20, 60, "", { fontSize: '30px', color: '#ffffff' });
+        //this.textObjects.selected = this.add.text(20, 60, "", { fontSize: '30px', color: '#ffffff' });
         
         // Add compute button
         this.textObjects.compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: '#ffffff' }).setInteractive();
@@ -240,7 +240,7 @@ export default class LoopLevel extends Level {
             }
         } 
 
-        this.textObjects.selected.text = "Selected: " + selected;
+        //this.textObjects.selected.text = "Selected: " + selected;
         return [stringBefore, selected, stringAfter];
     }
 

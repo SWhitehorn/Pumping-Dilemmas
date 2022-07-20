@@ -1,8 +1,8 @@
-import Colours from "./colours.js";
+import Colours from "../colours.js";
 import TransitionPoint from "./transitionPoint.js";
 import Automata from "./automata.js";
-import { sameState, splitKey } from "./utils.js";
-import "./typedefs/typedefs.js"
+import { sameState, splitKey } from "../utils.js";
+import "../typedefs/typedefs.js"
 
 
 /**

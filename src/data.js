@@ -1,5 +1,20 @@
 
-export const level1Data = {
+const level1Data = {
+    automata: {
+        states: {
+            q1: {x:100, y:150, accepting: false, transitions: {a: ['q2'], b: ['q4']}},
+            q2: {x:400, y:150, accepting: false, transitions: {a: ['q3'], b: ['q2']}},
+            q3: {x:700, y:150, accepting: true, transitions: {a: ['q4'], b: ['q4']}},
+            q4: {x:400, y:350, accepting: false, transitions: {a: ['q4'], b: ['q4']}}
+        },
+        start: 'q1'
+    },
+    word: ["abba"],
+    alphabet: ['a', 'b'],
+    language: "L = {ab\u{207F}a|n\u{2265}0}" 
+}
+
+const level4Data = {
     automata: {
         states: {
             q1: {x: 150, 
@@ -30,7 +45,7 @@ export const level1Data = {
     language: "L = {b\u{207F}a\u{1D50}|n>0,m>0}" 
 }
 
-export const level2Data = {
+const level2Data = {
     automata: {
         states: {
             q1: {x: 150, 
@@ -61,6 +76,8 @@ export const level2Data = {
     language: "L = {a\u{207F}b\u{1D50}|n>0,m>0}" 
 }
 
-export const level3Data = {
+const level3Data = {
     language: "L = {a\u{207F}b\u{207F}|n>0}"
 }
+
+export default [level1Data, level2Data, level3Data]

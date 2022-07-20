@@ -1,7 +1,6 @@
-import Colours from "./colours.js";
-import { isEmpty } from "./utils.js";
-import "./typedefs/typedefs.js"
-import { sameState } from "./utils.js";
+import Colours from "../colours.js";
+import "../typedefs/typedefs.js"
+import { sameState } from "../utils.js";
 
 /**
  * Class defining interactive points on transition

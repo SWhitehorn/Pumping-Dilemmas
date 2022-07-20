@@ -1,6 +1,6 @@
 import Colours from "../colours.js";
-import Transitions from "../transitions.js";
-import Automata from "../automata.js";
+import Transitions from "../automataFiles/transitions.js";
+import Automata from "../automataFiles/automata.js";
 import "../typedefs/typedefs.js"
 
 export default class Level extends Phaser.Scene {
@@ -13,7 +13,11 @@ export default class Level extends Phaser.Scene {
     constructor (key) {
         super(key);
     }
-      
+    
+    preload(){
+        this.load.image('backArrow', '../assets/backArrow.png');
+    }
+
     // Called with automata for level in object literal format
     create (automata, language) {
         
@@ -34,21 +38,12 @@ export default class Level extends Phaser.Scene {
 
             this.transitions = new Transitions(this.graphics, this.automata, this);
             
-            // Add pause button
-            this.textObjects.pause = this.add.text(700, 20, 'Pause', { fontSize: '30px', color: '#ffffff' }).setInteractive();
-            this.textObjects.pause.on('pointerup', () => {
-                if (this.computeLoop){
-                    this.computeLoop.paused = !this.computeLoop.paused;
-                }
-            })
         }
         
-        this.textObjects.back = this.add.text(700, 60, 'Back', { fontSize: '30px', color: '#ffffff' }).setInteractive();
-        this.textObjects.back.on('pointerup', () => {
-            this.scene.stop('Level1');
-            this.scene.stop('Level2');
-            this.scene.start('IntroScene');
-        })    
+        const back = this.add.image(750, 30, 'backArrow').setInteractive();
+        back.on('pointerup', () => {
+            this.scene.start('LevelSelect');
+        });    
     }
 
     setHighlights(state){

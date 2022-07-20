@@ -1,4 +1,4 @@
-import { level1Data, level2Data, level3Data } from "../data.js";
+import data from "../data.js";
 
 
 export default class IntroScene extends Phaser.Scene {
@@ -12,6 +12,7 @@ export default class IntroScene extends Phaser.Scene {
       const btn1 = this.add.text(20, 20, 'Level 1', { fontSize: '30px', color: '#ffffff' }).setInteractive();
       btn1.on('pointerup', () => {
         const word = "abbab";
+        const level1Data = data[0];
         this.scene.start('ControlLoopLevel', {automata:level1Data.automata, word:level1Data.word[0], language:level1Data.language});
       });
 

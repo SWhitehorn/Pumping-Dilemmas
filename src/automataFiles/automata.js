@@ -1,6 +1,6 @@
-import "./typedefs/typedefs.js";
-import Colours from "./colours.js";
-import { createKey } from "./utils.js";
+import "../typedefs/typedefs.js";
+import Colours from "../colours.js";
+import { createKey } from "../utils.js";
 
 /**
  * Class for the automata

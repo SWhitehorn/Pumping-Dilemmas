@@ -1,5 +1,5 @@
-import Level from "./levelTemplate.js";
-import Colours from "../colours.js"
+import Level from "../levelTemplate.js";
+import Colours from "../../colours.js"
 
 export default class AddWordLevel extends Level {
 
