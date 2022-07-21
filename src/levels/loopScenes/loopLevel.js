@@ -33,10 +33,8 @@ export default class LoopLevel extends Level {
      */
     create({automata, word, language, repeats}){
         
-        console.log(this.scene.key)
         // Level template handles drawing automaton
         super.create(automata, language);
-
         // letters: array of text objects, unchanging
         // computedLetters: array of text objects, changes with player selection
         this.levelObjects = {letters: [], computedLetters: []}
@@ -45,6 +43,7 @@ export default class LoopLevel extends Level {
         this.interactive = false;
         this.repeat = false;
         this.finishedAddingWord = false;
+        this.passedTests = false;
 
         // Set words
         this.inputWord = word // Original value of input word
@@ -76,12 +75,13 @@ export default class LoopLevel extends Level {
 
     /** Called every frame to update game objects */
     update(){
+        
         if (this.finishedAddingWord){
             this.updateBox();
             this.selectedWord = this.addSections(this.levelObjects.repeats.num);
             if (this.computing){
                 this.drawComputedWord();
-            } else {
+            } else if (!this.end){
                 this.drawSelectedWord();
             }
         }    
@@ -150,8 +150,8 @@ export default class LoopLevel extends Level {
         super.endComputation(accepted);
         this.word = this.selectedWord;
 
-        if (accepted){
-            this.time.delayedCall(1000, () => {alert('Correct!'); this.scene.start('LevelSelect', {passed:true})}, [], this)
+        if (accepted && !this.runTests){
+            this.passedTests = true;
         }
     }
 

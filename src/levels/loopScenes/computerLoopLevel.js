@@ -1,3 +1,4 @@
+import colours from "../../colours.js";
 import "../../typedefs/typedefs.js";
 import LoopLevel from "./loopLevel.js";
 
@@ -7,7 +8,7 @@ import LoopLevel from "./loopLevel.js";
  */
  export default class ComputerLoopLevel extends LoopLevel{
 
-    numbers = [0, 2, 4];
+    numbers = [0];
 
     constructor(){
         super('ComputerLoopLevel');
@@ -17,12 +18,13 @@ import LoopLevel from "./loopLevel.js";
         super.create({automata, word, language});
         
         this.runTests = false;
+        this.tests = this.getNextTest();
+        this.nextTest = this.tests.next(); 
 
         this.levelObjects.repeats.visible = false;
 
         this.textObjects.compute.on('pointerup', () => {
             if (!this.runTests) {
-                this.tests = this.getNextTest();
                 this.levelObjects.repeats.visible = true;
                 this.runTests = true;
             }
@@ -33,6 +35,9 @@ import LoopLevel from "./loopLevel.js";
         super.update();
         if (this.runTests && !this.computing){
             this.performTest()
+        } else if (this.passedTests){
+            this.passedTests = false;
+            this.startEnd();
         }
     }
 
@@ -46,20 +51,36 @@ import LoopLevel from "./loopLevel.js";
     /** Pulls a number from generator, then starts computation with that part of word repeated*/
     performTest(){
         
-        const test = this.tests.next();
-
-        // All tests have been run, reset
-        if (test.done){
-            this.runTests = false;
-            this.levelObjects.repeats.num = 1;
-            this.selectedWord = this.addSections(1);
-            this.levelObjects.repeats.visible = false;
-            return;
-        }
+        const test = this.nextTest;
 
 
         this.levelObjects.repeats.num = test.value;
+        this.levelObjects.repeats.text = test.value;
+        console.log(this.levelObjects.repeats.num);
         this.selectedWord = this.addSections(test.value);
         this.startComputation();
+       
+        this.nextTest = this.tests.next(); 
+        
+        if (this.nextTest.done){
+            this.runTests = false;
+        }
     }
+
+    startEnd(){
+        this.levelObjects.repeats.num = 1;
+        this.selectedWord = "";
+        this.end = true;
+        this.levelObjects.repeats.visible = false;
+        this.time.delayedCall(1000, this.endingScreen, [], this)
+    }
+
+    endingScreen(){
+        console.log('ending');
+        this.add.rectangle(0, 0, 800, 500, colours.BLACK, 0.8).setOrigin(0);
+        this.scene.pause();
+        this.scene.run('LevelEnd', {prevScene:'ComputerLoopLevel'})
+        
+    }
+
  }

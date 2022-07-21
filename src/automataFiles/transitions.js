@@ -183,7 +183,7 @@ export default class Transitions{
             
             const labelY = startState.graphic.y - (this.SIZE*3);
 
-            this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key);
+            this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key, line);
         
             // Add direction arrow
             this.addDirectionArrow(line, endState);
@@ -290,6 +290,9 @@ export default class Transitions{
         
         } else { 
             // Add fresh label
+            if (!sameState(key)){
+                point = new Phaser.Math.Vector2(line.getPointAt(0.5));
+            }
             this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: '#ffffff' })    
         }
     }
@@ -427,7 +430,6 @@ export default class Transitions{
         
         // Point is defined in automataData
         } else if (state && state.controlPoints && state.controlPoints[endName]){
-            console.log('returning point');
             return state.controlPoints[endName];
 
         // Curve is defined, return halfway point

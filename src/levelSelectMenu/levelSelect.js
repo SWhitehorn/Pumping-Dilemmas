@@ -11,15 +11,12 @@ export default class LevelSelect extends Phaser.Scene {
 
     count = []
     nodes = {}
+    UI = {}
     created = false
     prevNode = null;
 
     constructor(){
         super('LevelSelect');
-    }
-
-    preload(){
-        this.load.plugin('rexdropshadowpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexdropshadowpipelineplugin.min.js', true);
     }
 
     /**
@@ -28,19 +25,16 @@ export default class LevelSelect extends Phaser.Scene {
      */
     create({passed}){
         
-        console.log(passed);
-
         // Prevent objects being recreated
         if (!this.created){
             this.graphics = this.add.graphics({ lineStyle: { width: 3, color: colours.BLACK } })
             const [width, height] = [800, 600];
             this.cameras.main.setBounds(0, 0, width*2, height*2);
-            //this.cameras.main.centerOn(600, 300)
-
+            
+            this.addUI();
             
             for (let key in menuData){
                 const data = menuData[key];
-                console.log(data);
                 this.nodes[data.name] = new LevelNode(this, data);
             }
             
@@ -65,6 +59,22 @@ export default class LevelSelect extends Phaser.Scene {
 
     update(){
 
+    }
+
+    addUI(){
+        this.UI.back = this.add.image(750, 30, 'backArrow').setInteractive().setScrollFactor(0);
+        this.UI.back.visible = false;
+        this.UI.back.on('pointerup', () => {
+                this.cameras.main.pan(400, 250, 500);
+                this.UI.back.visible = false;
+            });    
+
+        this.UI.start = this.add.text(20, 200, "Start", { fontSize: '50px', color: '#ffffff' }).setInteractive();
+        this.UI.start.on('pointerup', () => {
+            this.prevNode = null;
+            this.nodes['node0'].selectNode();
+        })
+            
     }
 
     

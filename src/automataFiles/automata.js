@@ -49,7 +49,6 @@ export default class Automata {
      */
     addKey(key){
         const stateNames = key.split(",");
-        console.log("Before", this.states[stateNames[0]].keys);
         if (this.states[stateNames[0]].keys.indexOf(key) === -1){
             this.states[stateNames[0]].keys.push(key);
         }
@@ -57,8 +56,6 @@ export default class Automata {
         if (this.states[stateNames[1]].keys.indexOf(key) === -1){
             this.states[stateNames[1]].keys.push(key);
         }
-
-        console.log("After", this.states[stateNames[0]].keys);
     }
 
     /**
@@ -146,7 +143,7 @@ export default class Automata {
     /** Peform a single step of computation */
     computation(){        
 
-        console.log(this.scene.word, this.currState);
+        console.log(this.scene.levelObjects.repeats.text);
 
         // Get first symbol of word
         let symbol = this.scene.word[0];

@@ -35,20 +35,7 @@ export default class LevelNode {
 
         // Interactivity
         this.graphic.on('pointerup', () => {
-            
-            // Start level if node is already selected
-            if (scene.prevNode){
-                if (scene.prevNode === this && this.active){
-                    this.scene.scene.sleep('LevelSelect');
-                    this.scene.scene.run('LoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language, repeats:this.data.repeats});
-                } else {
-                    scene.prevNode = this;
-                }
-            }
-            
-            scene.cameras.main.pan(this.x, this.y, 500);
-            scene.prevNode = this;
-
+            this.selectNode();
         });
     }
 
@@ -90,9 +77,8 @@ export default class LevelNode {
      * @returns {Point} Point to draw line through 
      */
     getControlPoint(targetNode){
-        console.log(targetNode);
-        console.log(this.controlPoints['node1']);
-        if (this.controlPoints[targetNode.name]){
+        
+        if (this.controlPoints && this.controlPoints[targetNode.name]){
             return this.controlPoints[targetNode.name];
         } else {
             return Phaser.Geom.Point.Interpolate(this.getPosition(), targetNode.getPosition(), 0.5);
@@ -119,5 +105,22 @@ export default class LevelNode {
         angle += 1.571; // Rotate 3/4 of circle
         Phaser.Geom.Triangle.RotateAroundXY(tri, intersectPoint.x, intersectPoint.y, angle);
         drawTriangle(this.scene, tri);
+    }
+
+    selectNode(){
+        
+        // Start level if node is already selected
+        if (this.scene.prevNode){
+            if (this.scene.prevNode === this && this.active){
+                this.scene.scene.sleep('LevelSelect');
+                this.scene.scene.run('ComputerLoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language});
+            } else {
+                this.scene.prevNode = this;
+            }
+        }
+        
+        this.scene.cameras.main.pan(this.x, this.y, 500);
+        this.scene.prevNode = this;
+        this.scene.UI.back.visible = true;
     }
 }

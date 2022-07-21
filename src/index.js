@@ -8,6 +8,7 @@ import Non_RegularLevel from "./levels/addWord/non-regularChooseWord.js";
 import Non_RegularSelectRepeats from "./levels/loopScenes/non-regularSelectRepeats.js";
 import LoopLevel from "./levels/loopScenes/loopLevel.js";
 import LevelCreator from "./levels/createAutomataScenes/levelCreator.js";
+import LevelEnd from "./levels/levelEndScene.js";
 
 
 const scenes = [IntroScene, 
@@ -19,7 +20,8 @@ const scenes = [IntroScene,
     Non_RegularLevel, 
     Non_RegularSelectRepeats,
     LoopLevel, 
-    LevelCreator
+    LevelCreator, 
+    LevelEnd
 ]
 
 const config = {
