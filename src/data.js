@@ -44,7 +44,7 @@ const level2Data = {
         },
         start: "q1"
     },
-    word: ["abababaa"],
+    word: ["aaba"],
     repeats: 0,
     alphabet: ['a', 'b'],
     language: "do this later"
