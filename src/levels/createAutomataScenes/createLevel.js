@@ -20,8 +20,12 @@ export default class CreateLevel extends Level {
 
     inputAutomata = {}
 
-    constructor(){
-        super('CreateLevel');
+    constructor(key){
+        if (key){
+            super(key);
+        } else {
+            super('CreateLevel');
+        }
     }
 
     /**
@@ -47,9 +51,9 @@ export default class CreateLevel extends Level {
         
         this.input.mouse.disableContextMenu(); // Allow for right clicking
         
-        this.save = this.add.text(700, 100, "", { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.next = this.add.text(700, 100, "", { fontSize: '30px', color: '#ffffff' }).setInteractive();
         
-        this.save.on('pointerup', () => {
+        this.next.on('pointerup', () => {
             if (!this.computing) {
                 this.automata.bakeAutomata();
                 this.scene.stop();
@@ -114,9 +118,9 @@ export default class CreateLevel extends Level {
         this.transitions.updateTransitions(); 
 
         if (this.automata.allStatesUsed()){
-            this.save.text = "Save";
+            this.next.text = "next";
         } else {
-            this.save.text = "";
+            this.next.text = "";
         }
     }
     

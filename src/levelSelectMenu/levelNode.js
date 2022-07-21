@@ -1,19 +1,27 @@
 import colours from "../colours.js";
+import "../typedefs/typedefs.js";
+import { drawTriangle } from "../utils.js";
 
 export default class LevelNode {
     
+
+    SIZE = 30
+    TRISIZE = 15
+
     /**
      * Creates new level node instance
      * @param {Scene} scene - Phaser scene
-     * @param {Object} data - Object containing data for level
+     * @param {Object} data - Object containing data for node
      */
     constructor(scene, data){
         this.x = data.x;
         this.y = data.y;
         this.scene = scene;
+        this.name = data.name;
         this.children = data.children;
         this.type = data.type;
         this.data = data.data;
+        this.controlPoints = data.controlPoints;
         
         this.active = false;
         
@@ -32,7 +40,7 @@ export default class LevelNode {
             if (scene.prevNode){
                 if (scene.prevNode === this && this.active){
                     this.scene.scene.sleep('LevelSelect');
-                    this.scene.scene.run('ControlLoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language});
+                    this.scene.scene.run('LoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language, repeats:this.data.repeats});
                 } else {
                     scene.prevNode = this;
                 }
@@ -44,27 +52,72 @@ export default class LevelNode {
         });
     }
 
+    /** Enables the node */
     enable(){
         this.graphic.setFillStyle(colours.WHITE);
         this.active = true;
     }
-
-    enableNextStates(){
+    /** Enables the child nodes of current node */
+    enableNextNodes(){
         
+        const startPoint = this.getPosition();
         for (let node of this.children){
-            console.log(node);
             let child = this.scene.nodes[node]
-            console.log(child);
             child.enable();
-            const line = new Phaser.Geom.Line(this.x, this.y, child.x, child.y);
-            this.scene.graphics.strokeLineShape(line);
+
+            let endPoint = child.getPosition();
+            let midPoint = this.getControlPoint(child);
+
+            const line = new Phaser.Curves.QuadraticBezier(startPoint, midPoint, endPoint);
+            line.draw(this.scene.graphics);
             
             // Add arrow head
-            const tri = new Phaser.Geom.Triangle.BuildEquilateral(child.x-29, child.y, 15); 
-            Phaser.Geom.Triangle.RotateAroundXY(tri, child.x-29, child.y, Phaser.Math.DegToRad(90));
-            this.scene.graphics.fillStyle(colours.BLACK);
-            this.scene.graphics.fillTriangleShape(tri);
-            this.scene.graphics.strokeTriangleShape(tri);
+            this.addDirectionArrow(line, child);
         }
+    }
+
+    /**
+     * Returns position of node
+     * @returns {Point} Object with position of node
+     */
+    getPosition(){
+        return {x: this.x, y: this.y};
+    }
+
+    /**
+     * Gets point to draw transition through
+     * @param {LevelNode} targetNode - end node of transition
+     * @returns {Point} Point to draw line through 
+     */
+    getControlPoint(targetNode){
+        console.log(targetNode);
+        console.log(this.controlPoints['node1']);
+        if (this.controlPoints[targetNode.name]){
+            return this.controlPoints[targetNode.name];
+        } else {
+            return Phaser.Geom.Point.Interpolate(this.getPosition(), targetNode.getPosition(), 0.5);
+        }
+    }
+
+    /**
+     * Adds a direction arrow to line
+     * @param {Quadratic Bezier} line - line to draw arrow on
+     * @param {LevelNode} node - node to point to 
+     */
+    addDirectionArrow(line, node){
+    
+        // Calculate distance along line
+        const percent = this.SIZE / line.getLength();
+    
+        const intersectPoint = line.getPointAt(1 - percent);
+    
+        const tri = new Phaser.Geom.Triangle.BuildEquilateral(intersectPoint.x, intersectPoint.y, this.TRISIZE); 
+
+        // Rotate triangle to match gradient of line
+        const angleLine = new Phaser.Geom.Line(intersectPoint.x, intersectPoint.y, node.x, node.y);
+        let angle = Phaser.Geom.Line.Angle(angleLine); // Rotate triangle to match angle of line
+        angle += 1.571; // Rotate 3/4 of circle
+        Phaser.Geom.Triangle.RotateAroundXY(tri, intersectPoint.x, intersectPoint.y, angle);
+        drawTriangle(this.scene, tri);
     }
 }

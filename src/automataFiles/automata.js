@@ -49,7 +49,7 @@ export default class Automata {
      */
     addKey(key){
         const stateNames = key.split(",");
-        
+        console.log("Before", this.states[stateNames[0]].keys);
         if (this.states[stateNames[0]].keys.indexOf(key) === -1){
             this.states[stateNames[0]].keys.push(key);
         }
@@ -57,6 +57,8 @@ export default class Automata {
         if (this.states[stateNames[1]].keys.indexOf(key) === -1){
             this.states[stateNames[1]].keys.push(key);
         }
+
+        console.log("After", this.states[stateNames[0]].keys);
     }
 
     /**
@@ -85,7 +87,6 @@ export default class Automata {
      * @param {string} input - Symbol to define over
      */
     addTransition(firstStateName, secondStateName, input){
-        
         // Add input to transitions of first state
         const startState = this.states[firstStateName];
         if (startState.transitions.hasOwnProperty(input)){
@@ -198,7 +199,6 @@ export default class Automata {
 
         // Draw computed word for level one
         if (this.scene.scene.key === "Level1"){
-            console.log('drawing');            
             this.scene.drawComputedWord();
         }
     

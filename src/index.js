@@ -6,9 +6,21 @@ import ControlLoopLevel from "./levels/loopScenes/controlLoopLevel.js";
 import ComputerLoopLevel from "./levels/loopScenes/computerLoopLevel.js";
 import Non_RegularLevel from "./levels/addWord/non-regularChooseWord.js";
 import Non_RegularSelectRepeats from "./levels/loopScenes/non-regularSelectRepeats.js";
+import LoopLevel from "./levels/loopScenes/loopLevel.js";
+import LevelCreator from "./levels/createAutomataScenes/levelCreator.js";
 
 
-const scenes = [IntroScene, LevelSelect, ControlLoopLevel, CreateLevel, AddWordLevel, ComputerLoopLevel, Non_RegularLevel, Non_RegularSelectRepeats]
+const scenes = [IntroScene, 
+    LevelSelect, 
+    ControlLoopLevel, 
+    CreateLevel, 
+    AddWordLevel, 
+    ComputerLoopLevel, 
+    Non_RegularLevel, 
+    Non_RegularSelectRepeats,
+    LoopLevel, 
+    LevelCreator
+]
 
 const config = {
     type: Phaser.AUTO,

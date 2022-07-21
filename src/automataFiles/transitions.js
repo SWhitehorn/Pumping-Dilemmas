@@ -76,7 +76,6 @@ export default class Transitions{
                         
                         // Add data to transitionObjects
                         this.newTransition(key);
-                        this.automata.addKey(key);
                         this.drawSingleTransition(state, this.automata.states[endName], input, key, endName);
                     }
                 })
@@ -111,7 +110,7 @@ export default class Transitions{
                     // Get vector points
                     const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
                     const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
-                    const midPoint = this.getControlPoint(null, null, startPoint, endPoint);
+                    const midPoint = this.getControlPoint(null, null, startPoint, endPoint, startState, stateNames[1]);
                     
                     // Set control points of line
                     transitionData.line.p0 = startPoint;
@@ -200,7 +199,7 @@ export default class Transitions{
             // Get Control points for line
             const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
             const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
-            const mid = this.getControlPoint(null, key, startPoint, endPoint);
+            const mid = this.getControlPoint(null, key, startPoint, endPoint, startState, endName);
 
             // Add line to objects
             this.transitionObjects[key].line = new Phaser.Curves.QuadraticBezier(startPoint, mid, endPoint);
@@ -416,14 +415,21 @@ export default class Transitions{
      * @param {string} key - key for transition, or null
      * @param {Vector2} [startPoint] - must be included if other params are null
      * @param {Vector2} [endPoint] - must be included if other params are null
+     * @param {State} [state] - Starting state for line
+     * @param {string} [endName] - 
      * @returns {Vector2} - object with x and y properties 
      */
-    getControlPoint(curve, key, startPoint, endPoint){
+    getControlPoint(curve, key, startPoint, endPoint, state, endName){
         
         // Already a point defined, return the position
         if (key && this.transitionObjects[key].point && !this.transitionObjects[key].point.update){
             return new Phaser.Math.Vector2(this.transitionObjects[key].point.getPosition());
-            
+        
+        // Point is defined in automataData
+        } else if (state && state.controlPoints && state.controlPoints[endName]){
+            console.log('returning point');
+            return state.controlPoints[endName];
+
         // Curve is defined, return halfway point
         } else if (curve){
             return new Phaser.Math.Vector2(curve.getPointAt(0.5));
@@ -477,7 +483,6 @@ export default class Transitions{
      */
     newTransition(key, input){
         this.transitionObjects[key] = {'line': null, 'label': input, 'point': null, 'update': false};
-        this.automata.addKey(key);
     }
 
     /**

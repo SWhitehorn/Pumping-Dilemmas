@@ -15,9 +15,9 @@ import LoopLevel from "./loopLevel.js";
     create({automata, word, language}){
         super.create({automata, word, language});
         
-        this.textObjects.compute.on('pointerup', () => {
-            if (!this.computing) {this.startComputation()};
-        });
+        // this.textObjects.compute.on('pointerup', () => {
+        //     if (!this.computing) {this.startComputation()};
+        // });
 
         this.addControlButtons();
     }

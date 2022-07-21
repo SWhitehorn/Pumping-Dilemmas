@@ -1,4 +1,5 @@
 // Assorted useful functions
+import colours from "./colours.js";
 
 /**
  * Returns next available letter in language, or first if all are taken
@@ -58,4 +59,10 @@ export const splitKey = (key) => {
 */
 export const randomNumber = (min, max) => {
     return Math.floor(Math.random() * (max-min) ) + min;
+}
+
+export const drawTriangle = (scene, tri) => {
+    scene.graphics.fillStyle(colours.BLACK);
+    scene.graphics.fillTriangleShape(tri);
+    scene.graphics.strokeTriangleShape(tri);
 }

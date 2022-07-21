@@ -31,8 +31,9 @@ export default class LoopLevel extends Level {
      * Create level, initialising level objects and flags
      * @param {Input}
      */
-    create({automata, word, language}){
+    create({automata, word, language, repeats}){
         
+        console.log(this.scene.key)
         // Level template handles drawing automaton
         super.create(automata, language);
 
@@ -42,7 +43,7 @@ export default class LoopLevel extends Level {
     
         //Flags
         this.interactive = false;
-        this.repeat = true;
+        this.repeat = false;
         this.finishedAddingWord = false;
 
         // Set words
@@ -57,13 +58,19 @@ export default class LoopLevel extends Level {
         
         // Add compute button
         this.textObjects.compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        if (this.scene.key !== "ComputerLoopLevel"){
+            this.textObjects.compute.on('pointerup', () => {
+                if (!this.computing) {this.startComputation()};
+            });
+        }
+
 
         // Remove compute button until word has rendered
         this.textObjects.compute.visible = false;
 
         // Add label for number of repeats
         this.levelObjects.repeats = this.add.text(0, 0, "", { fontSize: '20px', color: colours.TEXTRED })
-        this.levelObjects.repeats.num = 1;
+        this.levelObjects.repeats.num = repeats;
 
     }
 
