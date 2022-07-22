@@ -16,7 +16,10 @@ export default class LevelNode {
     constructor(scene, data){
         this.x = data.x;
         this.y = data.y;
+        
+        this.data = data;
         this.scene = scene;
+        
         this.name = data.name;
         this.children = data.children;
         this.type = data.type;
@@ -113,7 +116,12 @@ export default class LevelNode {
         if (this.scene.prevNode){
             if (this.scene.prevNode === this && this.active){
                 this.scene.scene.sleep('LevelSelect');
-                this.scene.scene.run('ComputerLoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language});
+                if (this.type === 'loop') {
+                    this.scene.scene.run('ComputerLoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language});
+                } else if (this.type === 'create') {
+                    this.scene.scene.run('CreateLevel', {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language});
+
+                }
             } else {
                 this.scene.prevNode = this;
             }

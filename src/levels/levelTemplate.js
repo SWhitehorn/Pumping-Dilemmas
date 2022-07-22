@@ -3,6 +3,10 @@ import Transitions from "../automataFiles/transitions.js";
 import Automata from "../automataFiles/automata.js";
 import "../typedefs/typedefs.js"
 
+/**
+ * Template for levels, handles common features. Extended by others to provide specific functionality.
+ * @Class
+ */
 export default class Level extends Phaser.Scene {
 
     // Flags
@@ -18,13 +22,17 @@ export default class Level extends Phaser.Scene {
         this.load.image('backArrow', '../assets/backArrow.png');
     }
 
-    // Called with automata for level in object literal format
+    /**
+     * Creates objects present in all levels
+     * @param {Automata} automata 
+     * @param {String} language - String describing languaged 
+     */
     create (automata, language) {
         
         this.graphics = this.add.graphics({ lineStyle: { width: 3, color: Colours.BLACK } });
         
         this.textObjects = {};
-        this.textObjects.language = this.add.text(400, 30, language, { fontSize: '30px', color: '#ffffff' }).setOrigin(0.5);
+        this.addLanguage(language)
 
         // Render automata to screen
         if (automata){
@@ -96,6 +104,20 @@ export default class Level extends Phaser.Scene {
         if (this.repeat && !accepted){ 
             this.time.delayedCall(1000, this.startComputation, [], this); 
         }
+    }
+
+    /**
+     * Adds text describing language to scene. Scales text depending on size
+     * @param {String} language - String describing language
+     */
+    addLanguage(language){
+        if (language.length < 30){
+            const text = this.add.text(400, 20, language, { fontSize: '30px', color: '#ffffff' }).setOrigin(0.5);
+        } else {
+            const text = this.add.text(400, 30, language, { fontSize: '25px', color: '#ffffff', align: 'center'}).setOrigin(0.5);
+            text.setWordWrapWidth(400, true);
+        }
+        
     }
 
     

@@ -19,6 +19,10 @@ export default class LevelSelect extends Phaser.Scene {
         super('LevelSelect');
     }
 
+    preload(){
+        this.load.image('backArrow', '../assets/backArrow.png');
+    }
+
     /**
      * 
      * @param {} accepted 
@@ -40,6 +44,8 @@ export default class LevelSelect extends Phaser.Scene {
             
             const start = this.nodes['node0'];
             start.enable();  
+            
+            this.nodes['node2'].enable();
             
             // Add start arrow
             const tri = new Phaser.Geom.Triangle.BuildEquilateral(start.x-30, start.y, 16);
@@ -73,8 +79,12 @@ export default class LevelSelect extends Phaser.Scene {
         this.UI.start = this.add.text(20, 200, "Start", { fontSize: '50px', color: '#ffffff' }).setInteractive();
         this.UI.start.on('pointerup', () => {
             this.nodes['node0'].selectNode();
-        })
-            
+        });
+
+        this.UI.debug = this.add.text(20, 275, "Debug", { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.UI.debug.on('pointerup', () => {
+            this.scene.start('IntroScene');
+        });
     }
 
     

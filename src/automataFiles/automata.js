@@ -1,6 +1,6 @@
 import "../typedefs/typedefs.js";
 import colours from "../colours.js";
-import { createKey } from "../utils.js";
+import { createKey, sameState, splitKey } from "../utils.js";
 
 /**
  * Class for the automata
@@ -126,6 +126,7 @@ export default class Automata {
         // Set previous state to black
         const prevState = this.states[this.currState];
         prevState.graphic.setFillStyle(colours.WHITE, 1);
+        
         if (prevState.accepting){ 
             prevState.graphic.inner.setFillStyle(colours.WHITE, 1);
         }
@@ -137,13 +138,14 @@ export default class Automata {
         } 
         
         
-        this.scene.time.delayedCall(60, this.computation, [], this);
+        this.scene.time.delayedCall(60, this.computation, [prevState], this);
     }
 
-    /** Peform a single step of computation */
-    computation(){        
-
-        console.log(this.scene.levelObjects.repeats.text);
+    /** 
+     * Peform a single step of computation 
+     * @param {State} prevState - The previous state of the computation 
+     * */
+    computation(prevState){        
 
         // Get first symbol of word
         let symbol = this.scene.word[0];
@@ -163,6 +165,7 @@ export default class Automata {
         
         // Index transitions of state based on symbol
         this.currState = this.getState(this.currState).transitions[symbol][0];
+
         let state = this.getState(this.currState);
         
 
@@ -235,15 +238,15 @@ export default class Automata {
             
             state.x = state.graphic.x;
             state.y = state.graphic.y;
-
+            state.controlPoints = {}
             state.keys.forEach((key) => {
-                if (!key in this.controlPoints){
-                    this.controlPoints[key] = this.scene.transitions.transitionObjects[key].point.getPosition
+                let [s1, s2] = splitKey(key);
+                if (s1 === state.name && !sameState(key)){
+                    state.controlPoints[s2] = this.scene.transitions.transitionObjects[key].point.getPosition();
                 }
-                
             });
             
-        })
+        });
     }
 
     /** 

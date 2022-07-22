@@ -1,22 +1,26 @@
 
-const level1Data = {
+const level0Data = {
     automata: {
         states: {
             q1: {x:100, y:150, 
                 accepting: false, 
-                transitions: {a: ['q2'], b: ['q4']}
+                transitions: {a: ['q2'], b: ['q4']},
+                name: 'q1'
             },
             q2: {x:400, y:150, 
                 accepting: false, 
-                transitions: {a: ['q3'], b: ['q2']}
+                transitions: {a: ['q3'], b: ['q2']},
+                name: 'q2'
             },
             q3: {x:700, y:150, 
                 accepting: true, 
-                transitions: {a: ['q4'], b: ['q4']}
+                transitions: {a: ['q4'], b: ['q4']},
+                name: 'q3'
             },
             q4: {x:400, y:350, 
                 accepting: false, 
-                transitions: {a: ['q4'], b: ['q4']}
+                transitions: {a: ['q4'], b: ['q4']},
+                name: 'q4'
             }
         },
         start: 'q1'
@@ -28,7 +32,7 @@ const level1Data = {
 }
 
 
-const level2Data = {
+const level1Data = {
     automata: {
         states: {
             q1: {x:245, y:233, 
@@ -50,8 +54,42 @@ const level2Data = {
     language: "do this later"
 }
 
+const level2Data = {
+    automata: {
+        states: {
+            q1: {x: 150, 
+                y: 400, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 300, 
+                y: 400, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 450, 
+                y: 400, 
+                accepting: false,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 600, 
+                y: 400, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+        },
+        start: 'q1'
+        },
+    words: [{word: "ababba", result: true}, {word: "bbab", result: false}],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w contains abb as a subword}" 
+}
 
-const level4Data = {
+const spareData = {
     automata: {
         states: {
             q1: {x: 150, 
@@ -117,4 +155,4 @@ const testData2 = {
     language: "L = {a\u{207F}b\u{207F}|n>0}"
 }
 
-export default [level1Data, level2Data, testData1, testData2]
+export default {level0Data, level1Data, level2Data, testData1, testData2}

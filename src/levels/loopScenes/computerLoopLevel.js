@@ -56,7 +56,6 @@ import LoopLevel from "./loopLevel.js";
 
         this.levelObjects.repeats.num = test.value;
         this.levelObjects.repeats.text = test.value;
-        console.log(this.levelObjects.repeats.num);
         this.selectedWord = this.addSections(test.value);
         this.startComputation();
        

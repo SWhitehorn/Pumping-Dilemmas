@@ -33,10 +33,10 @@ export default class CreateLevel extends Level {
      * @param {Input}
      * @extends Level.create 
      */
-    create({automata, word, alphabet, language}){
+    create({automata, words, alphabet, language}){
         
         // Store original word and automata to allow for reseting
-        this.inputWord = this.word = word;
+        this.words = words;
         this.inputAutomata = structuredClone(automata);
         
         this.alphabet = alphabet;
@@ -56,8 +56,7 @@ export default class CreateLevel extends Level {
         this.next.on('pointerup', () => {
             if (!this.computing) {
                 this.automata.bakeAutomata();
-                this.scene.stop();
-                this.scene.start('ComputerLoopLevel', {automata:this.automata, word:this.word, language}); 
+                this.scene.start('TestCreateLevel', {automata:this.automata, words:this.words, language}); 
 
             };
           });
@@ -160,7 +159,6 @@ export default class CreateLevel extends Level {
                 // Update transitions going to state
                 const state = object.parent;
                 for (let key of state.keys){
-                    console.log(key);
                     const transitionObjects = this.transitions.getAllObjects();
 
                     // Remove letters
