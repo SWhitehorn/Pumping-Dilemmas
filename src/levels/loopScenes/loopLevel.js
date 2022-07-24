@@ -79,6 +79,7 @@ export default class LoopLevel extends Level {
         if (this.finishedAddingWord){
             this.updateBox();
             this.selectedWord = this.addSections(this.levelObjects.repeats.num);
+            
             if (this.computing){
                 this.drawComputedWord();
             } else if (!this.end){
@@ -209,13 +210,21 @@ export default class LoopLevel extends Level {
     }
 
     /**
-     * Repeats selected part of word according to number of repeats
+     * Repeats selected part of word according to number of repeats and checks text is selected
      * @param {number} numRepeats - number of times the selection of word is repeated 
      * @returns {String} String with repeated sections
      */
     addSections(numRepeats){
             
             const wordParts = this.decomposeWord(); 
+
+            // Check that selected section is not empty
+            if (wordParts[1] === ""){
+                this.textObjects.compute.visible = false;
+            } else {
+                this.textObjects.compute.visible = true;
+            }
+
             return wordParts[0] + wordParts[1].repeat(numRepeats) + wordParts[2];
     }
 
@@ -274,6 +283,7 @@ export default class LoopLevel extends Level {
         this.input.setDraggable(this.levelObjects.rightBar);
         const _this = this
         this.input.on('drag', function(pointer, line, dragX, dragY){
+            
             // Set bounds for dragging
             if (dragX >= letterBounds.x -20 && dragX <= _this.textX + 30){
                 line.x = dragX;

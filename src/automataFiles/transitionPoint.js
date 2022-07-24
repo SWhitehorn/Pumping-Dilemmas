@@ -38,7 +38,6 @@ export default class TransitionPoint {
            // Delete transition if right button is clicked
             if (pointer.rightButtonReleased()){
                 
-                console.log('rightbutton');
                 if (!this.scene.draw){
                     this.destroy();
 

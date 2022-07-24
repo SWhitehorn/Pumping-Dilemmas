@@ -113,9 +113,11 @@ export default class Transitions{
                     const midPoint = this.getControlPoint(null, null, startPoint, endPoint, startState, stateNames[1]);
                     
                     // Set control points of line
-                    transitionData.line.p0 = startPoint;
-                    transitionData.line.p1 = midPoint;
-                    transitionData.line.p2 = endPoint;
+                    // transitionData.line.p0 = startPoint;
+                    // transitionData.line.p1 = midPoint;
+                    // transitionData.line.p2 = endPoint;
+
+                    transitionData.line.points = [startPoint, midPoint, endPoint]
 
                     // Update position of interactive point
                     transitionData.point.setPosition(midPoint);
@@ -140,9 +142,11 @@ export default class Transitions{
                 // Normal transition
                 if (stateNames[0] !== stateNames[1]){
                     
+
+
                     // Update control point of line
                     const controlPoint = this.getControlPoint(transitionData.line, key, null, null);
-                    transitionData.line.p1 = controlPoint;
+                    transitionData.line.points[1] = controlPoint;
                     this.updateLabel(transitionData, stateNames[1], key, controlPoint);
                     transitionData.line.draw(this.graphics);
                 
@@ -202,7 +206,7 @@ export default class Transitions{
             const mid = this.getControlPoint(null, key, startPoint, endPoint, startState, endName);
 
             // Add line to objects
-            this.transitionObjects[key].line = new Phaser.Curves.QuadraticBezier(startPoint, mid, endPoint);
+            this.transitionObjects[key].line = new Phaser.Curves.Spline([startPoint, mid, endPoint]);
             const line = this.transitionObjects[key].line;
 
             // Draw line
@@ -233,8 +237,10 @@ export default class Transitions{
      */
     addDirectionArrow(line, endState){
         
+        console.log(line.type);
+
         // Transition from one state to other
-        if (line.type === "QuadraticBezier"){
+        if (line.type === "SplineCurve"){
             // Calculate distance along line
             const percent = this.SIZE / line.getLength();
         

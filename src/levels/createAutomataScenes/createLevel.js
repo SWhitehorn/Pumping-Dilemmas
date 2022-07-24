@@ -67,15 +67,6 @@ export default class CreateLevel extends Level {
             let state = this.automata.states[stateName];
             this.input.setDraggable(state.graphic);
             
-            state.graphic.on('pointerdown', (pointer) => {
-
-                if (!pointer.rightButtonDown()){
-                    for (let key in state.keys){
-                        
-                    }
-                }
-            })
-
             // Allow player to draw transitions to connect states
             state.graphic.on('pointerup', (pointer) => {
                 if (pointer.rightButtonReleased()){
@@ -88,10 +79,8 @@ export default class CreateLevel extends Level {
                         this.connectStates(stateName)
                     }
                     
-                } else{
-                    
                 }
-            })
+            });
         }
         
         this.setDrag();
@@ -124,7 +113,7 @@ export default class CreateLevel extends Level {
     }
     
     /**
-     * Enables objects to be dragged
+     * Enables states and transition points to be dragged
      */
     setDrag(){
         this.input.dragDistanceThreshold = 10;
@@ -152,7 +141,7 @@ export default class CreateLevel extends Level {
             
             if (object.isTransitionPoint){
                 object.parent.dragging = true;
-            
+                console.log(object.parent.dragging);
             // Object is a state 
             } else {
                 
@@ -175,11 +164,12 @@ export default class CreateLevel extends Level {
         this.input.on('dragend', (pointer, object, dragX, dragY) => {
             
             if (object.isTransitionPoint){
-                object.parent.dragging = false;
+                
+                // Delay reseting dragging flag to allow for pointerup without registering as clicking
+                this.time.delayedCall(50, () => {object.parent.dragging = false}, [], this);
             
             // Object is a state
             } else{ 
-                const transitionObjects = this.transitions.getAllObjects();
                 for (let key of object.parent.keys){                
                     this.transitions.removeFromUpdate(key);
                 }
