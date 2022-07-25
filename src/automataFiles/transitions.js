@@ -114,11 +114,6 @@ export default class Transitions{
                     
                     const midPoint = this.getControlPoint(transitionData.line, key, startPoint, endPoint, startState, stateNames[1]);
                     
-                    // Set control points of line
-                    // transitionData.line.p0 = startPoint;
-                    // transitionData.line.p1 = midPoint;
-                    // transitionData.line.p2 = endPoint;
-
                     transitionData.line.points = [startPoint, midPoint, endPoint]
 
                     // Update position of interactive point
@@ -184,10 +179,6 @@ export default class Transitions{
             this.transitionObjects[key].line = line;
 
             this.graphics.strokeCircleShape(line);
-            
-            const labelY = startState.graphic.y - (this.SIZE*3);
-
-            this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key, line);
         
             // Add direction arrow
             this.addDirectionArrow(line, endState);
@@ -195,6 +186,9 @@ export default class Transitions{
             // Allow players to remove the transition
             if (this.interactive){    
                 this.setCircleInteractivity(line, startState, input, key, endName);
+            } else {
+                const labelY = startState.graphic.y - (this.SIZE*3);
+                this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key, line);
             }
         }
         // Transition between states
@@ -343,8 +337,9 @@ export default class Transitions{
         
         const point = new TransitionPoint(line.x, line.y-this.SIZE, this.scene, key);
         point.setStart(state).setEnd(state, name).addInput(input);
-        
         this.transitionObjects[key].point = point;
+        const labelY = state.graphic.y - (this.SIZE*3);
+        this.addLabel(name, {x:state.graphic.x, y:labelY}, input, key, line);
     }
 
     /**

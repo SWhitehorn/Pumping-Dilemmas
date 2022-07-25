@@ -50,8 +50,6 @@ export default class TransitionPoint {
             // Left mouse: enable user to change the letters on the transition
             } else if (!this.dragging){
                 
-                console.log('clicked');
-
                 if (this.selected){
                     this.removeLetters();
                     

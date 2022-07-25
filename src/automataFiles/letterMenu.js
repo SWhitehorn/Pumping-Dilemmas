@@ -1,5 +1,6 @@
 import colours from "../colours.js";
 import "../typedefs/typedefs.js"
+import { sameState } from "../utils.js";
 
 export default (scene, point, input, transitionPoint) => {
 
@@ -27,19 +28,16 @@ export default (scene, point, input, transitionPoint) => {
             bottom: 10,
             icon: 10
         },
-        dragging: false,
-        parentPoint: transitionPoint,
+              
         options: options,
 
         list: {
             
             createBackgroundCallback: function (scene) {
-                return scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, COLOR_DARK);
+                return scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, COLOR_PRIMARY);
             },
             
             createButtonCallback: function (scene, option, index, options) {
-
-                console.log(this.dragging);
                 let text = option;
                 
                 let background = scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0);
@@ -66,26 +64,12 @@ export default (scene, point, input, transitionPoint) => {
 
             // scope: dropDownList
             onButtonClick: function (button, index, pointer, event) {
-                transitionPoint.changeInput(button.text);
+                this.parentPoint.changeInput(button.text);
             },
 
-            // scope: dropDownList
-            onButtonOver: function (button, index, pointer, event) {
-                button.getElement('background').setStrokeStyle(1, 0xffffff);
-            },
-
-            // scope: dropDownList
-            onButtonOut: function (button, index, pointer, event) {
-                button.getElement('background').setStrokeStyle();
-            },
         },
 
-        // setValueCallback: function (dropDownList, value, previousValue) {
-        //     console.log(value);
-        // },
-        // value: undefined
-
-    })
+    });
 
     menu.setPosition = (point) => {
         menu.x = point.x;
@@ -95,10 +79,29 @@ export default (scene, point, input, transitionPoint) => {
     menu.setText = (text) => {
         menu.text = text
     }
-
-    menu.setDraggable();
+    
     menu.parentPoint = transitionPoint;
+    
+    if (!sameState(menu.parentPoint.key)){
+        menu.setDraggable();
+    }   
+
+    // 
+    
     menu.isMenu = true; 
+    menu.dragging = false,
+
+    // Enable player to right click to remove menu
+    menu.on('pointerup', (pointer) => {
+        
+        if (pointer.rightButtonReleased()){
+            if (!menu.scene.draw){
+                point = menu.parentPoint;
+                point.destroy(); // Will also destroy menu
+                scene.transitions.removeTransitions(point.startState, point.endName, point.key);
+            }
+        }
+    });
     
     return menu;
 }
