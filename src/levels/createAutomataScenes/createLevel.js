@@ -141,20 +141,21 @@ export default class CreateLevel extends Level {
             
             if (object.isTransitionPoint){
                 object.parent.dragging = true;
-                console.log(object.parent.dragging);
+                object.parent.active = true;
+            
             // Object is a state 
             } else {
                 
-                // Update transitions going to state
+                // Sets transitions going to state to update
                 const state = object.parent;
                 for (let key of state.keys){
                     const transitionObjects = this.transitions.getAllObjects();
-
-                    // Remove letters
+                    // Remove letter menu if present 
                     if (transitionObjects[key].point.hasOwnProperty('letterArray')){
                         transitionObjects[key].point.removeLetters();
                     }
                     
+                    this.transitions.transitionObjects[key].point.active = false;
                     // Flag that position needs to be updated
                     this.transitions.setToUpdate(key);
                 }
@@ -164,14 +165,13 @@ export default class CreateLevel extends Level {
         this.input.on('dragend', (pointer, object, dragX, dragY) => {
             
             if (object.isTransitionPoint){
-                
                 // Delay reseting dragging flag to allow for pointerup without registering as clicking
                 this.time.delayedCall(50, () => {object.parent.dragging = false}, [], this);
             
             // Object is a state
             } else{ 
                 for (let key of object.parent.keys){                
-                    this.transitions.removeFromUpdate(key);
+                    this.transitions.removeFromUpdate(key); 
                 }
             }
         });

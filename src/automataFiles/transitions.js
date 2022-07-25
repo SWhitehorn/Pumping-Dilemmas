@@ -1,4 +1,4 @@
-import Colours from "../colours.js";
+import colours from "../colours.js";
 import TransitionPoint from "./transitionPoint.js";
 import Automata from "./automata.js";
 import { sameState, splitKey } from "../utils.js";
@@ -110,7 +110,8 @@ export default class Transitions{
                     // Get vector points
                     const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
                     const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
-                    const midPoint = this.getControlPoint(null, null, startPoint, endPoint, startState, stateNames[1]);
+                    
+                    const midPoint = this.getControlPoint(transitionData.line, key, startPoint, endPoint, startState, stateNames[1]);
                     
                     // Set control points of line
                     // transitionData.line.p0 = startPoint;
@@ -225,14 +226,14 @@ export default class Transitions{
      * @param {Triangle} tri - Phaser Geom Triangle 
      */
     drawTriangle(tri){
-        this.graphics.fillStyle(Colours.BLACK);
+        this.graphics.fillStyle(colours.BLACK);
         this.graphics.fillTriangleShape(tri);
         this.graphics.strokeTriangleShape(tri);
     }
 
     /**
      * Adds a direction arrow to the line
-     * @param {QuadraticBezier|Arc} line - Phaser object for visual transition
+     * @param {SplineCurve|Arc} line - Phaser object for visual transition
      * @param {State} endState - State to point at
      */
     addDirectionArrow(line, endState){
@@ -282,7 +283,7 @@ export default class Transitions{
      * @param {Object} point - Object with x and y properties 
      * @param {string} input - Single char string 
      * @param {string} key - String with name of start and end state
-     * @param {QuadtraticBezier} line - Phaser Curve QuadtraticBezier object
+     * @param {SplineCurve} line - Phaser Curve SplineCurve object
      */
     addLabel(endName, point, input, key, line){
         
@@ -297,8 +298,38 @@ export default class Transitions{
             if (!sameState(key)){
                 point = new Phaser.Math.Vector2(line.getPointAt(0.5));
             }
-            this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: '#ffffff' })    
-        }
+            this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: '#ffffff' });
+            if (!this.interactive){
+                let label = this.scene.rexUI.add.label({
+                    background: this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 5, COLOR_PRIMARY).setName('bgH'),
+                    text: this.scene.add.text(0, 0, input, {fontSize: '30px'}),
+                    align: 'center',
+                    space: {
+                        left: 5,
+                        right: 5,
+                        top: 0,
+                        bottom: 0,
+                    }
+                });
+    
+                let sizer = this.scene.rexUI.add.sizer({
+                    x: point.x, y: point.y,
+                    width: 30, height: 30,
+                    orientation: 0
+                })
+                    .add(
+                        label, // Game object
+                        0, // Proportion
+                        'center', // Align
+                        0, // Padding
+                        true // Expand
+                    ).changeOrigin(0,0).layout()
+    
+            } else {
+                this.addList(point, input)
+            }
+            }
+            
     }
 
     /**
@@ -313,6 +344,7 @@ export default class Transitions{
         if (transitionData.point.selected){
             transitionData.label.visible = false;
             this.addLetterMenu(transitionData.point, name, this.getControlPoint(transitionData.line, key), key);
+          
         } else {
             const y = sameState(key) ? point.y-this.SIZE : point.y;
             transitionData.label.setPosition(point.x+10, y);
@@ -339,7 +371,7 @@ export default class Transitions{
 
     /**
      *  Adds interactive component to transition from state to different state
-     * @param {QuadtraticBezier} line - Phaser object for line 
+     * @param {SplineCurve} line - Phaser object for line 
      * @param {State} startState - State state of transition
      * @param {State} endState - Ending state of transition
      * @param {string} key - String with key for transition
@@ -418,7 +450,7 @@ export default class Transitions{
 
     /**
      * Returns point for the line to be drawn through
-     * @param {QuadraticBezier|Null} curve - curve to get mid point of, or null
+     * @param {SplineCurve|Null} curve - curve to get mid point of, or null
      * @param {string} key - key for transition, or null
      * @param {Vector2} [startPoint] - must be included if other params are null
      * @param {Vector2} [endPoint] - must be included if other params are null
@@ -428,10 +460,14 @@ export default class Transitions{
      */
     getControlPoint(curve, key, startPoint, endPoint, state, endName){
         
-        // Already a point defined, return the position
-        if (key && this.transitionObjects[key].point && !this.transitionObjects[key].point.update){
+        // Point is active, return the position
+        if (key && this.transitionObjects[key].point && this.transitionObjects[key].point.active){
             return new Phaser.Math.Vector2(this.transitionObjects[key].point.getPosition());
         
+        // Transition is from self to self
+        } else if (sameState(key)){
+            return new Phaser.Math.Vector2(this.transitionObjects[key].point.getPosition());
+
         // Point is defined in automataData
         } else if (state && state.controlPoints && state.controlPoints[endName]){
             return state.controlPoints[endName];
@@ -440,7 +476,7 @@ export default class Transitions{
         } else if (curve){
             return new Phaser.Math.Vector2(curve.getPointAt(0.5));
         
-        // No transition point and curve is null 
+        // // No transition point and curve is null 
         } else {
             if (!startPoint || !endPoint){
                 console.error('No optional parameters')
@@ -501,6 +537,89 @@ export default class Transitions{
 
     removeFromUpdate(key){
         this.transitionObjects[key].update = false;
+    }
+
+    
+
+    addList(point, input){
+        let scene= this.scene;
+        const COLOR_PRIMARY = 0x4e342e;
+        const COLOR_LIGHT = 0x7b5e57;
+        const COLOR_DARK = 0x260e04;
+        
+        let options = scene.alphabet;
+        const createTextObject = function (scene, text) {
+            return scene.add.text(0, 0, text, { fontSize: 20 })
+        }
+
+        
+        let dropDownList = scene.rexUI.add.dropDownList({
+            x: point.x, y: point.y,
+
+            background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, COLOR_PRIMARY),
+            icon: scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, COLOR_LIGHT),
+            text: createTextObject(scene, input).setFixedSize(150, 0),
+
+            space: {
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10,
+                icon: 10
+            },
+
+            options: options,
+
+            list: {
+                createBackgroundCallback: function (scene) {
+                    return scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, COLOR_DARK);
+                },
+                createButtonCallback: function (scene, option, index, options) {
+                    var text = option
+                    var button = scene.rexUI.add.label({
+                        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0),
+
+                        text: createTextObject(scene, text),
+
+                        space: {
+                            left: 10,
+                            right: 10,
+                            top: 10,
+                            bottom: 10,
+                            icon: 10
+                        }
+                    });
+                    button.value = undefined;
+
+                    return button;
+                },
+
+                // scope: dropDownList
+                onButtonClick: function (button, index, pointer, event) {
+                    // Set label text, and value
+                    scene.text = button.text;
+                    scene.value = button.value;
+                    print.text += `Select ${button.text}, value=${button.value}\n`;
+                },
+
+                // scope: dropDownList
+                onButtonOver: function (button, index, pointer, event) {
+                    button.getElement('background').setStrokeStyle(1, 0xffffff);
+                },
+
+                // scope: dropDownList
+                onButtonOut: function (button, index, pointer, event) {
+                    button.getElement('background').setStrokeStyle();
+                },
+            },
+
+            setValueCallback: function (dropDownList, value, previousValue) {
+                console.log(value);
+            },
+            value: undefined
+
+        })
+            .layout();
     }
 
 }

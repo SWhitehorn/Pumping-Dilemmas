@@ -31,7 +31,9 @@ export default class TransitionPoint {
         this.graphic = this.scene.add.circle(x, y, this.SIZE, Colours.BLACK).setInteractive();
         this.graphic.parent = this;
         this.graphic.isTransitionPoint = true;
-        this.update = false;
+        
+        // Flags
+        this.active = false; // Whether point has moved from default (straight-line) position
 
         this.graphic.on('pointerup', (pointer) => {
                 
