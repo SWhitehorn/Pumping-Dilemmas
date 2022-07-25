@@ -66,3 +66,15 @@ export const drawTriangle = (scene, tri) => {
     scene.graphics.fillTriangleShape(tri);
     scene.graphics.strokeTriangleShape(tri);
 }
+
+/**
+ * Calculates how far left a word should start drawing so it is centered on screen
+ * @param {String} word 
+ */
+export const calculateStartingX = (word) => {
+    const width = 800;
+    const letterWidth = 35;
+
+    const wordWidth = letterWidth * word.length;
+    return width/2 - wordWidth/2;
+}

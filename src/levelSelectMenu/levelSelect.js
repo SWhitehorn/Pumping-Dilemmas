@@ -24,8 +24,7 @@ export default class LevelSelect extends Phaser.Scene {
     }
 
     /**
-     * 
-     * @param {} accepted 
+     * @param {Input} 
      */
     create({passed}){
         
@@ -66,6 +65,9 @@ export default class LevelSelect extends Phaser.Scene {
 
     }
 
+    /**
+     * Adds non-node objects to screen
+     */
     addUI(){
         this.UI.back = this.add.image(750, 30, 'backArrow').setInteractive().setScrollFactor(0);
         this.UI.back.visible = false;
@@ -84,9 +86,6 @@ export default class LevelSelect extends Phaser.Scene {
         this.UI.debug.on('pointerup', () => {
             this.scene.start('IntroScene');
         });
-    }
-
-    
-    
+    }    
 
 }

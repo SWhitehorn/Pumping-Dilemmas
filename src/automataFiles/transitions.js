@@ -237,8 +237,6 @@ export default class Transitions{
      */
     addDirectionArrow(line, endState){
         
-        console.log(line.type);
-
         // Transition from one state to other
         if (line.type === "SplineCurve"){
             // Calculate distance along line
