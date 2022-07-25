@@ -128,9 +128,9 @@ export default class CreateLevel extends Level {
                 object.inner.y = pointer.y;
             }
 
-            // Object is transitionPoint
-            if (object.isTransitionPoint){
-                object.parent.setPosition(pointer.x, pointer.y);
+            // Object is menu
+            if (object.isMenu){
+                object.parentPoint.setPosition(pointer.x, pointer.y);
             } else {
                 object.parent.shadow.x = pointer.x+5;
                 object.parent.shadow.y = pointer.y+10;
@@ -139,9 +139,12 @@ export default class CreateLevel extends Level {
 
         this.input.on('dragstart', (pointer, object, dragX, dragY) => {
             
-            if (object.isTransitionPoint){
-                object.parent.dragging = true;
-                object.parent.active = true;
+            if (object.isMenu){
+                let TP = object.parentPoint;
+                
+                TP.dragging = true;
+                TP.active = true;
+                object.disableClick();
             
             // Object is a state 
             } else {
@@ -164,9 +167,9 @@ export default class CreateLevel extends Level {
 
         this.input.on('dragend', (pointer, object, dragX, dragY) => {
             
-            if (object.isTransitionPoint){
+            if (object.isMenu){
                 // Delay reseting dragging flag to allow for pointerup without registering as clicking
-                this.time.delayedCall(50, () => {object.parent.dragging = false}, [], this);
+                this.time.delayedCall(50, () => {object.parentPoint.dragging = false; object.enableClick();}, [], this);
             
             // Object is a state
             } else{ 

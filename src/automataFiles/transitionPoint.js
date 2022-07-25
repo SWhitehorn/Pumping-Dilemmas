@@ -199,6 +199,37 @@ export default class TransitionPoint {
         }
     } 
 
+    changeInput(letter){
+        const transitions = this.startState.transitions;
+
+        if (transitions.hasOwnProperty(letter)){
+            
+            const index = transitions[letter].indexOf(this.endName);
+
+            // Transition between states over letter is defined, remove it
+            if (index != -1){
+                
+                transitions[letter].splice(index, 1);
+                this.inputs.splice(this.inputs.indexOf(letter), 1);
+                
+                // Delete data if array is empty
+                if (transitions[letter].length === 0){
+                    delete transitions[letter]; 
+                }
+            
+            // Transition over input is defined, but not to end state
+            } else {
+                transitions[letter].splice(0, 0, this.endName);
+                this.inputs.push(letter);
+            }
+        
+        // Transition over input is not defined, create new transition
+        } else {
+            transitions[letter] = [this.endName];
+            this.inputs.push(letter);
+        }
+    }
+
 
     /**
      * Render letter in green if part of transition, red if not

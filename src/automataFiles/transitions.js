@@ -2,6 +2,7 @@ import colours from "../colours.js";
 import TransitionPoint from "./transitionPoint.js";
 import Automata from "./automata.js";
 import { sameState, splitKey } from "../utils.js";
+import createMenu from "./letterMenu.js";
 import "../typedefs/typedefs.js"
 
 
@@ -142,8 +143,6 @@ export default class Transitions{
                 
                 // Normal transition
                 if (stateNames[0] !== stateNames[1]){
-                    
-
 
                     // Update control point of line
                     const controlPoint = this.getControlPoint(transitionData.line, key, null, null);
@@ -212,12 +211,14 @@ export default class Transitions{
 
             // Draw line
             line.draw(this.graphics);
-            this.addLabel(endName, mid, input, key, line);
+            
             this.addDirectionArrow(line, endState);
 
             // Add interactive component to line
             if (this.interactive){
                 this.setLineInteractivity(line, startState, endState, key, input, endName);
+            } else {
+                this.addLabel(endName, mid, input, key, line);
             }
         }
     }
@@ -298,38 +299,15 @@ export default class Transitions{
             if (!sameState(key)){
                 point = new Phaser.Math.Vector2(line.getPointAt(0.5));
             }
-            this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: '#ffffff' });
-            if (!this.interactive){
-                let label = this.scene.rexUI.add.label({
-                    background: this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 5, COLOR_PRIMARY).setName('bgH'),
-                    text: this.scene.add.text(0, 0, input, {fontSize: '30px'}),
-                    align: 'center',
-                    space: {
-                        left: 5,
-                        right: 5,
-                        top: 0,
-                        bottom: 0,
-                    }
-                });
-    
-                let sizer = this.scene.rexUI.add.sizer({
-                    x: point.x, y: point.y,
-                    width: 30, height: 30,
-                    orientation: 0
-                })
-                    .add(
-                        label, // Game object
-                        0, // Proportion
-                        'center', // Align
-                        0, // Padding
-                        true // Expand
-                    ).changeOrigin(0,0).layout()
-    
-            } else {
-                this.addList(point, input)
-            }
-            }
             
+            if (!this.interactive){
+                this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: '#ffffff' });
+
+            } else {
+
+                this.transitionObjects[key].label = createMenu(this.scene, point, input, this.transitionObjects[key].point).layout();
+            }
+        }
     }
 
     /**
@@ -347,8 +325,8 @@ export default class Transitions{
           
         } else {
             const y = sameState(key) ? point.y-this.SIZE : point.y;
-            transitionData.label.setPosition(point.x+10, y);
-            transitionData.label.text = transitionData.point.inputs.toString();   
+            transitionData.label.setPosition(point);
+            transitionData.label.setText(transitionData.point.inputs.toString());
         }
     }
     
@@ -388,6 +366,7 @@ export default class Transitions{
 
         // Add point to transitionObjects
         this.transitionObjects[key].point = point;
+        this.addLabel(endName, mid, input, key, line);
                 
        }
 
@@ -537,89 +516,6 @@ export default class Transitions{
 
     removeFromUpdate(key){
         this.transitionObjects[key].update = false;
-    }
-
-    
-
-    addList(point, input){
-        let scene= this.scene;
-        const COLOR_PRIMARY = 0x4e342e;
-        const COLOR_LIGHT = 0x7b5e57;
-        const COLOR_DARK = 0x260e04;
-        
-        let options = scene.alphabet;
-        const createTextObject = function (scene, text) {
-            return scene.add.text(0, 0, text, { fontSize: 20 })
-        }
-
-        
-        let dropDownList = scene.rexUI.add.dropDownList({
-            x: point.x, y: point.y,
-
-            background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, COLOR_PRIMARY),
-            icon: scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, COLOR_LIGHT),
-            text: createTextObject(scene, input).setFixedSize(150, 0),
-
-            space: {
-                left: 10,
-                right: 10,
-                top: 10,
-                bottom: 10,
-                icon: 10
-            },
-
-            options: options,
-
-            list: {
-                createBackgroundCallback: function (scene) {
-                    return scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, COLOR_DARK);
-                },
-                createButtonCallback: function (scene, option, index, options) {
-                    var text = option
-                    var button = scene.rexUI.add.label({
-                        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0),
-
-                        text: createTextObject(scene, text),
-
-                        space: {
-                            left: 10,
-                            right: 10,
-                            top: 10,
-                            bottom: 10,
-                            icon: 10
-                        }
-                    });
-                    button.value = undefined;
-
-                    return button;
-                },
-
-                // scope: dropDownList
-                onButtonClick: function (button, index, pointer, event) {
-                    // Set label text, and value
-                    scene.text = button.text;
-                    scene.value = button.value;
-                    print.text += `Select ${button.text}, value=${button.value}\n`;
-                },
-
-                // scope: dropDownList
-                onButtonOver: function (button, index, pointer, event) {
-                    button.getElement('background').setStrokeStyle(1, 0xffffff);
-                },
-
-                // scope: dropDownList
-                onButtonOut: function (button, index, pointer, event) {
-                    button.getElement('background').setStrokeStyle();
-                },
-            },
-
-            setValueCallback: function (dropDownList, value, previousValue) {
-                console.log(value);
-            },
-            value: undefined
-
-        })
-            .layout();
     }
 
 }
