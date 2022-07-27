@@ -10,6 +10,7 @@ import LoopLevel from "./levels/loopScenes/loopLevel.js";
 import LevelCreator from "./levels/createAutomataScenes/levelCreator.js";
 import LevelEnd from "./levels/levelEndScene.js";
 import TestCreateLevel from "./levels/createAutomataScenes/testCreate.js";
+import colours from "./colours.js";
 
 
 const scenes = [LevelSelect, 
@@ -28,7 +29,7 @@ const scenes = [LevelSelect,
 
 const config = {
     type: Phaser.AUTO,
-    backgroundColor: "88add5",
+    backgroundColor: colours.BLUE,
     width: 800,
     height: 500,
     scene: scenes

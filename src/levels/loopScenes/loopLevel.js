@@ -1,6 +1,7 @@
 import Level from "../levelTemplate.js";
 import colours from "../../colours.js";
 import "../../typedefs/typedefs.js";
+import { calculateStartingX } from "../../utils.js";
 
 /**
  * @typedef {Object} Input
@@ -50,6 +51,7 @@ export default class LoopLevel extends Level {
         this.word = word; // Word that computation is performed on
        
         // Add letters individually
+        this.startingX = calculateStartingX(this.word);
         this.drawLetters(0);
         
         // Add text for selected text and number of repeats
@@ -71,7 +73,8 @@ export default class LoopLevel extends Level {
         this.levelObjects.repeats = this.add.text(0, 0, "", { fontSize: '20px', color: colours.TEXTRED })
         this.levelObjects.repeats.num = repeats;
 
-    }
+        
+    } 
 
     /** Called every frame to update game objects */
     update(){
@@ -303,7 +306,6 @@ export default class LoopLevel extends Level {
         // Decrease button
         this.textObjects.decrease = this.add.text(650, 450, "Decrease", {fontSize: '30px', color: '#ffffff'}).setInteractive();
         this.textObjects.decrease.on('pointerup', () => {
-            console.log('click')
             if (this.levelObjects.repeats.num > 0){ this.levelObjects.repeats.num -= 1; }
         });  
     }

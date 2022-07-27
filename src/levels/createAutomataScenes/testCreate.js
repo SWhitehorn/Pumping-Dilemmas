@@ -2,9 +2,11 @@ import Level from "../levelTemplate.js";
 import "../../typedefs/typedefs.js";
 import LoopLevel from "../loopScenes/loopLevel.js";
 import colours from "../../colours.js";
+import { calculateStartingX } from "../../utils.js";
 
 export default class TestCreateLevel extends Level {
 
+    // Default value - startingX should be overridden for each word to ensure they are centred.
     startingX = 300;
     textY = 400;
 
@@ -17,7 +19,7 @@ export default class TestCreateLevel extends Level {
         
         //Flags
         this.runTests = true;
-       this.drawingLetters = false;
+        this.drawingLetters = false;
         this.passedTests = false;
 
 
@@ -82,6 +84,7 @@ export default class TestCreateLevel extends Level {
 
     startDrawingLetters(){
         this.drawingLetters = true;
+        this.startingX = calculateStartingX(this.word);
         this.drawLetters(0);
     }
 

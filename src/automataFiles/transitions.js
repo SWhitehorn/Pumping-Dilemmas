@@ -1,7 +1,8 @@
-import Colours from "../colours.js";
+import colours from "../colours.js";
 import TransitionPoint from "./transitionPoint.js";
 import Automata from "./automata.js";
 import { sameState, splitKey } from "../utils.js";
+import createMenu from "./letterMenu.js";
 import "../typedefs/typedefs.js"
 
 
@@ -110,13 +111,9 @@ export default class Transitions{
                     // Get vector points
                     const startPoint = new Phaser.Math.Vector2(startState.graphic.x, startState.graphic.y);
                     const endPoint = new Phaser.Math.Vector2(endState.graphic.x, endState.graphic.y);
-                    const midPoint = this.getControlPoint(null, null, startPoint, endPoint, startState, stateNames[1]);
                     
-                    // Set control points of line
-                    // transitionData.line.p0 = startPoint;
-                    // transitionData.line.p1 = midPoint;
-                    // transitionData.line.p2 = endPoint;
-
+                    const midPoint = this.getControlPoint(transitionData.line, key, startPoint, endPoint, startState, stateNames[1]);
+                    
                     transitionData.line.points = [startPoint, midPoint, endPoint]
 
                     // Update position of interactive point
@@ -141,8 +138,6 @@ export default class Transitions{
                 
                 // Normal transition
                 if (stateNames[0] !== stateNames[1]){
-                    
-
 
                     // Update control point of line
                     const controlPoint = this.getControlPoint(transitionData.line, key, null, null);
@@ -177,17 +172,13 @@ export default class Transitions{
     drawSingleTransition(startState, endState, input, key, endName){
 
         // Transitions is from state to itself
-        if (startState === endState){
+        if (sameState(key)){
             
             // Add line by adding second circle and stroking outline
             const line = new Phaser.Geom.Circle(startState.graphic.x, startState.graphic.y-this.SIZE, this.SIZE);
             this.transitionObjects[key].line = line;
 
             this.graphics.strokeCircleShape(line);
-            
-            const labelY = startState.graphic.y - (this.SIZE*3);
-
-            this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key, line);
         
             // Add direction arrow
             this.addDirectionArrow(line, endState);
@@ -195,6 +186,9 @@ export default class Transitions{
             // Allow players to remove the transition
             if (this.interactive){    
                 this.setCircleInteractivity(line, startState, input, key, endName);
+            } else {
+                const labelY = startState.graphic.y - (this.SIZE*3);
+                this.addLabel(endName, {x:startState.graphic.x, y:labelY}, input, key, line);
             }
         }
         // Transition between states
@@ -211,12 +205,14 @@ export default class Transitions{
 
             // Draw line
             line.draw(this.graphics);
-            this.addLabel(endName, mid, input, key, line);
+            
             this.addDirectionArrow(line, endState);
 
             // Add interactive component to line
             if (this.interactive){
                 this.setLineInteractivity(line, startState, endState, key, input, endName);
+            } else {
+                this.addLabel(endName, mid, input, key, line);
             }
         }
     }
@@ -225,20 +221,18 @@ export default class Transitions{
      * @param {Triangle} tri - Phaser Geom Triangle 
      */
     drawTriangle(tri){
-        this.graphics.fillStyle(Colours.BLACK);
+        this.graphics.fillStyle(colours.BLACK);
         this.graphics.fillTriangleShape(tri);
         this.graphics.strokeTriangleShape(tri);
     }
 
     /**
      * Adds a direction arrow to the line
-     * @param {QuadraticBezier|Arc} line - Phaser object for visual transition
+     * @param {SplineCurve|Arc} line - Phaser object for visual transition
      * @param {State} endState - State to point at
      */
     addDirectionArrow(line, endState){
         
-        console.log(line.type);
-
         // Transition from one state to other
         if (line.type === "SplineCurve"){
             // Calculate distance along line
@@ -284,7 +278,7 @@ export default class Transitions{
      * @param {Object} point - Object with x and y properties 
      * @param {string} input - Single char string 
      * @param {string} key - String with name of start and end state
-     * @param {QuadtraticBezier} line - Phaser Curve QuadtraticBezier object
+     * @param {SplineCurve} line - Phaser Curve SplineCurve object
      */
     addLabel(endName, point, input, key, line){
         
@@ -299,7 +293,14 @@ export default class Transitions{
             if (!sameState(key)){
                 point = new Phaser.Math.Vector2(line.getPointAt(0.5));
             }
-            this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: '#ffffff' })    
+            
+            if (!this.interactive){
+                this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: '#ffffff' });
+
+            } else {
+
+                this.transitionObjects[key].label = createMenu(this.scene, point, input, this.transitionObjects[key].point).layout();
+            }
         }
     }
 
@@ -315,10 +316,11 @@ export default class Transitions{
         if (transitionData.point.selected){
             transitionData.label.visible = false;
             this.addLetterMenu(transitionData.point, name, this.getControlPoint(transitionData.line, key), key);
+          
         } else {
             const y = sameState(key) ? point.y-this.SIZE : point.y;
-            transitionData.label.setPosition(point.x+10, y);
-            transitionData.label.text = transitionData.point.inputs.toString();   
+            transitionData.label.setPosition(point);
+            transitionData.label.setText(transitionData.point.inputs.toString());
         }
     }
     
@@ -335,13 +337,14 @@ export default class Transitions{
         
         const point = new TransitionPoint(line.x, line.y-this.SIZE, this.scene, key);
         point.setStart(state).setEnd(state, name).addInput(input);
-        
         this.transitionObjects[key].point = point;
+        const labelY = state.graphic.y - (this.SIZE*3);
+        this.addLabel(name, {x:state.graphic.x, y:labelY}, input, key, line);
     }
 
     /**
      *  Adds interactive component to transition from state to different state
-     * @param {QuadtraticBezier} line - Phaser object for line 
+     * @param {SplineCurve} line - Phaser object for line 
      * @param {State} startState - State state of transition
      * @param {State} endState - Ending state of transition
      * @param {string} key - String with key for transition
@@ -354,10 +357,11 @@ export default class Transitions{
         
         // Create transition point
         const point = new TransitionPoint(mid.x, mid.y, this.scene, key);
-        point.setStart(startState).setEnd(endState, endName).addInput(input).setDraggable();
+        point.setStart(startState).setEnd(endState, endName).addInput(input);
 
         // Add point to transitionObjects
         this.transitionObjects[key].point = point;
+        this.addLabel(endName, mid, input, key, line);
                 
        }
 
@@ -368,12 +372,12 @@ export default class Transitions{
 
     /**
      * Removes all transitions from first state to second
-     * @param {State} startState 
-     * @param {string} endStateName 
      * @param {string} key - key for transition
      */
-    removeTransitions(startState, endStateName, key){
+    removeTransitions(key){
         
+        const [startStateName, endStateName] = splitKey(key);
+        const startState = this.scene.automata.getState(startStateName);
         const transitions = Object.entries(startState.transitions);
         
         // Iterate through [letter, states], check for endState in states
@@ -393,7 +397,11 @@ export default class Transitions{
             }
         });
 
-        delete this.transitionObjects[key];
+        if (this.transitionObjects[key]){
+            this.transitionObjects[key].point.destroy();
+            delete this.transitionObjects[key]
+        }
+        delete startState.keys.splice(startState.keys.indexOf(key), 1);
     }
 
     /**
@@ -420,7 +428,7 @@ export default class Transitions{
 
     /**
      * Returns point for the line to be drawn through
-     * @param {QuadraticBezier|Null} curve - curve to get mid point of, or null
+     * @param {SplineCurve|Null} curve - curve to get mid point of, or null
      * @param {string} key - key for transition, or null
      * @param {Vector2} [startPoint] - must be included if other params are null
      * @param {Vector2} [endPoint] - must be included if other params are null
@@ -430,10 +438,14 @@ export default class Transitions{
      */
     getControlPoint(curve, key, startPoint, endPoint, state, endName){
         
-        // Already a point defined, return the position
-        if (key && this.transitionObjects[key].point && !this.transitionObjects[key].point.update){
+        // Point is active, return the position
+        if (key && this.transitionObjects[key].point && this.transitionObjects[key].point.active){
             return new Phaser.Math.Vector2(this.transitionObjects[key].point.getPosition());
         
+        // Transition is from self to self
+        } else if (sameState(key)){
+            return new Phaser.Math.Vector2(this.transitionObjects[key].point.getPosition());
+
         // Point is defined in automataData
         } else if (state && state.controlPoints && state.controlPoints[endName]){
             return state.controlPoints[endName];
@@ -442,7 +454,7 @@ export default class Transitions{
         } else if (curve){
             return new Phaser.Math.Vector2(curve.getPointAt(0.5));
         
-        // No transition point and curve is null 
+        // // No transition point and curve is null 
         } else {
             if (!startPoint || !endPoint){
                 console.error('No optional parameters')

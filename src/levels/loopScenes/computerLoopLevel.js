@@ -8,7 +8,7 @@ import LoopLevel from "./loopLevel.js";
  */
  export default class ComputerLoopLevel extends LoopLevel{
 
-    numbers = [0];
+    numbers = [2];
 
     constructor(){
         super('ComputerLoopLevel');
@@ -75,7 +75,6 @@ import LoopLevel from "./loopLevel.js";
     }
 
     endingScreen(){
-        console.log('ending');
         this.add.rectangle(0, 0, 800, 500, colours.BLACK, 0.8).setOrigin(0);
         this.scene.pause();
         this.scene.run('LevelEnd', {prevScene:'ComputerLoopLevel'})

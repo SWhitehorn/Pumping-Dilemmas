@@ -1,6 +1,7 @@
 import Level from "../levelTemplate.js";
-import { getNextLetter, createKey } from "../../utils.js";
+import { getNextLetter, createKey, withinBounds } from "../../utils.js";
 import "../../typedefs/typedefs.js";
+import colours from "../../colours.js";
 
 
 /**
@@ -44,7 +45,14 @@ export default class CreateLevel extends Level {
         // Flags
         this.draw = false; // Flag for whether the player is currently drawing transition
         this.interactive = true; // Flag for whether player can interact with automata
+        this.deterministic = true; // Flag for whether FA has to be deterministic
         
+        this.startZone = {
+            shape: this.add.rexRoundRectangle(400, 425, 400, 100, 30, 0xFDFFFC).setAlpha(0.75),
+            border: this.add.rexRoundRectangle(400, 425, 400, 100, 30).setStrokeStyle(3, 0x010A12)
+        };
+
+        this.background = this.add.rectangle(0, 0, 800, 500).setOrigin(0).setInteractive();
         
         super.create(this.inputAutomata, language);
         this.transitions.setInteractive();
@@ -61,8 +69,9 @@ export default class CreateLevel extends Level {
             };
           });
 
-
-        // Iterate through states
+          
+        
+          // Iterate through states
         for (let stateName in this.automata.states){
             let state = this.automata.states[stateName];
             this.input.setDraggable(state.graphic);
@@ -94,6 +103,12 @@ export default class CreateLevel extends Level {
                 this.graphics.strokeLineShape(line);
             }
         }); 
+
+        this.background.on('pointerup', pointer => {
+            if (pointer.rightButtonReleased()){
+                this.draw = false;
+            }
+        });
     }
 
     /**
@@ -105,7 +120,7 @@ export default class CreateLevel extends Level {
         }
         this.transitions.updateTransitions(); 
 
-        if (this.automata.allStatesUsed()){
+        if (this.automata.allStatesUsed() && this.validFA()){
             this.next.text = "next";
         } else {
             this.next.text = "";
@@ -118,7 +133,7 @@ export default class CreateLevel extends Level {
     setDrag(){
         this.input.dragDistanceThreshold = 10;
 
-        this.input.on('drag', (pointer, object, dragX, dragY) => {
+        this.input.on('drag', (pointer, object) => {
             
             object.x = pointer.x;
             object.y = pointer.y;
@@ -128,50 +143,61 @@ export default class CreateLevel extends Level {
                 object.inner.y = pointer.y;
             }
 
-            // Object is transitionPoint
-            if (object.isTransitionPoint){
-                object.parent.setPosition(pointer.x, pointer.y);
+            // Object is menu
+            if (object.isMenu){
+                object.parentPoint.setPosition(pointer.x, pointer.y);
             } else {
                 object.parent.shadow.x = pointer.x+5;
                 object.parent.shadow.y = pointer.y+10;
             }
         });
 
-        this.input.on('dragstart', (pointer, object, dragX, dragY) => {
+        this.input.on('dragstart', (pointer, object) => {
             
-            if (object.isTransitionPoint){
-                object.parent.dragging = true;
-                console.log(object.parent.dragging);
+            if (object.isMenu){
+                let TP = object.parentPoint;
+                
+                TP.dragging = true;
+                TP.active = true;
+                object.disableClick();
+            
             // Object is a state 
             } else {
                 
-                // Update transitions going to state
+                // Sets transitions going to state to update
                 const state = object.parent;
                 for (let key of state.keys){
                     const transitionObjects = this.transitions.getAllObjects();
-
-                    // Remove letters
+                    // Remove letter menu if present 
                     if (transitionObjects[key].point.hasOwnProperty('letterArray')){
                         transitionObjects[key].point.removeLetters();
                     }
                     
+                    this.transitions.transitionObjects[key].point.active = false;
                     // Flag that position needs to be updated
                     this.transitions.setToUpdate(key);
                 }
             }
         });
 
-        this.input.on('dragend', (pointer, object, dragX, dragY) => {
-            
-            if (object.isTransitionPoint){
-                
+        this.input.on('dragend', (pointer, object) => {
+        
+            if (withinBounds(this.startZone.shape, {x: pointer.x, y: pointer.y})){
+                if (object.isMenu){
+
+                } else {
+                    this.automata.resetState(object.parent)
+                }
+            }
+
+            if (object.isMenu){
                 // Delay reseting dragging flag to allow for pointerup without registering as clicking
-                this.time.delayedCall(50, () => {object.parent.dragging = false}, [], this);
+                this.time.delayedCall(50, () => {object.parentPoint.dragging = false; object.enableClick();}, [], this);
             
             // Object is a state
             } else{ 
                 for (let key of object.parent.keys){                
-                    this.transitions.removeFromUpdate(key);
+                    this.transitions.removeFromUpdate(key); 
                 }
             }
         });
@@ -204,7 +230,16 @@ export default class CreateLevel extends Level {
             this.transitions.newTransition(key, input);
         }
     }
-    
 
-    
+    /**
+     *  Checks whether automaton is valid for level
+     * @returns {boolean} True if automaton is deterministic, or if non-deterministic automata are allowed.
+     */
+    validFA(){
+        if (!this.deterministic){
+            return true;
+        } else {
+            return this.automata.checkDeterministic();
+        }
+    }
 }

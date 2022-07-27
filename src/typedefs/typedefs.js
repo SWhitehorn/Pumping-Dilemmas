@@ -21,4 +21,5 @@
  * @property {TransitionPoint} point - Object with data about interactive transition point
  * @property {Object} label - Text object for transition label 
  * @property {Object} line - Geom object for visual line
+ * @property {Boolean} update - Flags whether transition needs updating since last update cycle
  */

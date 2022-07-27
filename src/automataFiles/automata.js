@@ -39,6 +39,10 @@ export default class Automata {
         }
     }
 
+    getAllStates(){
+        return this.states;
+    }
+
     getStart(){
         return this.states[this.start];
     }
@@ -120,39 +124,53 @@ export default class Automata {
         state.keys = [];
     }
 
-    /** First half of computation, resets previous state and checks for empty word */
-    resetPreviousState(){
+    /** 
+     * First half of computation, resets previous state and checks for empty word 
+     * @param {string} currState - name of current state 
+     * @param {String} word - Current word for computation
+     * @param {String} key - Key for previous transition
+    */
+    resetPreviousState(currState, word, key){
         
+        console.log(word);
+
         // Set previous state to black
-        const prevState = this.states[this.currState];
+        const prevState = this.states[currState];
         prevState.graphic.setFillStyle(colours.WHITE, 1);
+
+        // Set previous label to black
+        if (key){
+            this.scene.transitions.transitionObjects[key].label.setColor(colours.TEXTWHITE);
+        }
         
         if (prevState.accepting){ 
             prevState.graphic.inner.setFillStyle(colours.WHITE, 1);
         }
 
         // Check if word is empty. If so, end computation
-        if (!this.scene.word){
+        if (!word){
+            console.log('ending');
             this.endComputation();
-            return;
-        } 
-        
-        
-        this.scene.time.delayedCall(60, this.computation, [prevState], this);
+        } else {
+            this.scene.time.delayedCall(60, this.computation, [currState, word], this);
+        }
     }
 
     /** 
      * Peform a single step of computation 
-     * @param {State} prevState - The previous state of the computation 
+     * @param {String} prevState - Name of the previous state of the computation 
+     * @param {String} word - Current word for computation
      * */
-    computation(prevState){        
+    computation(prevStateName, word){        
 
         // Get first symbol of word
-        let symbol = this.scene.word[0];
-        this.scene.word = this.scene.word.slice(1);
+        let symbol = word[0];
+        word = word.slice(1);
+        let prevState = this.getState(prevStateName);
         
         // Exit if transition over symbol is not defined
-        if (!(symbol in this.getState(this.currState).transitions)){
+        console.log(prevState.transitions);
+        if (!(symbol in prevState.transitions) && !("ε" in prevState.transitions)){
 
             // Colour state red
             prevState.graphic.setFillStyle(colours.RED, 1);
@@ -164,37 +182,47 @@ export default class Automata {
         }
         
         // Index transitions of state based on symbol
-        this.currState = this.getState(this.currState).transitions[symbol][0];
-
-        let state = this.getState(this.currState);
-        
-
-        // Colour state green or red is word is empty, having taken tranition
-        if (!this.scene.word){
+        let states = prevState.transitions[symbol];
+        for (let currState of states){
             
-            // Change to green if accepting, red if not
-            if (state.accepting){
-                state.graphic.setFillStyle(colours.GREEN, 1);
-                state.graphic.inner.setFillStyle(colours.GREEN, 1);
-                this.endComputation(true);
+            let state = this.getState(currState);
+            
+            // Highlight transition
+            const key = createKey(prevStateName, currState);
+            const label = this.scene.transitions.transitionObjects[key].label;
+            // Ensure that label is not a dropDownMenu object
+            if (label.type === "Text"){
+                label.setColor(colours.TEXTRED);
             }
+
+            // Colour state green or red is word is empty, having taken tranition
+            if (!word){
+                
+                // Change to green if accepting, red if not
+                if (state.accepting){
+                    state.graphic.setFillStyle(colours.GREEN, 1);
+                    state.graphic.inner.setFillStyle(colours.GREEN, 1);
+                    this.endComputation(true);
+                }
+                else{
+                    state.graphic.setFillStyle(colours.RED, 1); 
+                    this.endComputation();
+                }
+            }
+            
+            // Continue computation
             else{
-                state.graphic.setFillStyle(colours.RED, 1); 
-                this.endComputation();
-            }
-        }
-        
-        // Continue computation
-        else{
-            // Highlight current state in yellow;
-            state.graphic.setFillStyle(colours.YELLOW, 1);
-            if (state.accepting){ // Check if state has inner ring
-                state.graphic.inner.setFillStyle(this.THICKNESS, colours.YELLOW, 1);
-            }
-            
-            // Delay next step of compuation to allow for visual display
-            this.scene.time.delayedCall(500, this.resetPreviousState, [], this);
+                
+                // Highlight current state in yellow;
+                state.graphic.setFillStyle(colours.YELLOW, 1);
+                if (state.accepting){ // Check if state has inner ring
+                    state.graphic.inner.setFillStyle(this.THICKNESS, colours.YELLOW, 1);
+                }
+                
+                // Delay next step of compuation to allow for visual display
+                this.scene.time.delayedCall(500, this.resetPreviousState, [currState, word, key], this);
 
+            }
         }
 
         // Draw computed word for level one
@@ -204,8 +232,9 @@ export default class Automata {
     
     }
     
-    /** Reset all states to standard colours */
+    /** Reset all states and transitions to standard colours */
     clearStates(){
+        
         for (let s in this.states){            
             
             let state = this.states[s];
@@ -216,6 +245,11 @@ export default class Automata {
                 state.graphic.inner.setFillStyle(colours.WHITE, 1);
             }
         }
+
+        for (let key in this.scene.transitions.transitionObjects){
+            this.scene.transitions.transitionObjects[key].label.setColor(colours.TEXTWHITE);
+        }
+
         this.scene.computing = false;
     }
 
@@ -260,4 +294,58 @@ export default class Automata {
         }
         return true;
     }
+
+    /**
+     * Checks whether automaton is deterministic. Conditions are:
+     * 1: every symbol in the alphabet has a defined transition for each state, 
+     * 2: there are no ε-transitions defined,
+     * 3: each symbol has only one transition for each state.
+     * @returns {boolean} True if transition for state is deterministic
+    */
+    checkDeterministic(){
+        
+        const deterministicTransition = (state) => {
+            
+            return (
+                Object.keys(state.transitions)
+                .every( letter => { return this.scene.alphabet.includes(letter) }, this)
+
+                &&
+                this.scene.alphabet
+                .every( letter => { return Object.keys(state.transitions).includes(letter) })
+
+                &&
+                Object.values(state.transitions)
+                .every( transitionList => { return transitionList.length === 1 })
+            );
+        }
+        
+        return Object.values(this.states).every(deterministicTransition, this);
+
+    }
+
+    resetState(state){
+        state.graphic.x = state.x;
+        state.graphic.y = state.y;
+        state.shadow.x = state.x +5;
+        state.shadow.y = state.shadow+10;
+
+        if (state.accepting){
+            state.graphic.inner.x = state.x;
+            state.graphic.inner.y = state.y;
+        }
+
+
+        const keyCopy = [...state.keys];
+        
+        for (let key of keyCopy){
+            console.log("Key", key);
+            this.scene.transitions.removeTransitions(key);
+        };
+
+        state.keys = [];
+        state.transitions = {};
+        
+    }
+
 }

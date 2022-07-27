@@ -1,9 +1,24 @@
+
+/**
+ * Class for testing membership of CFG
+ * @class
+ */
 export class CYK {
     
+    /**
+     * Creates new instance with specified ruleset
+     * @param {String} grammar - String for grammar. Rules are of form "A -> BC | DE", seperated by commas. 
+     *                           First rule must be S ->
+     */
     constructor(grammar){
         this.productions = this.parseRules(grammar);
     }
 
+    /**
+     * 
+     * @param {String} grammar - input grammar
+     * @returns {String} parsed ruleset
+     */
     parseRules(grammar) {
 
         // Convert newlines to comma and remove spaces and dots
@@ -24,10 +39,14 @@ export class CYK {
         return productions;
     }
 
+    /**
+     * 
+     * @param {String} word - Word to test
+     * @returns {Boolean} True if word is accpeted  
+     */
     testMembership(word){
         this.word = word;
         
-
         // Create n*n 2d array
         this.table = [];
         for (let i = 0; i < this.word.length; i++) {
@@ -51,7 +70,9 @@ export class CYK {
             .map(production => production.producer))
     }
 
+
     calc(start, end) {
+        
         // Cell is already calculated
         if (this.table[start][end]) {
             return this.table[start][end]
@@ -86,10 +107,18 @@ export class CYK {
         return this.table[start][end]
     }
 
+    /**
+     * Checks whether start start is in top right of table
+     * @returns {Boolean} 
+     */
     result() {
         return this.table[0][this.word.length-1].has("S")
     }
 
+    /**
+     * Converts table into conventional 2d array so it can be inspected.
+     * @returns {String[][]} 
+     */
     debugTable(){
         let output = [];
 
