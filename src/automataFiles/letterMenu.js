@@ -13,23 +13,24 @@ import { sameState } from "../utils.js";
  */
 export default (scene, point, input, transitionPoint) => {
 
-    const COLOR_PRIMARY = colours.BLACK;
+    const COLOR_PRIMARY = colours.LIGHTBLUE;
     const COLOR_LIGHT = colours.WHITE;
     const COLOR_DARK = colours.DARKBLUE;
 
     // Option for each of the letters in the alphabet
-    let options = scene.alphabet;
+    let options = [...scene.alphabet, 'Remove']
+
     const width = options.length * 20;
     
     // Returns text object
     const createTextObject = function (scene, text) {
-        return scene.add.text(0, 0, text, { fontSize: 20 })
+        return scene.add.text(0, 0, text, { fontSize: 20, color: colours.TEXTBLACK});
     }
 
     let menu = scene.rexUI.add.dropDownList({
         
         x: point.x, y: point.y,
-        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 5, COLOR_PRIMARY),
+        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 5, COLOR_PRIMARY).setStrokeStyle(2, 0x010A12),
         //icon: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, COLOR_LIGHT),
         text: createTextObject(scene, input).setFixedSize(width, 0),
         align: 'center',
@@ -79,10 +80,12 @@ export default (scene, point, input, transitionPoint) => {
 
             // scope: dropDownList
             onButtonClick: function (button, index, pointer, event) {
-                this.parentPoint.changeInput(button.text);
-                console.log(this.parentPoint.inputs);
-                
-                console.log(this.width);
+                if (button.text === "Remove"){
+                    this.parentPoint.destroy(); // Will also destroy menu
+                    scene.transitions.removeTransitions(this.parentPoint.key);
+                } else {
+                    this.parentPoint.changeInput(button.text);
+                }
             },
 
         },
@@ -115,8 +118,7 @@ export default (scene, point, input, transitionPoint) => {
         if (pointer.rightButtonReleased()){
             if (!menu.scene.draw){
                 point = menu.parentPoint;
-                point.destroy(); // Will also destroy menu
-                scene.transitions.removeTransitions(point.key);
+                
             }
         } 
     });

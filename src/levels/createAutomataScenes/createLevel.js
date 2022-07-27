@@ -135,21 +135,24 @@ export default class CreateLevel extends Level {
 
         this.input.on('drag', (pointer, object) => {
             
-            object.x = pointer.x;
-            object.y = pointer.y;
-            
-            if (object.inner){
-                object.inner.x = pointer.x;
-                object.inner.y = pointer.y;
-            }
+            if (pointer.y > 80){
+                object.x = pointer.x;
+                object.y = pointer.y;
+                
+                if (object.inner){
+                    object.inner.x = pointer.x;
+                    object.inner.y = pointer.y;
+                }
 
-            // Object is menu
-            if (object.isMenu){
-                object.parentPoint.setPosition(pointer.x, pointer.y);
-            } else {
-                object.parent.shadow.x = pointer.x+5;
-                object.parent.shadow.y = pointer.y+10;
+                // Object is menu
+                if (object.isMenu){
+                    object.parentPoint.setPosition(pointer.x, pointer.y);
+                } else {
+                    object.parent.shadow.x = pointer.x+5;
+                    object.parent.shadow.y = pointer.y+10;
+                }
             }
+            
         });
 
         this.input.on('dragstart', (pointer, object) => {
