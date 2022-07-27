@@ -3,6 +3,7 @@ export default {
     BLACK: "0x010A12",
     YELLOW: "0xFF9F1C", 
     BLUE: "0x78C2FF",
+    LIGHTBLUE: "0xdcf0fd",
     DARKBLUE: "0x02213B",
     RED: "0xE71D36",
     GREEN: "0xCAFFBF",

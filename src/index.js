@@ -32,7 +32,8 @@ const config = {
     backgroundColor: colours.BLUE,
     width: 800,
     height: 500,
-    scene: scenes
+    scene: scenes,
+    parent: 'canvas-container'
 };
 
 const game = new Phaser.Game(config);
