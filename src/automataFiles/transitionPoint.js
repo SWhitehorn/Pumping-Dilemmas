@@ -3,7 +3,7 @@ import "../typedefs/typedefs.js"
 import { sameState } from "../utils.js";
 
 /**
- * Class defining interactive points on transition
+ * Class defining points on transition. Used to store data about transition.
  * @class
  */
 export default class TransitionPoint {
@@ -28,40 +28,40 @@ export default class TransitionPoint {
         this.scene = scene;
         this.key = key;
 
-        this.graphic = this.scene.add.circle(x, y, this.SIZE, Colours.BLACK).setInteractive();
-        this.graphic.parent = this;
-        this.graphic.isTransitionPoint = true;
+        // this.graphic = this.scene.add.circle(x, y, this.SIZE, Colours.BLACK).setInteractive();
+        // this.graphic.parent = this;
+        // this.graphic.isTransitionPoint = true;
         
         // Flags
         this.active = false; // Whether point has moved from default (straight-line) position
 
-        this.graphic.on('pointerup', (pointer) => {
+        // this.graphic.on('pointerup', (pointer) => {
                 
-           // Delete transition if right button is clicked
-            if (pointer.rightButtonReleased()){
+        //    // Delete transition if right button is clicked
+        //     if (pointer.rightButtonReleased()){
                 
-                if (!this.scene.draw){
-                    this.destroy();
+        //         if (!this.scene.draw){
+        //             this.destroy();
 
-                    this.scene.transitions.removeTransitions(this.startState, this.endName, this.key);
-                }
+        //             this.scene.transitions.removeTransitions(this.startState, this.endName, this.key);
+        //         }
             
             
-            // Left mouse: enable user to change the letters on the transition
-            } else if (!this.dragging){
+        //     // Left mouse: enable user to change the letters on the transition
+        //     } else if (!this.dragging){
                 
-                if (this.selected){
-                    this.removeLetters();
+        //         if (this.selected){
+        //             this.removeLetters();
                     
-                    // Delete transition if empty
-                    if (this.isEmptyTransition(this.startState.transitions)){
-                        this.destroy();
-                    }
-                }
+        //             // Delete transition if empty
+        //             if (this.isEmptyTransition(this.startState.transitions)){
+        //                 this.destroy();
+        //             }
+        //         }
                 
-                this.selected = !this.selected;
-            }
-        });
+        //         this.selected = !this.selected;
+        //     }
+        // });
 
         return this;
     }
@@ -91,8 +91,8 @@ export default class TransitionPoint {
         this.x = x;
         this.y = y;
 
-        this.graphic.x = x;
-        this.graphic.y = y;
+        // this.graphic.x = x;
+        // this.graphic.y = y;
 
         return this;
     }
@@ -100,10 +100,10 @@ export default class TransitionPoint {
     /**
      * Enables drag for transition point
      */
-    setDraggable(){
-        this.scene.input.setDraggable(this.graphic);
-        return this;
-    }
+    // setDraggable(){
+    // //     this.scene.input.setDraggable(this.graphic);
+    //     return this;
+    // }
 
     /**
      * Destroys point
@@ -111,7 +111,6 @@ export default class TransitionPoint {
     destroy(){
         this.removeLetters();
         this.scene.automata.removeKey(this.key);
-        this.graphic.destroy();
         this.scene.transitions.transitionObjects[this.key].label.destroy();
         delete this.scene.transitions.transitionObjects[this.key];
     }
@@ -148,55 +147,9 @@ export default class TransitionPoint {
     }
 
     /**
-     * Create menu of clickable letters
+     * Adds or removes given letter from inputs, depending on whether is included
+     * @param {string} letter - Letter to add/remove 
      */
-    createLetters(){
-        
-        this.letterArray = [];
-        
-        for (let i = 0; i < this.scene.alphabet.length; i++){
-        
-            this.renderLetter(this.scene.alphabet[i], i);
-            
-            this.letterArray[i].setInteractive().on('pointerup', () => {
-
-                const transitions = this.startState.transitions;
-                let letter = this.letterArray[i].text
-
-                if (transitions.hasOwnProperty(letter)){
-                    
-                    const index = transitions[letter].indexOf(this.endName);
-
-                    // Transition between states over letter is defined, remove it
-                    if (index != -1){
-                        
-                        transitions[letter].splice(index, 1);
-                        this.inputs.splice(this.inputs.indexOf(letter), 1);
-                        
-                        // Delete data if array is empty
-                        if (transitions[letter].length === 0){
-                            delete transitions[letter];
-
-                        }
-                    
-                    // Transition over input is defined, but not to end state
-                    } else {
-                        transitions[letter].splice(0, 0, this.endName);
-                        this.inputs.push(letter);
-                    }
-                
-                // Transition over input is not defined, create new transition
-                } else {
-                    transitions[letter] = [this.endName];
-                    this.inputs.push(letter);
-                }
-
-                // Remove letterArray property
-                this.removeLetters();
-            });
-        }
-    } 
-
     changeInput(letter){
         const transitions = this.startState.transitions;
 
@@ -214,15 +167,26 @@ export default class TransitionPoint {
                 if (transitions[letter].length === 0){
                     delete transitions[letter]; 
                 }
+
+                if (this.hasEmptyTransition()){
+                    transitions["ε"] = [this.endName]
+                    this.inputs.push("ε");
+                }   
             
-            // Transition over input is defined, but not to end state
+            // Transition over letter is defined, but not to end state
             } else {
                 transitions[letter].splice(0, 0, this.endName);
                 this.inputs.push(letter);
             }
-        
+            Array [ "ε" ]
+            
         // Transition over input is not defined, create new transition
         } else {
+            if (this.hasEmptyTransition()){
+                this.inputs = [];
+                delete transitions["ε"];
+            }
+            
             transitions[letter] = [this.endName];
             this.inputs.push(letter);
         }
@@ -268,8 +232,8 @@ export default class TransitionPoint {
      * Test whether array of inputs is empty
      * @returns {boolean} Returns true no inputs are present in array
      */
-    isEmptyTransition(){
-        return (this.inputs.length === 0);
+    hasEmptyTransition(){
+        return (this.inputs.length === 0 || this.inputs.includes("ε"));
     }
 
     /**

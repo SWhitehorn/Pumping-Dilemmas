@@ -175,8 +175,6 @@ export default class LoopLevel extends Level {
             return;
         }
 
-        console.log(i);
-        console.log(this.inputWord[i]);
         this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.inputWord[i], { fontSize: '50px', color: '#ffffff' }))
         this.time.delayedCall(400, this.drawLetters, [i+1], this);
     }
@@ -308,7 +306,6 @@ export default class LoopLevel extends Level {
         // Decrease button
         this.textObjects.decrease = this.add.text(650, 450, "Decrease", {fontSize: '30px', color: '#ffffff'}).setInteractive();
         this.textObjects.decrease.on('pointerup', () => {
-            console.log('click')
             if (this.levelObjects.repeats.num > 0){ this.levelObjects.repeats.num -= 1; }
         });  
     }

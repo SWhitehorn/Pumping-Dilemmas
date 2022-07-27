@@ -172,7 +172,7 @@ export default class Transitions{
     drawSingleTransition(startState, endState, input, key, endName){
 
         // Transitions is from state to itself
-        if (startState === endState){
+        if (sameState(key)){
             
             // Add line by adding second circle and stroking outline
             const line = new Phaser.Geom.Circle(startState.graphic.x, startState.graphic.y-this.SIZE, this.SIZE);
@@ -357,7 +357,7 @@ export default class Transitions{
         
         // Create transition point
         const point = new TransitionPoint(mid.x, mid.y, this.scene, key);
-        point.setStart(startState).setEnd(endState, endName).addInput(input).setDraggable();
+        point.setStart(startState).setEnd(endState, endName).addInput(input);
 
         // Add point to transitionObjects
         this.transitionObjects[key].point = point;
@@ -372,12 +372,12 @@ export default class Transitions{
 
     /**
      * Removes all transitions from first state to second
-     * @param {State} startState 
-     * @param {string} endStateName 
      * @param {string} key - key for transition
      */
-    removeTransitions(startState, endStateName, key){
+    removeTransitions(key){
         
+        const [startStateName, endStateName] = splitKey(key);
+        const startState = this.scene.automata.getState(startStateName);
         const transitions = Object.entries(startState.transitions);
         
         // Iterate through [letter, states], check for endState in states
@@ -397,7 +397,11 @@ export default class Transitions{
             }
         });
 
-        delete this.transitionObjects[key];
+        if (this.transitionObjects[key]){
+            this.transitionObjects[key].point.destroy();
+            delete this.transitionObjects[key]
+        }
+        delete startState.keys.splice(startState.keys.indexOf(key), 1);
     }
 
     /**

@@ -57,26 +57,26 @@ const level1Data = {
 const level2Data = {
     automata: {
         states: {
-            q1: {x: 150, 
-                y: 400, 
+            q1: {x: 275, 
+                y: 425, 
                 accepting: false,
                 transitions: {},
                 name: 'q1'
             },
             q2: {x: 300, 
-                y: 400, 
+                y: 425, 
                 accepting: false,
                 transitions: {},
                 name: 'q2'
             },
-            q3: {x: 450, 
-                y: 400, 
+            q3: {x: 325, 
+                y: 425, 
                 accepting: false,
                 transitions: {},
                 name: 'q3'
             },
-            q4: {x: 600, 
-                y: 400, 
+            q4: {x: 500, 
+                y: 425, 
                 accepting: true,
                 transitions: {},
                 name: 'q4'

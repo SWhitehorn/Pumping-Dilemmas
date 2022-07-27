@@ -78,3 +78,23 @@ export const calculateStartingX = (word) => {
     const wordWidth = letterWidth * word.length;
     return width/2 - wordWidth/2;
 }
+
+/**
+ * Tests whether point is within bounds of shape. 
+ * @param {Object} shape - Game object shape to test.
+ * @param {Point} point
+ */
+export const withinBounds = (shape, point) => {
+    
+    const bounds = shape.getBounds();
+
+    return (
+        point.x > bounds.x
+        &&
+        point.x < bounds.x + bounds.width
+        &&
+        point.y > bounds.y 
+        &&
+        point.y < bounds.y + bounds.height
+    );
+}

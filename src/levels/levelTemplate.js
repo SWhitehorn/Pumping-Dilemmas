@@ -21,8 +21,10 @@ export default class Level extends Phaser.Scene {
     preload(){
         this.load.image('backArrow', '../assets/backArrow.png');
         this.load.scenePlugin('rexuiplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 'rexUI', 'rexUI');
+        this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
 
     }
+
 
     /**
      * Creates objects present in all levels
@@ -74,8 +76,7 @@ export default class Level extends Phaser.Scene {
             
             this.automata.getStart().graphic.setFillStyle(Colours.YELLOW, 1);
             this.computing = true;
-            this.automata.currState = this.automata.start;
-            this.time.delayedCall(500, this.automata.resetPreviousState, [], this.automata);
+            this.time.delayedCall(500, this.automata.resetPreviousState, [this.automata.start, this.word], this.automata);
         }
         
         // Handle empty word
@@ -95,8 +96,6 @@ export default class Level extends Phaser.Scene {
      * @param {boolean} accepted - Indicates whether computation ended in an accepting state. Null if not.
     */
     endComputation(accepted){
-        
-        this.automata.currState = this.automata.start;
 
         // Reset word
         this.word = Boolean(this.inputWord) ? this.inputWord : ""

@@ -77,7 +77,7 @@ export default class LevelSelect extends Phaser.Scene {
                 this.UI.back.visible = false;
             });    
 
-        this.UI.start = this.add.text(20, 200, "Start", { fontSize: '50px', color: '#ffffff' }).setInteractive();
+        this.UI.start = this.add.text(20, 200, "Start", { fontSize: '50px', color: colours.TEXTWHITE }).setInteractive();
         this.UI.start.on('pointerup', () => {
             this.nodes['node0'].selectNode();
         });

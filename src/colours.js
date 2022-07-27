@@ -1,12 +1,14 @@
 export default {
-    WHITE: "0xffffff",
-    BLACK: "0x000000",
-    YELLOW: "0xffb700", 
-    BLUE: "0x0540ca",
-    RED: "0xd40000",
-    GREEN: "0x4bb31e",
-    TEXTYELLOW: "#ffb700",
-    TEXTGREEN: "#4bb31e",
-    TEXTWHITE: "#ffffff",
-    TEXTRED: "#d40000"
+    WHITE: "0xFDFFFC",
+    BLACK: "0x010A12",
+    YELLOW: "0xFF9F1C", 
+    BLUE: "0x78C2FF",
+    DARKBLUE: "0x02213B",
+    RED: "0xE71D36",
+    GREEN: "0xCAFFBF",
+    TEXTYELLOW: "#FDFFB6",
+    TEXTGREEN: "#CAFFBF ",
+    TEXTWHITE: "#FDFFFC",
+    TEXTRED: "#E71D36",
+    TEXTBLACK: "#010A12"
 }
