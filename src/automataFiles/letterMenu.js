@@ -19,6 +19,7 @@ export default (scene, point, input, transitionPoint) => {
 
     // Option for each of the letters in the alphabet
     let options = scene.alphabet;
+    const width = options.length * 20;
     
     // Returns text object
     const createTextObject = function (scene, text) {
@@ -30,18 +31,18 @@ export default (scene, point, input, transitionPoint) => {
         x: point.x, y: point.y,
         background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 5, COLOR_PRIMARY),
         //icon: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, COLOR_LIGHT),
-        text: createTextObject(scene, input),
-
+        text: createTextObject(scene, input).setFixedSize(width, 0),
+        align: 'center',
         space: {
             left: 10,
             right: 10,
             top: 10,
             bottom: 10,
-            icon: 10
+            text: 10
         },
               
         options: options,
-
+        
         // Details for drop down
         list: {
             
@@ -80,6 +81,8 @@ export default (scene, point, input, transitionPoint) => {
             onButtonClick: function (button, index, pointer, event) {
                 this.parentPoint.changeInput(button.text);
                 console.log(this.parentPoint.inputs);
+                
+                console.log(this.width);
             },
 
         },
