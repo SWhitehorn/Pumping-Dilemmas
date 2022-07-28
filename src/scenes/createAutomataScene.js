@@ -1,6 +1,7 @@
 import Level from "./levelTemplate.js";
 import { getNextLetter, createKey, withinBounds } from "/src/utils/utils.js";
 import "/src/typedefs/typedefs.js";
+import colours from "/src/utils/colours.js"
 import lowerUIBox from "/src/objects/components/lowerUIBox.js";
 
 
@@ -48,7 +49,7 @@ export default class CreateLevel extends Level {
         this.deterministic = true; // Flag for whether FA has to be deterministic
         
         
-        this.startZone = lowerUIBox(this);
+        this.startZone = this.add.rexRoundRectangle(400, 425, 350, 75, 30, colours.WHITE).setStrokeStyle(3, colours.BLACK);
         this.background = this.add.rectangle(0, 0, 800, 500).setOrigin(0).setInteractive();
         
         super.create(this.inputAutomata, language);
