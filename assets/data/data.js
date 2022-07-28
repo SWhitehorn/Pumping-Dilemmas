@@ -17,7 +17,7 @@ const level0Data = {
                 transitions: {a: ['q4'], b: ['q4']},
                 name: 'q3'
             },
-            q4: {x:400, y:350, 
+            q4: {x:400, y:300, 
                 accepting: false, 
                 transitions: {a: ['q4'], b: ['q4']},
                 name: 'q4'

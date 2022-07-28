@@ -117,7 +117,7 @@ export default class LevelNode {
             if (this.scene.prevNode === this && this.active){
                 this.scene.scene.sleep('LevelSelect');
                 if (this.type === 'loop') {
-                    this.scene.scene.run('ComputerLoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language});
+                    this.scene.scene.run('ComputerLoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language, repeats: 2});
                 } else if (this.type === 'create') {
                     this.scene.scene.run('CreateLevel', {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language});
 

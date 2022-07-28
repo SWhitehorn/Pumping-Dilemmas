@@ -1,6 +1,7 @@
 import Level from "./levelTemplate.js";
 import { getNextLetter, createKey, withinBounds } from "/src/utils/utils.js";
 import "/src/typedefs/typedefs.js";
+import lowerUIBox from "/src/objects/components/lowerUIBox.js";
 
 
 /**
@@ -46,11 +47,8 @@ export default class CreateLevel extends Level {
         this.interactive = true; // Flag for whether player can interact with automata
         this.deterministic = true; // Flag for whether FA has to be deterministic
         
-        this.startZone = {
-            shape: this.add.rexRoundRectangle(400, 425, 400, 100, 30, 0xFDFFFC).setAlpha(0.75),
-            border: this.add.rexRoundRectangle(400, 425, 400, 100, 30).setStrokeStyle(3, 0x010A12)
-        };
-
+        
+        this.startZone = lowerUIBox(this);
         this.background = this.add.rectangle(0, 0, 800, 500).setOrigin(0).setInteractive();
         
         super.create(this.inputAutomata, language);
@@ -76,8 +74,8 @@ export default class CreateLevel extends Level {
             this.input.setDraggable(state.graphic);
             
             // Allow player to draw transitions to connect states
-            state.graphic.on('pointerup', (pointer) => {
-                if (pointer.rightButtonReleased()){
+            state.graphic.on('pointerup', () => {
+                if (!state.dragging){
                     
                     if (!this.draw){
                         this.draw = true;
@@ -104,9 +102,7 @@ export default class CreateLevel extends Level {
         }); 
 
         this.background.on('pointerup', pointer => {
-            if (pointer.rightButtonReleased()){
-                this.draw = false;
-            }
+            this.draw = false;
         });
     }
 
@@ -155,7 +151,7 @@ export default class CreateLevel extends Level {
         });
 
         this.input.on('dragstart', (pointer, object) => {
-            
+
             if (object.isMenu){
                 let TP = object.parentPoint;
                 
@@ -166,8 +162,10 @@ export default class CreateLevel extends Level {
             // Object is a state 
             } else {
                 
-                // Sets transitions going to state to update
                 const state = object.parent;
+                state.dragging = true;
+
+                // Sets transitions going to state to update
                 for (let key of state.keys){
                     const transitionObjects = this.transitions.getAllObjects();
                     // Remove letter menu if present 
@@ -184,7 +182,7 @@ export default class CreateLevel extends Level {
 
         this.input.on('dragend', (pointer, object) => {
         
-            if (withinBounds(this.startZone.shape, {x: pointer.x, y: pointer.y})){
+            if (withinBounds(this.startZone, {x: pointer.x, y: pointer.y})){
                 if (object.isMenu){
 
                 } else {
@@ -198,6 +196,8 @@ export default class CreateLevel extends Level {
             
             // Object is a state
             } else{ 
+                this.time.delayedCall(50, () => {object.parent.dragging = false;}, [], this);
+                
                 for (let key of object.parent.keys){                
                     this.transitions.removeFromUpdate(key); 
                 }

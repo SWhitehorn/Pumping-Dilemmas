@@ -2,6 +2,7 @@ import Level from "../levelTemplate.js";
 import "/src/typedefs/typedefs.js"
 import colours from "/src/utils/colours.js"
 import { calculateStartingX } from "/src/utils/utils.js"
+import lowerUIBox from "/src/objects/components/lowerUIBox.js";
 
 /**
  * @typedef {Object} Input
@@ -17,7 +18,7 @@ import { calculateStartingX } from "/src/utils/utils.js"
 export default class LoopLevel extends Level {
 
     startingX = 300;
-    textY = 400;
+    textY = 390;
     
 
     constructor(key){
@@ -36,10 +37,11 @@ export default class LoopLevel extends Level {
         
         // Level template handles drawing automaton
         super.create(automata, language);
+        
         // letters: array of text objects, unchanging
         // computedLetters: array of text objects, changes with player selection
         this.levelObjects = {letters: [], computedLetters: []}
-    
+        
         //Flags
         this.interactive = false;
         this.repeat = false;
@@ -50,15 +52,18 @@ export default class LoopLevel extends Level {
         this.inputWord = word // Original value of input word
         this.word = word; // Word that computation is performed on
        
+        const textBox = lowerUIBox(this, repeats);
+
         // Add letters individually
         this.startingX = calculateStartingX(this.word);
+        console.log(this.startingX);
         this.drawLetters(0);
         
         // Add text for selected text and number of repeats
         //this.textObjects.selected = this.add.text(20, 60, "", { fontSize: '30px', color: '#ffffff' });
-        
+
         // Add compute button
-        this.textObjects.compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.textObjects.compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: colours.TEXTWHITE }).setInteractive();
         if (this.scene.key !== "ComputerLoopLevel"){
             this.textObjects.compute.on('pointerup', () => {
                 if (!this.computing) {this.startComputation()};
@@ -83,9 +88,7 @@ export default class LoopLevel extends Level {
             this.updateBox();
             this.selectedWord = this.addSections(this.levelObjects.repeats.num);
             
-            if (this.computing){
-                this.drawComputedWord();
-            } else if (!this.end){
+            if (!this.end){
                 this.drawSelectedWord();
             }
         }    
@@ -105,24 +108,17 @@ export default class LoopLevel extends Level {
     }
 
     /**
-     * Draw sliding window
-     */
-    drawBox(){
-        const origin = this.levelObjects.leftBar.getTopRight();
-        const width = this.levelObjects.rightBar.getTopLeft().x - origin.x;
-        const height = this.levelObjects.leftBar.getBottomLeft().y - origin.y; 
-        this.levelObjects.slider = this.add.rectangle(origin.x, origin.y, width, height, colours.WHITE).setOrigin(0).setAlpha(0.2);
-    }
-
-    /**
      * Update window to match where the sliders are.
      * @param {number} extend - Option to extend slider based on section repeats
      */
     updateBox(extend = 1){
-        const origin = this.levelObjects.leftBar.getTopRight();
-        const width = (this.levelObjects.rightBar.getTopLeft().x - origin.x) * extend; 
+        const origin = this.levelObjects.leftBar.getTopLeft();
+        
+        const width = (this.levelObjects.rightBar.getTopRight().x - origin.x) * extend; 
+        
         this.levelObjects.slider.setX(origin.x - (width/2 * (extend-1) ) );
-        this.levelObjects.slider.width = width;
+        
+        this.levelObjects.slider.displayWidth = width;
 
         const point = this.levelObjects.rightBar.getTopLeft();
         this.levelObjects.repeats.setPosition(point.x, point.y);
@@ -175,7 +171,8 @@ export default class LoopLevel extends Level {
             return;
         }
 
-        this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.inputWord[i], { fontSize: '50px', color: '#ffffff' }))
+        console.log(this.inputWord[i]);
+        this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.inputWord[i], { fontSize: '50px', color: colours.TEXTBLACK }))
         this.time.delayedCall(400, this.drawLetters, [i+1], this);
     }
 
@@ -191,7 +188,7 @@ export default class LoopLevel extends Level {
     
             // Count backwards through letters
             let place = this.word.length - 1 - i
-            this.levelObjects.computedLetters.unshift(this.add.text(this.textX-(i*20), this.textY+50, this.word[place], { fontSize: '20px', color: '#ffffff' }))
+            this.levelObjects.computedLetters.unshift(this.add.text(this.textX-(i*20), this.textY+50, this.word[place], { fontSize: '20px', color: colours.TEXTBLACK }))
         }
     }
 
@@ -204,12 +201,21 @@ export default class LoopLevel extends Level {
         });
         
         this.levelObjects.computedLetters = [];
-        
+        //this.levelObjects.computedLetters.push(this.add.text(270, this.textY+60, this.selectedWord, { fontSize: '20px', color: colours.TEXTBLACK }))
+
+
         for (let i = 0; i < this.selectedWord.length; i++){
-            // Count backwards through letters
-            let place = this.selectedWord.length - 1 - i
-            this.levelObjects.computedLetters.unshift(this.add.text(this.textX-(i*20), this.textY+50, this.selectedWord[place], { fontSize: '20px', color: '#ffffff' }))
+            this.levelObjects.computedLetters.push(
+                this.add.text(320 + i*18, this.textY+60, this.selectedWord[i], { fontSize: '20px', color: colours.TEXTBLACK })
+            );
         }
+        //     if (i > 12){
+        //         return;
+        //     }
+        //     // Count backwards through letters
+        //     let place = this.selectedWord.length - 1 - i
+        //     this.levelObjects.computedLetters.unshift(this.add.text(this.textX-(i*20), this.textY+60, this.selectedWord[place], { fontSize: '20px', color: colours.TEXTBLACK }))
+        // }
     }
 
     /**
@@ -252,7 +258,7 @@ export default class LoopLevel extends Level {
 
             // Letter is not selected
             } else {
-                letter.setColor('#ffffff');
+                letter.setColor(colours.TEXTBLACK);
                 if (before){
                     stringBefore += letter.text;
 
@@ -272,11 +278,17 @@ export default class LoopLevel extends Level {
 
         // Add left bar
         const leftTop = this.levelObjects.letters[0].getTopLeft();
-        this.levelObjects.leftBar = this.add.rectangle(leftTop.x-20, leftTop.y, 20, 50, colours.WHITE).setAlpha(alpha).setOrigin(0).setInteractive();
+        this.levelObjects.leftBar = this.add.rexRoundRectangle(leftTop.x-20, leftTop.y, 10, 50, 
+            {
+                tl: 8, bl: 8
+            }, colours.DARKBLUE).setOrigin(0).setInteractive();
         
         // Add right bar
         const rightTop = this.levelObjects.letters.at(-1).getTopRight();
-        this.levelObjects.rightBar = this.add.rectangle(rightTop.x, rightTop.y, 20, 50, colours.WHITE).setAlpha(alpha).setOrigin(0).setInteractive();
+        this.levelObjects.rightBar = this.add.rexRoundRectangle(rightTop.x, rightTop.y, 10, 50, 
+            {
+                tr: 8, br: 8
+            }, colours.DARKBLUE).setOrigin(0).setInteractive();
 
         // Word is added from end, so position of first letter is variable
         const letterBounds = this.levelObjects.letters[0].getBounds();
@@ -293,6 +305,23 @@ export default class LoopLevel extends Level {
             }
         })
         this.drawBox();
+    }
+
+    /**
+     * Draw sliding window
+     */
+     drawBox(){
+        const origin = this.levelObjects.leftBar.getTopLeft();
+        const width = this.levelObjects.rightBar.getTopRight().x - origin.x;
+        const height = this.levelObjects.leftBar.getBottomLeft().y - origin.y; 
+        this.levelObjects.slider = this.add.rexRoundRectangle(origin.x, origin.y, width, height, 10)
+            .setStrokeStyle(2, colours.DARKBLUE, 1)
+            .setOrigin(0);
+
+        // Render letters above box
+        for (let letter of this.levelObjects.letters){
+            letter.setDepth(1);
+        }
     }
 
     addControlButtons(){

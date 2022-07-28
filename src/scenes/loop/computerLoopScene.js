@@ -14,8 +14,8 @@ import LoopLevel from "./baseLoopScene.js";
         super('ComputerLoopLevel');
     }
 
-    create({automata, word, language}){
-        super.create({automata, word, language});
+    create({automata, word, language, repeats}){
+        super.create({automata, word, language, repeats});
         
         this.runTests = false;
         this.tests = this.getNextTest();

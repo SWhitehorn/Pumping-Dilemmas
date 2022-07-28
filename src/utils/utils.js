@@ -76,7 +76,7 @@ export const calculateStartingX = (word) => {
     const letterWidth = 35;
 
     const wordWidth = letterWidth * word.length;
-    return width/2 - wordWidth/2;
+    return width/2 - wordWidth/2 + 50;
 }
 
 /**
