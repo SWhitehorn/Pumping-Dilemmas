@@ -1,7 +1,6 @@
-import Level from "../levelTemplate.js";
-import { getNextLetter, createKey, withinBounds } from "../../utils.js";
-import "../../typedefs/typedefs.js";
-import colours from "../../colours.js";
+import Level from "./levelTemplate.js";
+import { getNextLetter, createKey, withinBounds } from "/src/utils/utils.js";
+import "/src/typedefs/typedefs.js";
 
 
 /**

@@ -1,5 +1,5 @@
-import "../../typedefs/typedefs.js";
-import LoopLevel from "./loopLevel.js";
+import "/src/typedefs/typedefs.js"
+import LoopLevel from "./baseLoopScene.js";
 
 /** 
  * Level where player can choose the number of loops

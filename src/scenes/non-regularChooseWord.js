@@ -1,7 +1,7 @@
-import Level from "../levelTemplate.js";
-import colours from "../../colours.js";
-import { randomNumber } from "../../utils.js";
-import { CYK } from "./CYK.js";
+import Level from "./levelTemplate.js";
+import colours from "/src/utils/colours.js";
+import { randomNumber } from "/src/utils/utils.js";
+import { CYK } from "/src/utils/CYK.js";
 
 export default class Non_RegularLevel extends Level {
 

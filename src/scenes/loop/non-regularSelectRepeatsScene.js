@@ -1,7 +1,8 @@
-import LoopLevel from "./loopLevel.js";
-import { randomNumber } from "../../utils.js";
-import colours from "../../colours.js";
-import { CYK } from "../addWord/CYK.js";
+import LoopLevel from "./baseLoopScene.js";
+import { randomNumber } from "/src/utils/utils.js"
+import "/src/typedefs/typedefs.js"
+import colours from "/src/utils/colours.js"
+import { CYK } from "/src/utils/CYK.js"
 
 export default class Non_RegularSelectRepeats extends LoopLevel {
     

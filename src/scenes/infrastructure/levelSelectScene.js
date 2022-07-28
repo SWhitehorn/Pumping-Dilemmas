@@ -1,6 +1,8 @@
-import colours from "../colours.js";
-import LevelNode from "./levelNode.js";
-import menuData from "./menuData.js";
+import "/src/typedefs/typedefs.js"
+import colours from "/src/utils/colours.js"
+
+import LevelNode from "/src/objects/components/levelNode.js"
+import menuData from "/assets/data/menuData.js"
 
 /**
  * @typedef {Object} Input

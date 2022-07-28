@@ -1,6 +1,6 @@
-import colours from "../../colours.js";
-import "../../typedefs/typedefs.js";
-import LoopLevel from "./loopLevel.js";
+import "/src/typedefs/typedefs.js"
+import colours from "/src/utils/colours.js"
+import LoopLevel from "./baseLoopScene.js";
 
 /** 
  * Level where computer chooses the number of loops

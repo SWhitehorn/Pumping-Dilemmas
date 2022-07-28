@@ -1,6 +1,6 @@
-import Colours from "../colours.js";
-import "../typedefs/typedefs.js"
-import { sameState } from "../utils.js";
+import "/src/typedefs/typedefs.js"
+import colours from "/src/utils/colours.js"
+import { sameState } from "/src/utils/utils.js"
 
 /**
  * Class defining points on transition. Used to store data about transition.
@@ -28,7 +28,7 @@ export default class TransitionPoint {
         this.scene = scene;
         this.key = key;
 
-        // this.graphic = this.scene.add.circle(x, y, this.SIZE, Colours.BLACK).setInteractive();
+        // this.graphic = this.scene.add.circle(x, y, this.SIZE, colours.BLACK).setInteractive();
         // this.graphic.parent = this;
         // this.graphic.isTransitionPoint = true;
         
@@ -204,7 +204,7 @@ export default class TransitionPoint {
         
         // Render letter in green if included in transition
         if (this.startState.transitions.hasOwnProperty(letter) && this.startState.transitions[letter].includes(this.endName)){
-            this.letterArray.push(this.scene.add.text(this.x+10 + i*30, y, letter, { fontSize: '30px', color: Colours.TEXTWHITE }));
+            this.letterArray.push(this.scene.add.text(this.x+10 + i*30, y, letter, { fontSize: '30px', color: colours.TEXTWHITE }));
         
         // Render letter in yellow if not
         } else{

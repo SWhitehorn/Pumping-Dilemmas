@@ -1,8 +1,7 @@
-import Level from "../levelTemplate.js";
-import "../../typedefs/typedefs.js";
-import LoopLevel from "../loopScenes/loopLevel.js";
-import colours from "../../colours.js";
-import { calculateStartingX } from "../../utils.js";
+import Level from "./levelTemplate.js";
+import "/src/typedefs/typedefs.js";
+import colours from "/src/utils/colours.js";
+import { calculateStartingX } from "/src/utils/utils.js";
 
 export default class TestCreateLevel extends Level {
 

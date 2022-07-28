@@ -1,5 +1,5 @@
-import Level from "../levelTemplate.js";
-import Colours from "../../colours.js"
+import Level from "./levelTemplate.js";
+import colours from "/src/utils/colours.js"
 
 export default class AddWordLevel extends Level {
 
@@ -14,7 +14,7 @@ export default class AddWordLevel extends Level {
         this.word = ""
 
         this.textEntry = this.add.text(300, 400, this.word, { font: '32px Courier', fill: '#ffffff' });
-        const textBox = this.add.rectangle(300, 400, 155, 30, Colours.WHITE).setOrigin(0).setAlpha(.3);
+        const textBox = this.add.rectangle(300, 400, 155, 30, colours.WHITE).setOrigin(0).setAlpha(.3);
         
         // Text entry
         this.input.keyboard.on('keydown', (event) => {

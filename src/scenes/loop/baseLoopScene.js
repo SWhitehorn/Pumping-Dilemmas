@@ -1,7 +1,7 @@
 import Level from "../levelTemplate.js";
-import colours from "../../colours.js";
-import "../../typedefs/typedefs.js";
-import { calculateStartingX } from "../../utils.js";
+import "/src/typedefs/typedefs.js"
+import colours from "/src/utils/colours.js"
+import { calculateStartingX } from "/src/utils/utils.js"
 
 /**
  * @typedef {Object} Input

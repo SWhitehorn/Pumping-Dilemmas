@@ -1,7 +1,6 @@
-import Level from "../levelTemplate.js";
-import "../../typedefs/typedefs.js";
-import CreateLevel from "./createLevel.js";
-import { splitKey } from "../../utils.js";
+import "/src/typedefs/typedefs.js"
+import CreateLevel from "/src/scenes/createAutomataScene.js";  
+import { splitKey } from "/src/utils/utils.js"
 
 
 /**

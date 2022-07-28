@@ -1,10 +1,10 @@
-import colours from "../colours.js";
+import "/src/typedefs/typedefs.js"
+import colours from "/src/utils/colours.js"
+
 import TransitionPoint from "./transitionPoint.js";
 import Automata from "./automata.js";
-import { sameState, splitKey } from "../utils.js";
-import createMenu from "./letterMenu.js";
-import "../typedefs/typedefs.js"
-
+import { sameState, splitKey } from "/src/utils/utils.js";
+import createMenu from "./components/letterMenu.js";
 
 /**
  * Handles drawing and updating of transitions

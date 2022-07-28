@@ -1,7 +1,7 @@
-import Colours from "../colours.js";
-import Transitions from "../automataFiles/transitions.js";
-import Automata from "../automataFiles/automata.js";
-import "../typedefs/typedefs.js"
+import colours from "/src/utils/colours.js";
+import Transitions from "/src/objects/transitions.js";
+import Automata from "/src/objects/automata.js";
+import "/src/typedefs/typedefs.js"
 
 /**
  * Template for levels, handles common features. Extended by others to provide specific functionality.
@@ -33,7 +33,7 @@ export default class Level extends Phaser.Scene {
      */
     create (automata, language) {
         
-        this.graphics = this.add.graphics({ lineStyle: { width: 3, color: Colours.BLACK } });
+        this.graphics = this.add.graphics({ lineStyle: { width: 3, color: colours.BLACK } });
         
         this.textObjects = {};
         this.addLanguage(language)
@@ -60,11 +60,11 @@ export default class Level extends Phaser.Scene {
 
     setHighlights(state){
         state.graphic.on('pointerover', () => {
-            state.graphic.setStrokeStyle(this.THICKNESS, Colours.RED, 1);
+            state.graphic.setStrokeStyle(this.THICKNESS, colours.RED, 1);
         })
         
         state.graphic.on('pointerout', () => {
-            state.graphic.setStrokeStyle(this.THICKNESS, Colours.BLACK, 1);
+            state.graphic.setStrokeStyle(this.THICKNESS, colours.BLACK, 1);
         })
     }
 
@@ -74,7 +74,7 @@ export default class Level extends Phaser.Scene {
         // Check for empty word
         if (this.word){
             
-            this.automata.getStart().graphic.setFillStyle(Colours.YELLOW, 1);
+            this.automata.getStart().graphic.setFillStyle(colours.YELLOW, 1);
             this.computing = true;
             this.time.delayedCall(500, this.automata.resetPreviousState, [this.automata.start, this.word], this.automata);
         }
@@ -82,10 +82,10 @@ export default class Level extends Phaser.Scene {
         // Handle empty word
         else{
             if (this.automata.getStart().accepting){
-                this.automata.getStart().graphic.setFillStyle(Colours.GREEN, 1);
-                this.automata.getStart().graphic.inner.setFillStyle(Colours.GREEN, 1);
+                this.automata.getStart().graphic.setFillStyle(colours.GREEN, 1);
+                this.automata.getStart().graphic.inner.setFillStyle(colours.GREEN, 1);
             } else{
-                this.automata.getStart().graphic.setFillStyle(Colours.RED, 1);
+                this.automata.getStart().graphic.setFillStyle(colours.RED, 1);
             }
             this.endComputation();
         }
