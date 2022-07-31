@@ -25,7 +25,7 @@ import LoopLevel from "./baseLoopScene.js";
 
         this.textObjects.compute.on('pointerup', () => {
             if (!this.runTests) {
-                this.levelObjects.repeats.visible = true;
+                this.levelObjects.repeats.visible = false;
                 this.runTests = true;
             }
         });

@@ -70,13 +70,19 @@ export const drawTriangle = (scene, tri) => {
 /**
  * Calculates how far left a word should start drawing so it is centered on screen
  * @param {String} word 
+ * @param {Boolean} [small] - Flag small letter sizing
  */
-export const calculateStartingX = (word) => {
+export const calculateStartingX = (word, small=false) => {
     const width = 800;
-    const letterWidth = 35;
+    let letterWidth = 35;
+    
+    // Option for smaller letter
+    if (small){
+        letterWidth = 20;
+    }
 
     const wordWidth = letterWidth * word.length;
-    return width/2 - wordWidth/2 + 50;
+    return width/2 - wordWidth/2;
 }
 
 /**

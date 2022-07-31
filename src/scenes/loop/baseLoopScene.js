@@ -138,7 +138,7 @@ export default class LoopLevel extends Level {
      */
     startComputation(){
         this.word = this.selectedWord;
-        this.drawComputedWord();
+        //this.drawComputedWord();
         super.startComputation();
     }
     
@@ -164,7 +164,7 @@ export default class LoopLevel extends Level {
         // Base case 
         if (i === this.inputWord.length){
             
-            this.textX = this.levelObjects.letters.at(-1).getTopLeft().x;
+            this.textX = this.levelObjects.letters.at(-1).getTopRight().x;
             this.addSlidingWindow();
             this.finishedAddingWord = true;
             this.textObjects.compute.visible = true;
@@ -205,8 +205,9 @@ export default class LoopLevel extends Level {
 
 
         for (let i = 0; i < this.selectedWord.length; i++){
+            
             this.levelObjects.computedLetters.push(
-                this.add.text(320 + i*18, this.textY+60, this.selectedWord[i], { fontSize: '20px', color: colours.TEXTBLACK })
+                this.add.text(calculateStartingX(this.selectedWord, true) + i*18, this.textY+60, this.selectedWord[i], { fontSize: '20px', color: colours.TEXTBLACK })
             );
         }
         //     if (i > 12){
@@ -278,29 +279,28 @@ export default class LoopLevel extends Level {
 
         // Add left bar
         const leftTop = this.levelObjects.letters[0].getTopLeft();
-        this.levelObjects.leftBar = this.add.rexRoundRectangle(leftTop.x-20, leftTop.y, 10, 50, 
+        this.levelObjects.leftBar = this.add.rexRoundRectangle(leftTop.x-20, leftTop.y-4, 10, 50, 
             {
                 tl: 8, bl: 8
             }, colours.DARKBLUE).setOrigin(0).setInteractive();
         
         // Add right bar
         const rightTop = this.levelObjects.letters.at(-1).getTopRight();
-        this.levelObjects.rightBar = this.add.rexRoundRectangle(rightTop.x, rightTop.y, 10, 50, 
+        this.levelObjects.rightBar = this.add.rexRoundRectangle(rightTop.x+10, rightTop.y-4, 10, 50, 
             {
                 tr: 8, br: 8
             }, colours.DARKBLUE).setOrigin(0).setInteractive();
 
-        // Word is added from end, so position of first letter is variable
         const letterBounds = this.levelObjects.letters[0].getBounds();
 
         // Enabling dragging on bars
         this.input.setDraggable(this.levelObjects.leftBar);
         this.input.setDraggable(this.levelObjects.rightBar);
-        const _this = this
+        const rightBound = this.textX + 10
         this.input.on('drag', function(pointer, line, dragX, dragY){
             
             // Set bounds for dragging
-            if (dragX >= letterBounds.x -20 && dragX <= _this.textX + 30){
+            if (dragX >= letterBounds.x -20 && dragX <= rightBound){
                 line.x = dragX;
             }
         })
