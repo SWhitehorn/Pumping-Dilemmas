@@ -20,7 +20,7 @@ export default (scene, point, input, transitionPoint) => {
     // Option for each of the letters in the alphabet
     let options = [...scene.alphabet, 'Remove']
 
-    const width = options.length * 20;
+    const width = scene.alphabet.length * 20;
     
     // Returns text object
     const createTextObject = function (scene, text) {

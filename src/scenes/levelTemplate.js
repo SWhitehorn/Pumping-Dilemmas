@@ -2,6 +2,7 @@ import colours from "/src/utils/colours.js";
 import Transitions from "/src/objects/transitions.js";
 import Automata from "/src/objects/automata.js";
 import "/src/typedefs/typedefs.js"
+import topUIBox from "/src/objects/components/topUIBox.js";
 
 /**
  * Template for levels, handles common features. Extended by others to provide specific functionality.
@@ -35,8 +36,8 @@ export default class Level extends Phaser.Scene {
         this.graphics = this.add.graphics({ lineStyle: { width: 3, color: colours.BLACK } });
         
         this.textObjects = {};
-        this.addLanguage(language)
 
+        this.addLanguage(language)
         // Render automata to screen
         if (automata){
             // Create automata
@@ -51,10 +52,7 @@ export default class Level extends Phaser.Scene {
             
         }
         
-        const back = this.add.image(750, 30, 'backArrow').setInteractive();
-        back.on('pointerup', () => {
-            this.scene.start('LevelSelect');
-        });    
+        
     }
 
     setHighlights(state){
@@ -101,7 +99,7 @@ export default class Level extends Phaser.Scene {
                 
         this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
         
-        if (this.repeat && !accepted){ 
+        if (this.repeat && !this.testsStarted){ 
             this.time.delayedCall(1000, this.startComputation, [], this); 
         }
     }
@@ -111,13 +109,7 @@ export default class Level extends Phaser.Scene {
      * @param {String} language - String describing language
      */
     addLanguage(language){
-        if (language.length < 30){
-            const text = this.add.text(400, 20, language, { fontSize: '30px', color: '#ffffff' }).setOrigin(0.5);
-        } else {
-            const text = this.add.text(400, 30, language, { fontSize: '25px', color: '#ffffff', align: 'center'}).setOrigin(0.5);
-            text.setWordWrapWidth(400, true);
-        }
-        
+        topUIBox(this, language).layout();    
     }
 
     

@@ -26,7 +26,7 @@ const level0Data = {
         start: 'q1'
     },
     word: ["abba"],
-    repeats: 2,
+    repeats: [2, 1],
     alphabet: ['a', 'b'],
     language: "L = {ab\u{207F}a|n\u{2265}0}" 
 }
@@ -35,48 +35,48 @@ const level0Data = {
 const level1Data = {
     automata: {
         states: {
-            q1: {x:245, y:233, 
+            q1: {x:250, y:233, 
                 accepting: false, 
                 transitions: {a: ['q3'], b: ['q1']}, 
-                controlPoints: {q3: {x: 399, y: 136}}
+                controlPoints: {q3: {x: 400, y: 136}}
             },
-            q3: {x:520, y:233,
+            q3: {x:550, y:233,
                 accepting: true,
                 transitions: {a: ["q1"], b: ["q3"]},
-                controlPoints: {q1: {x: 395,y: 334}}
+                controlPoints: {q1: {x: 400,y: 334}}
             }
         },
         start: "q1"
     },
     word: ["aaba"],
-    repeats: 0,
+    repeats: [2, 0],
     alphabet: ['a', 'b'],
-    language: "do this later"
+    language: "L = {w\u{2208}{a,b}* | w has an even number of a symbols}"
 }
 
 const level2Data = {
     automata: {
         states: {
             q1: {x: 275, 
-                y: 425, 
+                y: 460, 
                 accepting: false,
                 transitions: {},
                 name: 'q1'
             },
             q2: {x: 300, 
-                y: 425, 
+                y: 460, 
                 accepting: false,
                 transitions: {},
                 name: 'q2'
             },
             q3: {x: 325, 
-                y: 425, 
+                y: 460, 
                 accepting: false,
                 transitions: {},
                 name: 'q3'
             },
             q4: {x: 500, 
-                y: 425, 
+                y: 460, 
                 accepting: true,
                 transitions: {},
                 name: 'q4'

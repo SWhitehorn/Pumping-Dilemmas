@@ -132,8 +132,6 @@ export default class Automata {
     */
     resetPreviousState(currState, word, key){
         
-        console.log(word);
-
         // Set previous state to black
         const prevState = this.states[currState];
         prevState.graphic.setFillStyle(colours.WHITE, 1);
@@ -149,7 +147,6 @@ export default class Automata {
 
         // Check if word is empty. If so, end computation
         if (!word){
-            console.log('ending');
             this.endComputation();
         } else {
             this.scene.time.delayedCall(60, this.computation, [currState, word], this);
@@ -169,7 +166,6 @@ export default class Automata {
         let prevState = this.getState(prevStateName);
         
         // Exit if transition over symbol is not defined
-        console.log(prevState.transitions);
         if (!(symbol in prevState.transitions) && !("ε" in prevState.transitions)){
 
             // Colour state red
@@ -216,7 +212,7 @@ export default class Automata {
                 // Highlight current state in yellow;
                 state.graphic.setFillStyle(colours.YELLOW, 1);
                 if (state.accepting){ // Check if state has inner ring
-                    state.graphic.inner.setFillStyle(this.THICKNESS, colours.YELLOW, 1);
+                    state.graphic.inner.setFillStyle(colours.YELLOW, 1);
                 }
                 
                 // Delay next step of compuation to allow for visual display
@@ -251,6 +247,11 @@ export default class Automata {
         }
 
         this.scene.computing = false;
+    }
+
+    stopComputation(){
+        this.clearStates();
+        this.scene.time.removeAllEvents();
     }
 
     /** 
@@ -339,7 +340,6 @@ export default class Automata {
         const keyCopy = [...state.keys];
         
         for (let key of keyCopy){
-            console.log("Key", key);
             this.scene.transitions.removeTransitions(key);
         };
 

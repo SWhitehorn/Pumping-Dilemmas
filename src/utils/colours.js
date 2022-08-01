@@ -6,7 +6,7 @@ export default {
     LIGHTBLUE: "0xdcf0fd",
     DARKBLUE: "0x02213B",
     RED: "0xE71D36",
-    GREEN: "0xCAFFBF",
+    GREEN: "0x2E8C2E",
     TEXTYELLOW: "#FDFFB6",
     TEXTGREEN: "#CAFFBF ",
     TEXTWHITE: "#FDFFFC",

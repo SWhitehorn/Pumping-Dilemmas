@@ -44,7 +44,8 @@ export default class LevelSelect extends Phaser.Scene {
             }
             
             const start = this.nodes['node0'];
-            start.enable();  
+            start.enable(); 
+            start.enableNextNodes(); 
             this.nodes['node2'].enable();
             
             // Add start arrow

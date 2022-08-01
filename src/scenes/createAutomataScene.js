@@ -49,7 +49,7 @@ export default class CreateLevel extends Level {
         this.deterministic = true; // Flag for whether FA has to be deterministic
         
         
-        this.startZone = this.add.rexRoundRectangle(400, 425, 350, 75, 30, colours.WHITE).setStrokeStyle(3, colours.BLACK);
+        this.startZone = lowerUIBox(this).layout();
         this.background = this.add.rectangle(0, 0, 800, 500).setOrigin(0).setInteractive();
         
         super.create(this.inputAutomata, language);

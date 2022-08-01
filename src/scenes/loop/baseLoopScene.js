@@ -2,7 +2,7 @@ import Level from "../levelTemplate.js";
 import "/src/typedefs/typedefs.js"
 import colours from "/src/utils/colours.js"
 import { calculateStartingX } from "/src/utils/utils.js"
-import lowerUIBox from "/src/objects/components/lowerUIBox.js";
+import loopSelectBox from "/src/objects/components/loopSelectBox.js";
 
 /**
  * @typedef {Object} Input
@@ -18,7 +18,7 @@ import lowerUIBox from "/src/objects/components/lowerUIBox.js";
 export default class LoopLevel extends Level {
 
     startingX = 300;
-    textY = 390;
+    textY = 425;
     
 
     constructor(key){
@@ -44,41 +44,29 @@ export default class LoopLevel extends Level {
         
         //Flags
         this.interactive = false;
-        this.repeat = false;
+        this.repeat = true;
+        this.end = false;
         this.finishedAddingWord = false;
         this.passedTests = false;
+
+        this.numRepeats = 1
 
         // Set words
         this.inputWord = word // Original value of input word
         this.word = word; // Word that computation is performed on
        
-        const textBox = lowerUIBox(this, repeats);
+        const box = loopSelectBox(this, this.numRepeats);
+        this.UIElements = {
+            box: box, 
+            repeats: box.getElement('left').getElement('label').getElement('text'), 
+            play: box.getElement('right').getElement('label').getElement('icon') 
+        };
+        this.UIElements.play.visible = false;
+
 
         // Add letters individually
         this.startingX = calculateStartingX(this.word);
-        console.log(this.startingX);
         this.drawLetters(0);
-        
-        // Add text for selected text and number of repeats
-        //this.textObjects.selected = this.add.text(20, 60, "", { fontSize: '30px', color: '#ffffff' });
-
-        // Add compute button
-        this.textObjects.compute = this.add.text(20, 20, 'Compute', { fontSize: '30px', color: colours.TEXTWHITE }).setInteractive();
-        if (this.scene.key !== "ComputerLoopLevel"){
-            this.textObjects.compute.on('pointerup', () => {
-                if (!this.computing) {this.startComputation()};
-            });
-        }
-
-
-        // Remove compute button until word has rendered
-        this.textObjects.compute.visible = false;
-
-        // Add label for number of repeats
-        this.levelObjects.repeats = this.add.text(0, 0, "", { fontSize: '20px', color: colours.TEXTRED })
-        this.levelObjects.repeats.num = repeats;
-
-        
     } 
 
     /** Called every frame to update game objects */
@@ -86,13 +74,12 @@ export default class LoopLevel extends Level {
         
         if (this.finishedAddingWord){
             this.updateBox();
-            this.selectedWord = this.addSections(this.levelObjects.repeats.num);
+            this.selectedWord = this.addSections(this.numRepeats);
             
             if (!this.end){
                 this.drawSelectedWord();
             }
         }    
-        this.children.bringToTop(this.levelObjects.repeats);
     }
 
     /**
@@ -121,8 +108,6 @@ export default class LoopLevel extends Level {
         this.levelObjects.slider.displayWidth = width;
 
         const point = this.levelObjects.rightBar.getTopLeft();
-        this.levelObjects.repeats.setPosition(point.x, point.y);
-        this.levelObjects.repeats.text = this.levelObjects.repeats.num;
     }
 
     /**
@@ -138,7 +123,6 @@ export default class LoopLevel extends Level {
      */
     startComputation(){
         this.word = this.selectedWord;
-        //this.drawComputedWord();
         super.startComputation();
     }
     
@@ -147,11 +131,31 @@ export default class LoopLevel extends Level {
      * @param {boolean} accepted - Indicates whether computation ended in accepting state
      */
     endComputation(accepted){
-        super.endComputation(accepted);
         this.word = this.selectedWord;
 
-        if (accepted && !this.runTests){
+        if (!accepted){
+            this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
+            let toast = this.rexUI.add.toast({
+                x:400, 
+                y:300, 
+                background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 20, colours.WHITE),
+                text: this.add.text(0,0, "", {fontSize: "24px", color: colours.DARKBLUE}),
+                space: {left: 20, right: 20, top: 20, bottom: 20}
+            })
+            .showMessage("Not accepted!")
+            .showMessage("Try a different selection");
+            
+            this.runTests = false;
+            this.numRepeats = 1;
+            this.UIElements.repeats.text = this.numRepeats;
+            this.time.delayedCall(2000, this.startComputation, [], this); 
+
+        } else if (accepted && !this.runTests && this.testsStarted){
+            console.log('good');
+            this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
             this.passedTests = true;
+        } else {
+            super.endComputation();
         }
     }
 
@@ -167,11 +171,12 @@ export default class LoopLevel extends Level {
             this.textX = this.levelObjects.letters.at(-1).getTopRight().x;
             this.addSlidingWindow();
             this.finishedAddingWord = true;
-            this.textObjects.compute.visible = true;
+            this.UIElements.play.visible = true;
+            this.selectedWord = this.addSections(this.numRepeats);
+            this.startComputation();
             return;
         }
 
-        console.log(this.inputWord[i]);
         this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.inputWord[i], { fontSize: '50px', color: colours.TEXTBLACK }))
         this.time.delayedCall(400, this.drawLetters, [i+1], this);
     }
@@ -194,29 +199,19 @@ export default class LoopLevel extends Level {
 
     /** Draws the word the player has selected */
     drawSelectedWord(){
-
         // Remove current letters
         this.levelObjects.computedLetters.forEach((letter) => {
             letter.destroy();
         });
         
         this.levelObjects.computedLetters = [];
-        //this.levelObjects.computedLetters.push(this.add.text(270, this.textY+60, this.selectedWord, { fontSize: '20px', color: colours.TEXTBLACK }))
-
 
         for (let i = 0; i < this.selectedWord.length; i++){
             
             this.levelObjects.computedLetters.push(
-                this.add.text(calculateStartingX(this.selectedWord, true) + i*18, this.textY+60, this.selectedWord[i], { fontSize: '20px', color: colours.TEXTBLACK })
+                this.add.text(calculateStartingX(this.selectedWord, true) + i*18, this.textY+55, this.selectedWord[i], { fontSize: '20px', color: colours.TEXTBLACK })
             );
         }
-        //     if (i > 12){
-        //         return;
-        //     }
-        //     // Count backwards through letters
-        //     let place = this.selectedWord.length - 1 - i
-        //     this.levelObjects.computedLetters.unshift(this.add.text(this.textX-(i*20), this.textY+60, this.selectedWord[place], { fontSize: '20px', color: colours.TEXTBLACK }))
-        // }
     }
 
     /**
@@ -230,9 +225,9 @@ export default class LoopLevel extends Level {
 
             // Check that selected section is not empty
             if (wordParts[1] === ""){
-                this.textObjects.compute.visible = false;
+                this.UIElements.play.visible = false;
             } else {
-                this.textObjects.compute.visible = true;
+                this.UIElements.play.visible = true;
             }
 
             return wordParts[0] + wordParts[1].repeat(numRepeats) + wordParts[2];
@@ -329,13 +324,13 @@ export default class LoopLevel extends Level {
         this.textObjects.increase = this.add.text(650, 400, "Increase", {fontSize: '30px', color: '#ffffff'}).setInteractive();
         this.textObjects.increase.on('pointerup', () => {
             // Cap at 4
-            if (this.levelObjects.repeats.num < 4) {this.levelObjects.repeats.num += 1};
+            if (this.numRepeats < 4) {this.numRepeats += 1};
         });
         
         // Decrease button
         this.textObjects.decrease = this.add.text(650, 450, "Decrease", {fontSize: '30px', color: '#ffffff'}).setInteractive();
         this.textObjects.decrease.on('pointerup', () => {
-            if (this.levelObjects.repeats.num > 0){ this.levelObjects.repeats.num -= 1; }
+            if (this.numRepeats > 0){ this.numRepeats -= 1; }
         });  
     }
 }

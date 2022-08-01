@@ -8,8 +8,6 @@ import LoopLevel from "./baseLoopScene.js";
  */
  export default class ComputerLoopLevel extends LoopLevel{
 
-    numbers = [2];
-
     constructor(){
         super('ComputerLoopLevel');
     }
@@ -18,17 +16,18 @@ import LoopLevel from "./baseLoopScene.js";
         super.create({automata, word, language, repeats});
         
         this.runTests = false;
-        this.tests = this.getNextTest();
-        this.nextTest = this.tests.next(); 
-
-        this.levelObjects.repeats.visible = false;
-
-        this.textObjects.compute.on('pointerup', () => {
-            if (!this.runTests) {
-                this.levelObjects.repeats.visible = false;
-                this.runTests = true;
-            }
-        });
+        this.testsStarted = false;
+        
+        this.tests = undefined;
+        this.nextTest = undefined;
+        
+        this.UIElements.play.on('pointerup', () => {
+            this.automata.stopComputation();
+            this.runTests = true;
+            this.testsStarted = true;
+            this.tests = this.testGenerator(repeats);
+            this.nextTest = this.tests.next(); 
+        })
     }
 
     update(){
@@ -42,20 +41,18 @@ import LoopLevel from "./baseLoopScene.js";
     }
 
 
-    *getNextTest(){
-        for (let i = 0; i < this.numbers.length; i++){
-            yield this.numbers[i];
+    *testGenerator(repeats){
+        for (let i = 0; i < repeats.length; i++){
+            yield repeats[i];
         }
     }
 
     /** Pulls a number from generator, then starts computation with that part of word repeated*/
     performTest(){
-        
         const test = this.nextTest;
-
-
-        this.levelObjects.repeats.num = test.value;
-        this.levelObjects.repeats.text = test.value;
+        this.numRepeats = test.value;
+        this.UIElements.repeats.text = test.value;
+        
         this.selectedWord = this.addSections(test.value);
         this.startComputation();
        
@@ -67,17 +64,25 @@ import LoopLevel from "./baseLoopScene.js";
     }
 
     startEnd(){
-        this.levelObjects.repeats.num = 1;
+        this.numRepeats = 1;
         this.selectedWord = "";
         this.end = true;
-        this.levelObjects.repeats.visible = false;
-        this.time.delayedCall(1000, this.endingScreen, [], this)
+        let toast = this.rexUI.add.toast({
+            x:400, 
+            y:300, 
+            background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 20, colours.WHITE),
+            text: this.add.text(0,0, "", {fontSize: "24px", color: colours.DARKBLUE}),
+            space: {left: 20, right: 20, top: 20, bottom: 20}
+        })
+        .showMessage("Pumping suceeded!")
+        this.time.delayedCall(2000, this.endingScreen, [], this)
     }
 
     endingScreen(){
-        this.add.rectangle(0, 0, 800, 500, colours.BLACK, 0.8).setOrigin(0);
-        this.scene.pause();
-        this.scene.run('LevelEnd', {prevScene:'ComputerLoopLevel'})
+        
+        
+        
+        this.scene.start('LevelSelect', {passed: true})
         
     }
 
