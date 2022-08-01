@@ -8,6 +8,6 @@ export default (scene) => {
         width: 350,
         height: 80,
     }).addBackground(
-        scene.add.rexRoundRectangle(0, 0, 1, 1, {tr: 30, tl: 30}, colours.WHITE).setStrokeStyle(3, colours.BLACK)
+        scene.add.rexRoundRectangle(0, 0, 1, 1, {tr: 30, tl: 30}, colours.DARKBLUE).setStrokeStyle(3, colours.BLACK)
     );
 }

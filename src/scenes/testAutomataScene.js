@@ -2,12 +2,14 @@ import Level from "./levelTemplate.js";
 import "/src/typedefs/typedefs.js";
 import colours from "/src/utils/colours.js";
 import { calculateStartingX } from "/src/utils/utils.js";
+import lowerUIBox from "/src/objects/components/lowerUIBox.js";
+import testAutomataUI from "/src/objects/components/testAutomataUI.js";
 
 export default class TestCreateLevel extends Level {
 
     // Default value - startingX should be overridden for each word to ensure they are centred.
     startingX = 300;
-    textY = 400;
+    textY = 435;
 
     constructor(){
         super('TestCreateLevel');
@@ -27,6 +29,8 @@ export default class TestCreateLevel extends Level {
         this.tests = this.wordGenerator(words)
         this.test = this.tests.next();
         this.word = this.test.value.word;
+
+        this.UI = testAutomataUI(this).layout();
     }
 
     update(){
@@ -50,9 +54,13 @@ export default class TestCreateLevel extends Level {
         this.word = this.prevTest.word
         
         this.computing = true;
-        console.log("Running test:", this.word);
         this.removeLetters();
-        this.startDrawingLetters()
+        const icon = this.UI.getElement('left').getElement('label').getElement('icon');
+
+        this.prevTest.result ? icon.setFillStyle(colours.GREEN) : icon.setFillStyle(colours.RED)
+
+        this.startDrawingLetters();
+
         this.test = this.tests.next(); 
         
         if (this.test.done){
@@ -75,15 +83,13 @@ export default class TestCreateLevel extends Level {
             return;
         } 
 
-        let colour = this.prevTest.result ? colours.TEXTGREEN :colours.TEXTRED
-
-        this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.word[i], { fontSize: '50px', color: colour }))
+        this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.word[i], { fontSize: '50px', color: colours.BLACK }))
         this.time.delayedCall(400, this.drawLetters, [i+1], this);
     }
 
     startDrawingLetters(){
         this.drawingLetters = true;
-        this.startingX = calculateStartingX(this.word);
+        this.startingX = calculateStartingX(this.word)+20;
         this.drawLetters(0);
     }
 
