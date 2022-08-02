@@ -46,13 +46,15 @@ export default class LevelNode {
     enable(){
         this.graphic.setFillStyle(colours.WHITE);
         this.active = true;
+        return this;
     }
     /** Enables the child nodes of current node */
     enableNextNodes(){
         
         const startPoint = this.getPosition();
         for (let node of this.children){
-            let child = this.scene.nodes[node]
+            console.log(node);
+            let child = this.scene.nodes[node];
             child.enable();
 
             let endPoint = child.getPosition();
@@ -64,6 +66,8 @@ export default class LevelNode {
             // Add arrow head
             this.addDirectionArrow(line, child);
         }
+
+        return this;
     }
 
     /**
@@ -116,11 +120,13 @@ export default class LevelNode {
         if (this.scene.prevNode){
             if (this.scene.prevNode === this && this.active){
                 this.scene.scene.sleep('LevelSelect');
+                
                 if (this.type === 'loop') {
                     this.scene.scene.run('ComputerLoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language, repeats: this.data.repeats});
                 } else if (this.type === 'create') {
                     this.scene.scene.run('CreateLevel', {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language});
-
+                } else if (this.type === 'writeWord') {
+                    this.scene.scene.run('AddWordLevel', {automata:this.data.automata, language:this.data.language, grammar: this.data.grammar});
                 }
             } else {
                 this.scene.prevNode = this;

@@ -46,7 +46,7 @@ export default class LevelSelect extends Phaser.Scene {
             const start = this.nodes['node0'];
             start.enable(); 
             start.enableNextNodes(); 
-            this.nodes['node2'].enable();
+            this.nodes['node2'].enable().enableNextNodes();
             
             // Add start arrow
             const tri = new Phaser.Geom.Triangle.BuildEquilateral(start.x-30, start.y, 16);

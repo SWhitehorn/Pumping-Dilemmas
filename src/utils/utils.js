@@ -80,7 +80,7 @@ export const calculateStartingX = (word, small=false) => {
     if (small){
         letterWidth = 20;
     }
-
+    
     const wordWidth = letterWidth * word.length;
     return width/2 - wordWidth/2;
 }

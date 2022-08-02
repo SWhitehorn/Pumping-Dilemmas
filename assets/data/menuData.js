@@ -17,9 +17,16 @@ export default {
     },
     node2: {
         x:1000, y:300,
-        children: [],
+        children: ['node3'],
         data: data.level2Data,
         type: 'create',
         name: 'node2',
-    }
+    },
+    node3: {
+        x:1200, y:300,
+        children: [],
+        data: data.level3Data,
+        name: 'node3',
+        type: 'writeWord'
+    },
 }

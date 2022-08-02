@@ -131,8 +131,8 @@ export default class TestCreateLevel extends Level {
             popUp(["All words correct!"], this)
             this.time.delayedCall(1000, this.nextLevel, [true], this)
         } else {
-            const message = this.word + " classified incorrectly"
-            popUp([message, "Try a different automata"], this)
+            const message = '"' + this.word + '"' + " classified incorrectly"
+            popUp([message, "Try a different automata!"], this)
             this.time.delayedCall(3000, this.nextLevel, [false], this)
         }
     }

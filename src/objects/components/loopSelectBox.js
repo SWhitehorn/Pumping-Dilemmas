@@ -21,7 +21,7 @@ export default (scene, repeats) => {
             {
                 background: scene.rexUI.add.roundRectangle(0, 0, 1, 1, 5),
                 space: {left: 3, right: 3},
-                text: scene.add.text(0, 0, repeats, { fontSize: '30px' }),
+                text: scene.add.text(0, 0, repeats, { fontSize: '30px', fontFamily: 'Quantico' }),
             }
             ), {proportion: 0, expand: false, padding: {left: 20}, key: 'label'})
     }

@@ -170,7 +170,7 @@ export default class LoopLevel extends Level {
             return;
         }
 
-        this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.inputWord[i], { fontSize: '50px', color: colours.TEXTBLACK }))
+        this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.inputWord[i], { fontSize: '50px', color: colours.TEXTBLACK, fontFamily: 'Quantico'}))
         this.time.delayedCall(400, this.drawLetters, [i+1], this);
     }
 
@@ -186,7 +186,7 @@ export default class LoopLevel extends Level {
     
             // Count backwards through letters
             let place = this.word.length - 1 - i
-            this.levelObjects.computedLetters.unshift(this.add.text(this.textX-(i*20), this.textY+50, this.word[place], { fontSize: '20px', color: colours.TEXTBLACK }))
+            this.levelObjects.computedLetters.unshift(this.add.text(this.textX-(i*20), this.textY+50, this.word[place], { fontSize: '20px', color: colours.TEXTBLACK, fontFamily: 'Quantico'}))
         }
     }
 
@@ -202,7 +202,7 @@ export default class LoopLevel extends Level {
         for (let i = 0; i < this.selectedWord.length; i++){
             
             this.levelObjects.computedLetters.push(
-                this.add.text(calculateStartingX(this.selectedWord, true) + i*18, this.textY+55, this.selectedWord[i], { fontSize: '20px', color: colours.TEXTBLACK })
+                this.add.text(calculateStartingX(this.selectedWord, true) + i*18, this.textY+55, this.selectedWord[i], { fontSize: '20px', color: colours.TEXTBLACK, fontFamily: 'Quantico' })
             );
         }
     }

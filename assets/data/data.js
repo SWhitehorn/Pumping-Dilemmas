@@ -28,7 +28,7 @@ const level0Data = {
     word: ["abba"],
     repeats: [2, 1],
     alphabet: ['a', 'b'],
-    language: "L = {ab\u{207F}a|n\u{2265}0}" 
+    language: "L = { ab\u{207F}a | n \u{2265} 0}" 
 }
 
 
@@ -51,7 +51,7 @@ const level1Data = {
     word: ["aaba"],
     repeats: [2, 0],
     alphabet: ['a', 'b'],
-    language: "L = {w\u{2208}{a,b}* | w has an odd number of a symbols}"
+    language: "L = {w \u{2208} {a,b}* | w has an odd number of a symbols}"
 }
 
 const level2Data = {
@@ -83,10 +83,50 @@ const level2Data = {
             },
         },
         start: 'q1'
-        },
-    words: [{word: "ababba", result: true}, {word: "bbab", result: false}],
+    },
+    words: [{word: "aabba", result: true}, {word: "bbab", result: false}, {word: "abb", result: true}],
     alphabet: ['a', 'b'],
     language: "L = {w\u{2208}{a,b}* | w contains abb as a subword}" 
+}
+
+const level3Data = {
+    automata: {
+        states: {
+            q1: {
+                x: 200,
+                y: 200,
+                accepting: false,
+                transitions: {a: ["q2"]},
+            },
+            q2: {
+                x: 400,
+                y: 200,
+                accepting: false,
+                transitions: {a: ["q3"], b: ["q4"]},
+            },
+            q3: {
+                x: 600,
+                y: 200,
+                accepting: false,
+                transitions: {b: ["q5"]},
+            },
+            q4: {
+                x: 200,
+                y: 350,
+                accepting: true,
+                transitions: {},
+            },
+            q5: {
+                x: 400,
+                y: 350,
+                accepting: false,
+                transitions: {b: ["q4"]},    
+            }
+        },
+        start: 'q1'
+    },
+    language: "L = { a\u{207F}b\u{207F} | n > 0 }",
+    grammar: "A -> ε | 2 1 | 2 3, S -> 2 1 | 2 3, 1 -> S3, 2 -> a, 3 -> b"
 }
 
 const spareData = {
@@ -155,4 +195,4 @@ const testData2 = {
     language: "L = {a\u{207F}b\u{207F}|n>0}"
 }
 
-export default {level0Data, level1Data, level2Data, testData1, testData2}
+export default {level0Data, level1Data, level2Data, level3Data, testData1, testData2}

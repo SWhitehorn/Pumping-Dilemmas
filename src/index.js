@@ -34,6 +34,7 @@ const config = {
     height: 500,
     scene: scenes,
     parent: 'canvas-container'
+    
 };
 
 const game = new Phaser.Game(config);

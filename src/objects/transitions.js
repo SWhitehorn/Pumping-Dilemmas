@@ -295,7 +295,7 @@ export default class Transitions{
             }
             
             if (!this.interactive){
-                this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: '#ffffff' });
+                this.transitionObjects[key].label = this.scene.add.text(point.x+10, point.y, input, { fontSize: '30px', color: colours.TEXTWHITE, fontFamily: 'Quantico' });
 
             } else {
 

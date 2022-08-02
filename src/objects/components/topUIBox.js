@@ -9,7 +9,7 @@ export default (scene, language) => {
             width: 750,
             height: 50,
             background: scene.add.rexRoundRectangle(0, 0, 1, 1, {}, colours.DARKBLUE).setStrokeStyle(2, colours.BLACK),
-            text: scene.add.text(0, 0, language, {color: colours.TEXTWHITE, fontSize: '20px'}),
+            text: scene.add.text(0, 0, language, {color: colours.TEXTWHITE, fontSize: '20px', fontFamily: 'Quantico'}),
             align: 'center'
         })
         

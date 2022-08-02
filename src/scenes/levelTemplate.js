@@ -10,19 +10,41 @@ import topUIBox from "/src/objects/components/topUIBox.js";
  */
 export default class Level extends Phaser.Scene {
 
-    // Flags
+    // Flags common to all scenes
     computing = false;
     repeat = false;
     interactive = false;
 
     constructor (key) {
-        super(key);
+        
+        const sceneConfig = {
+            key: key,
+            pack: {
+                files: [{
+                    type: 'plugin',
+                    key: 'rexwebfontloaderplugin',
+                    url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexwebfontloaderplugin.min.js',
+                    start: true
+                }]
+            }
+        };
+        
+        super(sceneConfig);
     }
     
     preload(){
         this.load.image('backArrow', '../assets/backArrow.png');
         this.load.scenePlugin('rexuiplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 'rexUI', 'rexUI');
         this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
+    
+        this.plugins.get('rexwebfontloaderplugin').addToScene(this);
+
+        let config = {
+            google: {
+                families: ['Quantico']
+            }
+        };
+        this.load.rexWebFont(config);
     }
 
 
@@ -34,7 +56,7 @@ export default class Level extends Phaser.Scene {
     create (automata, language) {
         
         this.graphics = this.add.graphics({ lineStyle: { width: 3, color: colours.BLACK } });
-        
+        this.cameras.main.setRoundPixels(true);
         this.textObjects = {};
 
         this.addLanguage(language)
@@ -105,7 +127,7 @@ export default class Level extends Phaser.Scene {
     }
 
     /**
-     * Adds text describing language to scene. Scales text depending on size
+     * Adds text describing language to scene.
      * @param {String} language - String describing language
      */
     addLanguage(language){
