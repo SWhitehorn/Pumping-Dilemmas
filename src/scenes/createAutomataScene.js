@@ -3,6 +3,7 @@ import { getNextLetter, createKey, withinBounds } from "/src/utils/utils.js";
 import "/src/typedefs/typedefs.js";
 import colours from "/src/utils/colours.js"
 import lowerUIBox from "/src/objects/components/lowerUIBox.js";
+import createAutomataUI from "/src/objects/components/createAutomataUI.js";
 
 
 /**
@@ -19,8 +20,6 @@ import lowerUIBox from "/src/objects/components/lowerUIBox.js";
  * @extends Level
  */
 export default class CreateLevel extends Level {
-
-    inputAutomata = {}
 
     constructor(key){
         if (key){
@@ -40,36 +39,24 @@ export default class CreateLevel extends Level {
         // Store original word and automata to allow for reseting
         this.words = words;
         this.inputAutomata = structuredClone(automata);
-        
+        console.log(this.inputAutomata);
+
         this.alphabet = alphabet;
+        this.language = language;
 
         // Flags
         this.draw = false; // Flag for whether the player is currently drawing transition
         this.interactive = true; // Flag for whether player can interact with automata
         this.deterministic = true; // Flag for whether FA has to be deterministic
         
-        
-        this.startZone = lowerUIBox(this).layout();
-        this.background = this.add.rectangle(0, 0, 800, 500).setOrigin(0).setInteractive();
-        
-        super.create(this.inputAutomata, language);
+        this.addUIElements();
+
+        super.create(structuredClone(automata), language); // Draw states, add language banner
         this.transitions.setInteractive();
         
         this.input.mouse.disableContextMenu(); // Allow for right clicking
         
-        this.next = this.add.text(700, 100, "", { fontSize: '30px', color: '#ffffff' }).setInteractive();
-        
-        this.next.on('pointerup', () => {
-            if (!this.computing) {
-                this.automata.bakeAutomata();
-                this.scene.start('TestCreateLevel', {automata:this.automata, words:this.words, language}); 
-
-            };
-          });
-
-          
-        
-          // Iterate through states
+        // Enable interactions with states
         for (let stateName in this.automata.states){
             let state = this.automata.states[stateName];
             this.input.setDraggable(state.graphic);
@@ -102,9 +89,7 @@ export default class CreateLevel extends Level {
             }
         }); 
 
-        this.background.on('pointerup', pointer => {
-            this.draw = false;
-        });
+        
     }
 
     /**
@@ -116,10 +101,11 @@ export default class CreateLevel extends Level {
         }
         this.transitions.updateTransitions(); 
 
-        if (this.automata.allStatesUsed() && this.validFA()){
-            this.next.text = "next";
+        // Hide next button is automata is not valid
+        if (this.validFA()){
+            this.nextButton.setVisible(true);
         } else {
-            this.next.text = "";
+            this.nextButton.setVisible(false);
         }
     }
     
@@ -130,7 +116,7 @@ export default class CreateLevel extends Level {
         this.input.dragDistanceThreshold = 10;
 
         this.input.on('drag', (pointer, object) => {
-            
+
             if (pointer.y > 80){
                 object.x = pointer.x;
                 object.y = pointer.y;
@@ -234,15 +220,29 @@ export default class CreateLevel extends Level {
         }
     }
 
+    addUIElements(){
+        const background = this.add.rectangle(0, 0, 800, 500).setOrigin(0).setInteractive().on('pointerup', pointer => {
+            this.draw = false;
+        });
+
+        this.startZone = createAutomataUI(this);
+        this.nextButton = this.startZone.getElement('right').getElement('label').getElement('icon');
+        console.log(this.nextButton);
+    }
+
     /**
      *  Checks whether automaton is valid for level
      * @returns {boolean} True if automaton is deterministic, or if non-deterministic automata are allowed.
      */
     validFA(){
-        if (!this.deterministic){
-            return true;
-        } else {
-            return this.automata.checkDeterministic();
+        if (this.automata.allStatesUsed()){
+            if (!this.deterministic){
+                return true;
+            } else {
+                return this.automata.checkDeterministic();
+            }
         }
+
+        return false;
     }
 }

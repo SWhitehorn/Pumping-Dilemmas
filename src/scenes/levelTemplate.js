@@ -95,7 +95,7 @@ export default class Level extends Phaser.Scene {
     endComputation(accepted){
 
         // Reset word
-        this.word = Boolean(this.inputWord) ? this.inputWord : ""
+        this.word = Boolean(this.inputWord) ? this.inputWord : this.word
                 
         this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
         

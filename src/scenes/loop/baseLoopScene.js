@@ -3,6 +3,7 @@ import "/src/typedefs/typedefs.js"
 import colours from "/src/utils/colours.js"
 import { calculateStartingX } from "/src/utils/utils.js"
 import loopSelectBox from "/src/objects/components/loopSelectBox.js";
+import popUp from "/src/objects/components/popUp.js";
 
 /**
  * @typedef {Object} Input
@@ -135,17 +136,9 @@ export default class LoopLevel extends Level {
 
         if (!accepted){
             this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
-            let toast = this.rexUI.add.toast({
-                x:400, 
-                y:300, 
-                background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 20, colours.WHITE),
-                text: this.add.text(0,0, "", {fontSize: "24px", color: colours.DARKBLUE}),
-                space: {left: 20, right: 20, top: 20, bottom: 20}
-            })
-            .showMessage("Not accepted!")
-            .showMessage("Try a different selection");
-            
+            popUp(["Not accepted!", "Try a different selection"], this);
             this.runTests = false;
+            this.testsStarted = false;
             this.numRepeats = 1;
             this.UIElements.repeats.text = this.numRepeats;
             this.time.delayedCall(2000, this.startComputation, [], this); 

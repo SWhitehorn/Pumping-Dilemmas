@@ -1,6 +1,7 @@
 import "/src/typedefs/typedefs.js"
 import colours from "/src/utils/colours.js"
 import LoopLevel from "./baseLoopScene.js";
+import popUp from "../../objects/components/popUp.js";
 
 /** 
  * Level where computer chooses the number of loops
@@ -67,23 +68,12 @@ import LoopLevel from "./baseLoopScene.js";
         this.numRepeats = 1;
         this.selectedWord = "";
         this.end = true;
-        let toast = this.rexUI.add.toast({
-            x:400, 
-            y:300, 
-            background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 20, colours.WHITE),
-            text: this.add.text(0,0, "", {fontSize: "24px", color: colours.DARKBLUE}),
-            space: {left: 20, right: 20, top: 20, bottom: 20}
-        })
-        .showMessage("Pumping suceeded!")
+        popUp(["Pumping Succeeded!"], this)
         this.time.delayedCall(2000, this.endingScreen, [], this)
     }
 
     endingScreen(){
-        
-        
-        
         this.scene.start('LevelSelect', {passed: true})
-        
     }
 
  }

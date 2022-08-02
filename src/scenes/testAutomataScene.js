@@ -4,6 +4,7 @@ import colours from "/src/utils/colours.js";
 import { calculateStartingX } from "/src/utils/utils.js";
 import lowerUIBox from "/src/objects/components/lowerUIBox.js";
 import testAutomataUI from "/src/objects/components/testAutomataUI.js";
+import popUp from "/src/objects/components/popUp.js";
 
 export default class TestCreateLevel extends Level {
 
@@ -15,13 +16,17 @@ export default class TestCreateLevel extends Level {
         super('TestCreateLevel');
     }
 
-    create({automata, words, language}){
+    create({automata, words, alphabet, language, inputAutomata}){
+        
+        this.background = this.add.rectangle(0, 0, 800, 500, colours.BLUE).setOrigin(0);
+
         super.create(automata, language);
         
         //Flags
         this.runTests = true;
         this.drawingLetters = false;
         this.passedTests = false;
+        this.end = false;
 
 
         this.levelObjects = {letters: [], computedLetters: []}
@@ -30,14 +35,20 @@ export default class TestCreateLevel extends Level {
         this.test = this.tests.next();
         this.word = this.test.value.word;
 
+        this.alphabet = alphabet;
+        this.inputAutomata = inputAutomata;
+        this.language = language;
+
         this.UI = testAutomataUI(this).layout();
+        
     }
 
     update(){
         if (!this.drawingLetters && !this.computing && this.runTests){
             this.performTest();
-        } else if (this.passedTests){
-            this.time.delayedCall(1000, this.endingScreen, [], this)
+        } else if (!this.drawingLetters && !this.computing && !this.end){
+            this.end = true;
+            this.endingScreen();
         }
     }
 
@@ -52,7 +63,8 @@ export default class TestCreateLevel extends Level {
         
         this.prevTest = this.test.value
         this.word = this.prevTest.word
-        
+        console.log(this.word);
+        console.log(this.test.done)
         this.computing = true;
         this.removeLetters();
         const icon = this.UI.getElement('left').getElement('label').getElement('icon');
@@ -114,9 +126,24 @@ export default class TestCreateLevel extends Level {
      * Calls Level End Screen
      */
     endingScreen(){
-        this.add.rectangle(0, 0, 800, 500, colours.BLACK, 0.8).setOrigin(0);
-        this.scene.pause('TestCreateLevel');
-        this.scene.run('LevelEnd', {prevScene:'TestCreateLevel'});
+        
+        if (this.passedTests){
+            popUp(["All words correct!"], this)
+            this.time.delayedCall(1000, this.nextLevel, [true], this)
+        } else {
+            const message = this.word + " classified incorrectly"
+            popUp([message, "Try a different automata"], this)
+            this.time.delayedCall(3000, this.nextLevel, [false], this)
+        }
+    }
+
+    nextLevel(passed){
+        if (passed){
+            this.scene.stop('CreateLevel');
+            this.scene.start("LevelSelect", {passed:true})
+        } else {
+            this.scene.start('CreateLevel', {automata:this.inputAutomata, words:this.inputWords, alphabet:this.alphabet, language:this.language});
+        }
     }
 
     endComputation(accepted){

@@ -57,7 +57,8 @@ export default (scene, repeats) => {
                 {
                     background: scene.rexUI.add.roundRectangle(0, 0, 1, 1, 5),
                     space: {left: 3, right: 3},
-                    icon: scene.add.triangle(0, 0, 0, -5, 20, 10, 0, 25, colours.WHITE).setInteractive().on('pointerup', () => {
+                    icon: scene.add.triangle(0, 0, 0, -5, 20, 10, 0, 25, colours.WHITE)
+                        .setStrokeStyle(2, colours.BLACK, 1).setInteractive().on('pointerup', () => {
                         
                         // Start computation on button press if not already computing, word has been added, and selection is not empty
                         if (!scene.computing && scene.finishedAddingWord && scene.decomposeWord()[1] !== "") {

@@ -51,31 +51,31 @@ const level1Data = {
     word: ["aaba"],
     repeats: [2, 0],
     alphabet: ['a', 'b'],
-    language: "L = {w\u{2208}{a,b}* | w has an even number of a symbols}"
+    language: "L = {w\u{2208}{a,b}* | w has an odd number of a symbols}"
 }
 
 const level2Data = {
     automata: {
         states: {
-            q1: {x: 275, 
+            q1: {x: 290, 
                 y: 460, 
                 accepting: false,
                 transitions: {},
                 name: 'q1'
             },
-            q2: {x: 300, 
+            q2: {x: 315, 
                 y: 460, 
                 accepting: false,
                 transitions: {},
                 name: 'q2'
             },
-            q3: {x: 325, 
+            q3: {x: 340, 
                 y: 460, 
                 accepting: false,
                 transitions: {},
                 name: 'q3'
             },
-            q4: {x: 500, 
+            q4: {x: 475, 
                 y: 460, 
                 accepting: true,
                 transitions: {},

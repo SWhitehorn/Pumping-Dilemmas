@@ -269,8 +269,10 @@ export default class Automata {
 
     /** Saves the current automata so it can loaded into other levels */
     bakeAutomata(){
+
+
         Object.values(this.states).forEach( (state) => { 
-            
+
             state.x = state.graphic.x;
             state.y = state.graphic.y;
             state.controlPoints = {}
@@ -328,7 +330,7 @@ export default class Automata {
     resetState(state){
         state.graphic.x = state.x;
         state.graphic.y = state.y;
-        state.shadow.x = state.x +5;
+        state.shadow.x = state.x + 5;
         state.shadow.y = state.shadow+10;
 
         if (state.accepting){
