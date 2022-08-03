@@ -3,6 +3,7 @@ import colours from "/src/utils/colours.js"
 
 import LevelNode from "/src/objects/components/levelNode.js"
 import menuData from "/assets/data/menuData.js"
+import { resetBackground } from "/src/utils/utils.js"
 
 /**
  * @typedef {Object} Input
@@ -18,11 +19,32 @@ export default class LevelSelect extends Phaser.Scene {
     prevNode = null;
 
     constructor(){
-        super('LevelSelect');
+        
+        const sceneConfig = {
+            key: 'LevelSelect',
+            pack: {
+                files: [{
+                    type: 'plugin',
+                    key: 'rexwebfontloaderplugin',
+                    url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexwebfontloaderplugin.min.js',
+                    start: true
+                }]
+            }
+        };
+        
+        super(sceneConfig);
     }
 
     preload(){
         this.load.image('backArrow', '../assets/backArrow.png');
+        this.plugins.get('rexwebfontloaderplugin').addToScene(this);
+
+        let config = {
+            google: {
+                families: ['Quantico']
+            }
+        };
+        this.load.rexWebFont({google: {families: ['Quantico']}});
     }
 
     /**
@@ -30,6 +52,8 @@ export default class LevelSelect extends Phaser.Scene {
      */
     create({passed}){
         
+        resetBackground();
+
         // Prevent objects being recreated
         if (!this.created){
             this.graphics = this.add.graphics({ lineStyle: { width: 3, color: colours.BLACK } })
@@ -47,6 +71,7 @@ export default class LevelSelect extends Phaser.Scene {
             start.enable(); 
             start.enableNextNodes(); 
             this.nodes['node2'].enable().enableNextNodes();
+            this.nodes['node3'].enableNextNodes();
             
             // Add start arrow
             const tri = new Phaser.Geom.Triangle.BuildEquilateral(start.x-30, start.y, 16);
@@ -80,12 +105,12 @@ export default class LevelSelect extends Phaser.Scene {
                 this.UI.back.visible = false;
             });    
 
-        this.UI.start = this.add.text(20, 200, "Start", { fontSize: '50px', color: colours.TEXTWHITE }).setInteractive();
+        this.UI.start = this.add.text(20, 200, "Start", { fontFamily: 'Quantico', fontSize: '70px', color: colours.TEXTWHITE }).setInteractive();
         this.UI.start.on('pointerup', () => {
             this.nodes['node0'].selectNode();
         });
 
-        this.UI.debug = this.add.text(20, 275, "Debug", { fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.UI.debug = this.add.text(20, 275, "Extras", { fontFamily: 'Quantico', fontSize: '30px', color: '#ffffff' }).setInteractive();
         this.UI.debug.on('pointerup', () => {
             this.scene.start('IntroScene');
         });

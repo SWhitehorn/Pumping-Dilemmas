@@ -5,6 +5,8 @@ import { calculateStartingX } from "/src/utils/utils.js";
 import lowerUIBox from "/src/objects/components/lowerUIBox.js";
 import testAutomataUI from "/src/objects/components/testAutomataUI.js";
 import popUp from "/src/objects/components/popUp.js";
+import { changeBackground } from "/src/utils/utils.js";
+import { resetBackground } from "/src/utils/utils.js";
 
 export default class TestCreateLevel extends Level {
 
@@ -18,7 +20,7 @@ export default class TestCreateLevel extends Level {
 
     create({automata, words, alphabet, language, inputAutomata}){
         
-        this.background = this.add.rectangle(0, 0, 800, 500, colours.BLUE).setOrigin(0);
+        changeBackground();
 
         super.create(automata, language);
         
@@ -45,6 +47,7 @@ export default class TestCreateLevel extends Level {
 
     update(){
         if (!this.drawingLetters && !this.computing && this.runTests){
+            console.log('performing test');
             this.performTest();
         } else if (!this.drawingLetters && !this.computing && !this.end){
             this.end = true;
@@ -71,7 +74,7 @@ export default class TestCreateLevel extends Level {
 
         this.prevTest.result ? icon.setFillStyle(colours.GREEN) : icon.setFillStyle(colours.RED)
 
-        this.startDrawingLetters();
+        this.time.delayedCall(500, this.startDrawingLetters, [], this);
 
         this.test = this.tests.next(); 
         
@@ -91,17 +94,17 @@ export default class TestCreateLevel extends Level {
             
             this.textX = this.levelObjects.letters.at(-1).getTopLeft().x;
             this.drawingLetters = false;
-            this.time.delayedCall(400, this.startComputation, [], this);
+            this.time.delayedCall(500, this.startComputation, [], this);
             return;
         } 
 
-        this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.word[i], { fontSize: '50px', color: colours.BLACK }))
+        this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.word[i], { fontSize: '50px', color: colours.BLACK, fontFamily: 'Quantico'}))
         this.time.delayedCall(400, this.drawLetters, [i+1], this);
     }
 
     startDrawingLetters(){
         this.drawingLetters = true;
-        this.startingX = calculateStartingX(this.word)+20;
+        this.startingX = calculateStartingX(this.word);
         this.drawLetters(0);
     }
 
@@ -129,7 +132,7 @@ export default class TestCreateLevel extends Level {
         
         if (this.passedTests){
             popUp(["All words correct!"], this)
-            this.time.delayedCall(1000, this.nextLevel, [true], this)
+            this.time.delayedCall(2000, this.nextLevel, [true], this)
         } else {
             const message = '"' + this.word + '"' + " classified incorrectly"
             popUp([message, "Try a different automata!"], this)
@@ -138,6 +141,7 @@ export default class TestCreateLevel extends Level {
     }
 
     nextLevel(passed){
+        resetBackground();
         if (passed){
             this.scene.stop('CreateLevel');
             this.scene.start("LevelSelect", {passed:true})

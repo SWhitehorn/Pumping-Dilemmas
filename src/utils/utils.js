@@ -104,3 +104,15 @@ export const withinBounds = (shape, point) => {
         point.y < bounds.y + bounds.height
     );
 }
+
+/** Changes the background colour */
+export const changeBackground = () => {
+    const game = document.querySelector("#canvas-container");
+    game.style.cssText = 'background:repeating-linear-gradient(45deg,#8e92ac,#8e92ac 30px,#61636f 30px,#61636f 60px);';
+}
+
+/** Resets the background colour */
+export const resetBackground = () => {
+    const game = document.querySelector("#canvas-container");
+    game.style.cssText = 'background-color:#78C2FF'
+}

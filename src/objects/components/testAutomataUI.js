@@ -31,7 +31,7 @@ export default (scene) => {
                 orientation: 'x',
                 width: 290,
             })
-            .addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tr: 30}, colours.WHITE).setStrokeStyle(3, 0x010A12))
+            .addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {}, colours.WHITE).setStrokeStyle(3, 0x010A12))
     }
 
     return lowerUIBox(scene)

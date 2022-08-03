@@ -127,6 +127,8 @@ export default class LevelNode {
                     this.scene.scene.run('CreateLevel', {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language});
                 } else if (this.type === 'writeWord') {
                     this.scene.scene.run('AddWordLevel', {automata:this.data.automata, language:this.data.language, grammar: this.data.grammar});
+                } else if (this.type === "nonRegular") {
+                    this.scene.scene.run('Non_RegularLevel', {language:this.data.language, grammar: this.data.grammar});
                 }
             } else {
                 this.scene.prevNode = this;

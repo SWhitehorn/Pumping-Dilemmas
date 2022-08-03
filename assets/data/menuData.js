@@ -24,9 +24,16 @@ export default {
     },
     node3: {
         x:1200, y:300,
-        children: [],
+        children: ['node4'],
         data: data.level3Data,
         name: 'node3',
         type: 'writeWord'
     },
+    node4: {
+        x: 1200, y: 150,
+        children: [],
+        data: data.level4Data,
+        name: 'node4',
+        type: 'nonRegular'
+    }
 }

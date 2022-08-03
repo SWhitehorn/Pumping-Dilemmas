@@ -10,9 +10,9 @@ export default (scene) => {
         return scene.rexUI.add.sizer(
             {
                 orientation: 'x',
-                width: 300
+                width: 350
             })
-            .addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tl:30}, colours.WHITE).setStrokeStyle(3, 0x010A12))
+            .addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tl:30}, colours.LIGHTBLUE).setStrokeStyle(3, 0x010A12))
     }
 
     // Section containing play button

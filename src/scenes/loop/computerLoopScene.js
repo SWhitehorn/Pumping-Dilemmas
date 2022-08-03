@@ -2,6 +2,7 @@ import "/src/typedefs/typedefs.js"
 import colours from "/src/utils/colours.js"
 import LoopLevel from "./baseLoopScene.js";
 import popUp from "../../objects/components/popUp.js";
+import { changeBackground } from "/src/utils/utils.js";
 
 /** 
  * Level where computer chooses the number of loops
@@ -23,6 +24,7 @@ import popUp from "../../objects/components/popUp.js";
         this.nextTest = undefined;
         
         this.UIElements.play.on('pointerup', () => {
+            changeBackground();
             this.automata.stopComputation();
             this.runTests = true;
             this.testsStarted = true;

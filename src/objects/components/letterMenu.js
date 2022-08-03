@@ -20,18 +20,17 @@ export default (scene, point, input, transitionPoint) => {
     // Option for each of the letters in the alphabet
     let options = [...scene.alphabet, 'Remove']
 
-    const width = scene.alphabet.length * 20;
+    const width = scene.alphabet.length * 15;
     
     // Returns text object
     const createTextObject = function (scene, text) {
-        return scene.add.text(0, 0, text, { fontSize: 20, color: colours.TEXTBLACK});
+        return scene.add.text(0, 0, text, { fontSize: 20, color: colours.TEXTBLACK, fontFamily: 'Quantico'});
     }
 
     let menu = scene.rexUI.add.dropDownList({
         
         x: point.x, y: point.y,
         background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 5, COLOR_PRIMARY).setStrokeStyle(2, 0x010A12),
-        //icon: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, COLOR_LIGHT),
         text: createTextObject(scene, input).setFixedSize(width, 0),
         align: 'center',
         space: {
@@ -58,7 +57,7 @@ export default (scene, point, input, transitionPoint) => {
                 
                 // Outline in white if option is included
                 if (this.text.includes(option)){
-                    background.setStrokeStyle(1, colours.WHITE);
+                    background.setStrokeStyle(1, colours.BLACK);
                 }
 
                 let button = scene.rexUI.add.label({

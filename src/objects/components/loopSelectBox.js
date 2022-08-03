@@ -32,11 +32,11 @@ export default (scene, repeats) => {
         return scene.rexUI.add.sizer(
             {
                 orientation: 1,
-                width: 270
+                width: 320
             })
             .addBackground(scene.add.rectangle(0, 0, 1, 1, colours.WHITE))
             .add(scene.rexUI.add.sizer({height: 60}).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tr: 0}, colours.WHITE).setStrokeStyle(3, 0x010A12)), {expand: true})
-            .add(scene.rexUI.add.sizer({height: 30}).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {br: 0}, colours.WHITE).setStrokeStyle(3, 0x010A12)), {expand: true})
+            .add(scene.rexUI.add.sizer({height: 30}).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {br: 0}, colours.LIGHTBLUE).setStrokeStyle(3, 0x010A12)), {expand: true})
     }
 
     // Section containing play button
@@ -59,13 +59,15 @@ export default (scene, repeats) => {
                     space: {left: 3, right: 3},
                     icon: scene.add.triangle(0, 0, 0, -5, 20, 10, 0, 25, colours.WHITE)
                         .setStrokeStyle(2, colours.BLACK, 1).setInteractive().on('pointerup', () => {
-                        
                         // Start computation on button press if not already computing, word has been added, and selection is not empty
                         if (!scene.computing && scene.finishedAddingWord && scene.decomposeWord()[1] !== "") {
+                            if (scene.scene.key === 'Non_RegularSelectRepeats'){
+                                scene.testWord();
+                            }
                             // If normal loop scene, start computation
                             if(scene.scene.key !== "ComputerLoopLevel"){
                                 scene.startComputation();
-                            // Else check whether tests are already running and start if not
+                                // Else check whether tests are already running and start if not
                             } else if (!scene.runTests){
                                 scene.runTests = true;
                             }

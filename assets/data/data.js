@@ -129,6 +129,11 @@ const level3Data = {
     grammar: "A -> ε | 2 1 | 2 3, S -> 2 1 | 2 3, 1 -> S3, 2 -> a, 3 -> b"
 }
 
+const level4Data = {
+    language: "L = { a\u{207F}b\u{207F} | n > 0 }",
+    grammar: "A -> ε | 2 1 | 2 3, S -> 2 1 | 2 3, 1 -> S3, 2 -> a, 3 -> b"
+}
+
 const spareData = {
     automata: {
         states: {
@@ -195,4 +200,4 @@ const testData2 = {
     language: "L = {a\u{207F}b\u{207F}|n>0}"
 }
 
-export default {level0Data, level1Data, level2Data, level3Data, testData1, testData2}
+export default {level0Data, level1Data, level2Data, level3Data, level4Data, testData1, testData2}

@@ -1,9 +1,8 @@
-
 /**
  * Class for testing membership of CFG
  * @class
  */
-export class CYK {
+export default class CYK {
     
     /**
      * Creates new instance with specified ruleset

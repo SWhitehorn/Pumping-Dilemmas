@@ -1,7 +1,7 @@
 import Level from "../levelTemplate.js";
 import "/src/typedefs/typedefs.js"
 import colours from "/src/utils/colours.js"
-import { calculateStartingX } from "/src/utils/utils.js"
+import { calculateStartingX, resetBackground } from "/src/utils/utils.js"
 import loopSelectBox from "/src/objects/components/loopSelectBox.js";
 import popUp from "/src/objects/components/popUp.js";
 
@@ -19,7 +19,7 @@ import popUp from "/src/objects/components/popUp.js";
 export default class LoopLevel extends Level {
 
     startingX = 300;
-    textY = 425;
+    textY = 420;
     
 
     constructor(key){
@@ -100,9 +100,9 @@ export default class LoopLevel extends Level {
      * @param {number} extend - Option to extend slider based on section repeats
      */
     updateBox(extend = 1){
-        const origin = this.levelObjects.leftBar.getTopLeft();
+        const origin = this.levelObjects.leftBar.getTopRight();
         
-        const width = (this.levelObjects.rightBar.getTopRight().x - origin.x) * extend; 
+        const width = (this.levelObjects.rightBar.getTopLeft().x - origin.x) * extend; 
         
         this.levelObjects.slider.setX(origin.x - (width/2 * (extend-1) ) );
         
@@ -137,6 +137,7 @@ export default class LoopLevel extends Level {
         if (!accepted){
             this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
             popUp(["Not accepted!", "Try a different selection"], this);
+            resetBackground();
             this.runTests = false;
             this.testsStarted = false;
             this.numRepeats = 1;
@@ -144,7 +145,6 @@ export default class LoopLevel extends Level {
             this.time.delayedCall(2000, this.startComputation, [], this); 
 
         } else if (accepted && !this.runTests && this.testsStarted){
-            console.log('good');
             this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
             this.passedTests = true;
         } else {
@@ -267,14 +267,14 @@ export default class LoopLevel extends Level {
 
         // Add left bar
         const leftTop = this.levelObjects.letters[0].getTopLeft();
-        this.levelObjects.leftBar = this.add.rexRoundRectangle(leftTop.x-20, leftTop.y-4, 10, 50, 
+        this.levelObjects.leftBar = this.add.rexRoundRectangle(leftTop.x-20, leftTop.y, 10, 50, 
             {
                 tl: 8, bl: 8
             }, colours.DARKBLUE).setOrigin(0).setInteractive();
         
         // Add right bar
         const rightTop = this.levelObjects.letters.at(-1).getTopRight();
-        this.levelObjects.rightBar = this.add.rexRoundRectangle(rightTop.x+10, rightTop.y-4, 10, 50, 
+        this.levelObjects.rightBar = this.add.rexRoundRectangle(rightTop.x+10, rightTop.y, 10, 50, 
             {
                 tr: 8, br: 8
             }, colours.DARKBLUE).setOrigin(0).setInteractive();
@@ -299,10 +299,10 @@ export default class LoopLevel extends Level {
      * Draw sliding window
      */
      drawBox(){
-        const origin = this.levelObjects.leftBar.getTopLeft();
-        const width = this.levelObjects.rightBar.getTopRight().x - origin.x;
+        const origin = this.levelObjects.leftBar.getTopRight();
+        const width = this.levelObjects.rightBar.getTopLeft().x - origin.x;
         const height = this.levelObjects.leftBar.getBottomLeft().y - origin.y; 
-        this.levelObjects.slider = this.add.rexRoundRectangle(origin.x, origin.y, width, height, 10)
+        this.levelObjects.slider = this.add.rectangle(origin.x, origin.y, width, height)
             .setStrokeStyle(2, colours.DARKBLUE, 1)
             .setOrigin(0);
 
@@ -314,16 +314,22 @@ export default class LoopLevel extends Level {
 
     addControlButtons(){
         // Increase button
-        this.textObjects.increase = this.add.text(650, 400, "Increase", {fontSize: '30px', color: '#ffffff'}).setInteractive();
+        this.textObjects.increase = this.add.text(650, 400, "Increase", {fontSize: '30px', color: '#ffffff', fontFamily: 'Quantico'}).setInteractive();
         this.textObjects.increase.on('pointerup', () => {
-            // Cap at 4
-            if (this.numRepeats < 4) {this.numRepeats += 1};
+            // Cap at 3
+            if (this.numRepeats < 3) {
+                this.numRepeats += 1;
+                this.UIElements.repeats.text = this.numRepeats;
+            };
         });
         
         // Decrease button
-        this.textObjects.decrease = this.add.text(650, 450, "Decrease", {fontSize: '30px', color: '#ffffff'}).setInteractive();
+        this.textObjects.decrease = this.add.text(650, 450, "Decrease", {fontSize: '30px', color: '#ffffff', fontFamily: 'Quantico'}).setInteractive();
         this.textObjects.decrease.on('pointerup', () => {
-            if (this.numRepeats > 0){ this.numRepeats -= 1; }
+            if (this.numRepeats > 0) { 
+                this.numRepeats -= 1;
+                this.UIElements.repeats.text = this.numRepeats 
+            }
         });  
     }
 }

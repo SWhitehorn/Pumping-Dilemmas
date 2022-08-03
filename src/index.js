@@ -29,7 +29,7 @@ const scenes = [LevelSelect,
 
 const config = {
     type: Phaser.AUTO,
-    backgroundColor: colours.BLUE,
+    transparent: true,
     width: 800,
     height: 500,
     scene: scenes,
