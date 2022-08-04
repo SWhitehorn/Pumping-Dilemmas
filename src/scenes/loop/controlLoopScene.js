@@ -12,13 +12,13 @@ import LoopLevel from "./baseLoopScene.js";
     }
 
     /** Adds buttons for the player to increase or decrease number of loops */
-    create({automata, word, language}){
+    create({automata, word, language, repeats}){
         super.create({automata, word, language});
-        
-        // this.textObjects.compute.on('pointerup', () => {
-        //     if (!this.computing) {this.startComputation()};
-        // });
 
-        this.addControlButtons();
+        this.UIElements.play.on('pointerup', () => {
+            this.automata.stopComputation();
+            this.automata.startComputation();
+        })
     }
+
  }

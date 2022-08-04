@@ -1,12 +1,14 @@
-import colours from "/src/utils/colours.js"
+import colours from "/src/utils/colours.js";
+import addWordUI from "./addWordUI.js";
 
-export default (scene) => {
+export default (scene, content) => {
     
     const COLOR_PRIMARY = colours.LIGHTBLUE;
     const COLOR_LIGHT = colours.WHITE;
     const COLOR_DARK = colours.DARKBLUE;
 
-    var content = `Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.`;
+    let page = 0;
+
     const GetValue = Phaser.Utils.Objects.GetValue;
     
     const createTextBox = function (scene, x, y, config) {
@@ -45,14 +47,25 @@ export default (scene) => {
                 if (this.isTyping) {
                     this.stop(true);
                 } else {
-                    this.typeNextPage();
+                    if (this.isLastPage){
+                        this.destroy();
+                        scene.addUI();
+                        return;
+                    } else {
+                        this.typeNextPage(); 
+                        if (scene.scene.key === "OpeningScene"){
+                            if (page === 3){ scene.startComputation();}
+                        } else if (scene.scene.key === "LoopTutorial"){
+                        }
+                        
+                        page++;
+                    }
                 }
             }, textBox)
             .on('pageend', function () {
                 if (this.isLastPage) {
                     return;
-                }
-
+                } 
                 var icon = this.getElement('action').setVisible(true);
                 this.resetChildVisibleState(icon);
                 icon.y -= 30;
@@ -98,7 +111,7 @@ export default (scene) => {
             })
     }
 
-    createTextBox(scene, 400, 250, {
+    createTextBox(scene, 400, 430, {
             wrapWidth: 500,
             fixedWidth: 500,
             fixedHeight: 65,

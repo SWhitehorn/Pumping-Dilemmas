@@ -34,7 +34,7 @@ export default class LoopLevel extends Level {
      * Create level, initialising level objects and flags
      * @param {Input}
      */
-    create({automata, word, language, repeats}){
+    create({automata, word, language}){
         
         // Level template handles drawing automaton
         super.create(automata, language);
@@ -59,10 +59,18 @@ export default class LoopLevel extends Level {
         const box = loopSelectBox(this, this.numRepeats);
         this.UIElements = {
             box: box, 
-            repeats: box.getElement('left').getElement('label').getElement('text'), 
+            repeats: box.getElement('left').getElement('top').getElement('label').getElement('text'), 
+            increase: box.getElement('left').getElement('bottom').getElement('increase').getElement('icon'),
+            decrease: box.getElement('left').getElement('bottom').getElement('decrease').getElement('icon'), 
             play: box.getElement('right').getElement('label').getElement('icon') 
         };
+        
+        // Hide all interactive elements
         this.UIElements.play.visible = false;
+        this.UIElements.increase.visible = false;
+        this.UIElements.decrease.visible = false;
+        this.UIElements.repeats.visible = false;
+        
 
 
         // Add letters individually
@@ -134,7 +142,7 @@ export default class LoopLevel extends Level {
     endComputation(accepted){
         this.word = this.selectedWord;
 
-        if (!accepted){
+        if (!accepted && this.testsStarted){
             this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
             popUp(["Not accepted!", "Try a different selection"], this);
             resetBackground();
@@ -165,6 +173,8 @@ export default class LoopLevel extends Level {
             this.addSlidingWindow();
             this.finishedAddingWord = true;
             this.UIElements.play.visible = true;
+            this.UIElements.repeats.visible = true;
+            this.enableControlButtons();
             this.selectedWord = this.addSections(this.numRepeats);
             this.startComputation();
             return;
@@ -270,14 +280,30 @@ export default class LoopLevel extends Level {
         this.levelObjects.leftBar = this.add.rexRoundRectangle(leftTop.x-20, leftTop.y, 10, 50, 
             {
                 tl: 8, bl: 8
-            }, colours.DARKBLUE).setOrigin(0).setInteractive();
+            }, 
+        colours.DARKBLUE).setOrigin(0).setInteractive();
+
+        this.levelObjects.leftBar.on('pointerover', () => {
+            this.levelObjects.leftBar.setFillStyle(colours.RED)
+        });
+        this.levelObjects.leftBar.on('pointerout', () => {
+            this.levelObjects.leftBar.setFillStyle(colours.DARKBLUE)
+        });
         
         // Add right bar
         const rightTop = this.levelObjects.letters.at(-1).getTopRight();
         this.levelObjects.rightBar = this.add.rexRoundRectangle(rightTop.x+10, rightTop.y, 10, 50, 
             {
                 tr: 8, br: 8
-            }, colours.DARKBLUE).setOrigin(0).setInteractive();
+            }, 
+        colours.DARKBLUE).setOrigin(0).setInteractive();
+
+        this.levelObjects.rightBar.on('pointerover', () => {
+            this.levelObjects.rightBar.setFillStyle(colours.RED)
+        });
+        this.levelObjects.rightBar.on('pointerout', () => {
+            this.levelObjects.rightBar.setFillStyle(colours.DARKBLUE)
+        });
 
         const letterBounds = this.levelObjects.letters[0].getBounds();
 
@@ -312,24 +338,44 @@ export default class LoopLevel extends Level {
         }
     }
 
-    addControlButtons(){
-        // Increase button
-        this.textObjects.increase = this.add.text(650, 400, "Increase", {fontSize: '30px', color: '#ffffff', fontFamily: 'Quantico'}).setInteractive();
-        this.textObjects.increase.on('pointerup', () => {
+    enableControlButtons(){
+        
+        this.UIElements.increase.visible = true;
+        this.UIElements.decrease.visible = true;
+
+        this.UIElements.increase.on('pointerup', () => {
+            
             // Cap at 3
             if (this.numRepeats < 3) {
                 this.numRepeats += 1;
                 this.UIElements.repeats.text = this.numRepeats;
             };
         });
+        this.UIElements.increase.on('pointerover', () => {
+            this.UIElements.increase.setFillStyle(colours.RED)
+        });
+        this.UIElements.increase.on('pointerout', () => {
+            this.UIElements.increase.setFillStyle(colours.WHITE)
+        });
         
-        // Decrease button
-        this.textObjects.decrease = this.add.text(650, 450, "Decrease", {fontSize: '30px', color: '#ffffff', fontFamily: 'Quantico'}).setInteractive();
-        this.textObjects.decrease.on('pointerup', () => {
+        this.UIElements.decrease.on('pointerup', () => {
             if (this.numRepeats > 0) { 
                 this.numRepeats -= 1;
                 this.UIElements.repeats.text = this.numRepeats 
             }
         });  
+        this.UIElements.decrease.on('pointerover', () => {
+            this.UIElements.decrease.setFillStyle(colours.RED)
+        });
+        this.UIElements.decrease.on('pointerout', () => {
+            this.UIElements.decrease.setFillStyle(colours.WHITE)
+        });
+        
+        this.UIElements.play.on('pointerover', () => {
+            this.UIElements.play.setFillStyle(colours.RED)
+        });
+        this.UIElements.play.on('pointerout', () => {
+            this.UIElements.play.setFillStyle(colours.WHITE)
+        });
     }
 }

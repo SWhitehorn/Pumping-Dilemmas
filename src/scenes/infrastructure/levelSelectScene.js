@@ -58,7 +58,8 @@ export default class LevelSelect extends Phaser.Scene {
         if (!this.created){
             this.graphics = this.add.graphics({ lineStyle: { width: 3, color: colours.BLACK } })
             const [width, height] = [800, 600];
-            this.cameras.main.setBounds(0, 0, width*2, height*2);
+            this.cameras.main.setBounds(0, 0, width*10, height*3);
+            this.cameras.main.centerOn(200, 800)
             
             this.addUI();
             
@@ -67,8 +68,8 @@ export default class LevelSelect extends Phaser.Scene {
                 this.nodes[data.name] = new LevelNode(this, data);
             }
             
-            this.nodes['startNode'].enable();
-            const start = this.nodes['node0'];
+            
+            const start = this.nodes['openingNode'];
             start.enable(); 
             start.enableNextNodes(); 
             this.nodes['node2'].enable().enableNextNodes();
@@ -101,18 +102,18 @@ export default class LevelSelect extends Phaser.Scene {
         this.UI.back = this.add.image(750, 30, 'backArrow').setInteractive().setScrollFactor(0);
         this.UI.back.visible = false;
         this.UI.back.on('pointerup', () => {
-                this.cameras.main.pan(400, 250, 750);
+                this.cameras.main.pan(400, 800, 750);
                 this.prevNode.graphic.setFillStyle(colours.WHITE, 1);
                 this.prevNode = null;
                 this.UI.back.visible = false;
             });    
 
-        this.UI.start = this.add.text(20, 200, "Start", { fontFamily: 'Quantico', fontSize: '70px', color: colours.TEXTWHITE }).setInteractive();
+        this.UI.start = this.add.text(20, 725, "Start", { fontFamily: 'Quantico', fontSize: '70px', color: colours.TEXTWHITE }).setInteractive();
         this.UI.start.on('pointerup', () => {
-            this.nodes['node0'].selectNode();
+            this.nodes['openingNode'].selectNode();
         });
 
-        this.UI.extras = this.add.text(20, 275, "Extras", { fontFamily: 'Quantico', fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.UI.extras = this.add.text(20, 800, "Extras", { fontFamily: 'Quantico', fontSize: '30px', color: '#ffffff' }).setInteractive();
         this.UI.extras.on('pointerup', () => {
             this.scene.start('IntroScene');
         });

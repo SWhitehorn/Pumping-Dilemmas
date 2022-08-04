@@ -12,6 +12,7 @@ import LevelEnd from "/src/scenes/infrastructure/levelEndScene.js";
 import TestCreateLevel from "/src/scenes/testAutomataScene.js";
 import colours from "/src/utils/colours.js";
 import OpeningScene from "/src/scenes/tutorials/openingScene.js";
+import LoopTutorial from "/src/scenes/tutorials/loopTutorialScene.js";
 
 
 const scenes = [LevelSelect, 
@@ -26,7 +27,8 @@ const scenes = [LevelSelect,
     LevelCreator, 
     LevelEnd,
     TestCreateLevel,
-    OpeningScene
+    OpeningScene,
+    LoopTutorial
 ]
 
 const config = {

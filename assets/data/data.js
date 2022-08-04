@@ -25,7 +25,7 @@ const level0Data = {
         },
         start: 'q1'
     },
-    word: ["abba"],
+    word: "abba",
     repeats: [2, 1],
     alphabet: ['a', 'b'],
     language: "L = { ab\u{207F}a | n \u{2265} 0}" 
@@ -48,7 +48,7 @@ const level1Data = {
         },
         start: "q1"
     },
-    word: ["aaba"],
+    word: "aaba",
     repeats: [2, 0],
     alphabet: ['a', 'b'],
     language: "L = {w \u{2208} {a,b}* | w has an odd number of a symbols}"

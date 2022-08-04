@@ -6,12 +6,16 @@ import popUp from "/src/objects/components/popUp.js";
 
 export default class AddWordLevel extends Level {
 
-    constructor(){
-        super('AddWordLevel');
-        
+    constructor(key){
+        if (key){
+            super(key);
+        } else {
+            super('AddWordLevel')
+        }
     }
 
     create({automata, language, grammar}){
+
         super.create(automata, language);
         
         // Initialise empty word
@@ -21,25 +25,6 @@ export default class AddWordLevel extends Level {
         this.CYK = new CYK(grammar);
 
         const UI = addWordUI(this).layout();
-
-        const textBox = this.add.rectangle(380, 460, 230, 50, colours.WHITE).setStrokeStyle(3, colours.BLACK);
-        this.textEntry = this.add.text(380, 460, this.word, { fontSize: '50px', color: colours.TEXTBLACK, fontFamily: 'Quantico'}).setOrigin(0.5);
-        // Text entry
-        this.input.keyboard.on('keydown', (event) => {
-            
-            if (!this.computing){ // Disable text entry when computation is happening
-                
-                // Backspace: Remove final character
-                if (event.keyCode === 8 && this.word.length > 0) { 
-                    this.word = this.word.substr(0, this.word.length - 1);
-                
-                // Add key to text
-                } else if ((event.keyCode === 32 || (event.keyCode >= 48 && event.keyCode < 90)) 
-                    && this.word.length < 8) {
-                    this.word = (this.word + event.key).toLowerCase();                
-                }
-            }
-        });
     }
 
     update(){

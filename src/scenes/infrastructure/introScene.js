@@ -11,7 +11,8 @@ export default class IntroScene extends Phaser.Scene {
     create() {
       const btn1 = this.add.text(20, 20, 'Opening scene test', { fontSize: '30px', color: '#ffffff' }).setInteractive();
       btn1.on('pointerup', () => {
-        this.scene.start('OpeningScene');
+        const leveldata = data.level0Data;
+        this.scene.start('LoopTutorial', {automata: leveldata.automata, word: leveldata.word[0], language: leveldata.language});
       });
 
       const btn2 = this.add.text(20, 60, 'Create new level', { fontSize: '30px', color: '#ffffff' }).setInteractive();

@@ -26,6 +26,7 @@ export default class LevelNode {
         this.data = data.data;
         this.controlPoints = data.controlPoints;
         
+        this.levelDict = this.createLookUpDict();
         
         this.active = false;
         
@@ -116,6 +117,7 @@ export default class LevelNode {
         drawTriangle(this.scene, tri);
     }
 
+    /** Handles interaction when player clicks on a node */
     selectNode(){
         
         // Start level if node is already selected
@@ -123,15 +125,9 @@ export default class LevelNode {
             if (this.scene.prevNode === this && this.active){
                 this.scene.scene.sleep('LevelSelect');
                 
-                if (this.type === 'loop') {
-                    this.scene.scene.run('ComputerLoopLevel', {automata:this.data.automata, word:this.data.word[0], language:this.data.language, repeats: this.data.repeats});
-                } else if (this.type === 'create') {
-                    this.scene.scene.run('CreateLevel', {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language});
-                } else if (this.type === 'writeWord') {
-                    this.scene.scene.run('AddWordLevel', {automata:this.data.automata, language:this.data.language, grammar: this.data.grammar});
-                } else if (this.type === "nonRegular") {
-                    this.scene.scene.run('Non_RegularLevel', {language:this.data.language, grammar: this.data.grammar});
-                }
+                const levelData = this.levelDict[this.type];
+                this.scene.scene.run(levelData.scene, levelData.data)
+
             } else {
                 if (this.scene.prevNode.active){
                     this.scene.prevNode.graphic.setFillStyle(colours.WHITE, 1);
@@ -149,5 +145,39 @@ export default class LevelNode {
         this.scene.cameras.main.pan(this.x, this.y, 500);        
         this.scene.prevNode = this;
         this.scene.UI.back.visible = true;
+    }
+
+    /**
+     * Returns a dictionary with the name and data for each level type
+     * @returns {Object} Object with scene and data properties for each type
+     */
+    createLookUpDict(){
+        return {
+            loop: {
+                scene: "ComputerLoopLevel", 
+                data: {automata:this.data.automata, word:this.data.word, language:this.data.language, repeats: this.data.repeats}
+            },
+            create: {
+                scene: 'CreateLevel', 
+                data: {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language}
+            },
+            writeWord: {
+                scene: "AddWordLevel",
+                data: {automata:this.data.automata, language:this.data.language, grammar: this.data.grammar}
+            },
+            nonRegular: {
+                scene: 'Non_RegularLevel', 
+                data: {language:this.data.language, grammar: this.data.grammar}
+            },
+            opening: {
+                scene: "OpeningScene", 
+                data: {automata:this.data.automata, word: this.data.word, language: this.data.language }
+            },
+            loopTutorial: {
+                scene: "LoopTutorial",
+                data: {automata:this.data.automata, word:this.data.word, language:this.data.language, repeats: this.data.repeats}
+            }
+
+        }
     }
 }

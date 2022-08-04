@@ -10,20 +10,52 @@ export default (scene, repeats) => {
 
         return scene.rexUI.add.sizer(
             {
-                orientation: 0,
+                orientation: 'y',
                 x: 0,
                 y: 0,
                 width: 60,
                 height: 90,
             })
-            .addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tl: 30}, colours.DARKBLUE).setStrokeStyle(3, 0x010A12))
-            .add(scene.rexUI.add.label(
-            {
-                background: scene.rexUI.add.roundRectangle(0, 0, 1, 1, 5),
-                space: {left: 3, right: 3},
-                text: scene.add.text(0, 0, repeats, { fontSize: '30px', fontFamily: 'Quantico' }),
-            }
-            ), {proportion: 0, expand: false, padding: {left: 20}, key: 'label'})
+            .add(scene.rexUI.add.sizer(
+                {
+                    orientation: 'x',
+                    x: 0,
+                    y: 0,
+                    width: 60,
+                    height: 60,
+                }
+                ).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tl: 30}, colours.DARKBLUE))
+                .add(scene.rexUI.add.label(
+                {
+                    background: scene.rexUI.add.roundRectangle(0, 0, 1, 1, 5),
+                    space: {left: 3, right: 3},
+                    text: scene.add.text(0, 0, repeats, { fontSize: '30px', fontFamily: 'Quantico' }),
+                }
+                ), {proportion: 0, expand: false, padding: {left: 20}, key: 'label'})
+            , {key: 'top'})
+            .add(scene.rexUI.add.sizer(
+                {
+                    orientation: 'x',
+                    x: 0,
+                    y: 0,
+                    width: 60,
+                    height: 30,
+                }
+                ).add(scene.rexUI.add.label(
+                    {
+                        space: {left: 10, right: 3},
+                        icon: scene.add.triangle(0, 0, 5, -3, -7, 6, 5, 15, colours.WHITE)
+                            .setStrokeStyle(2, colours.BLACK, 1).setInteractive()
+                    }), {align: 'left', padding: {left:5}, key: 'decrease'}
+                )
+                .add(scene.rexUI.add.label(
+                    {
+                        icon: scene.add.triangle(0, 0, 0, -3, 12, 6, 0, 15, colours.WHITE)
+                            .setStrokeStyle(2, colours.BLACK, 1).setInteractive()
+                    }), {align: 'right', padding: {left: 10}, key: 'increase'}
+                )
+            , {key: 'bottom'})
+            
     }
     
     // Section containing word

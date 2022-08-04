@@ -34,8 +34,6 @@ export default (scene, language) => {
         });
     }
 
-    console.log(scene);
-
     return scene.rexUI.add.sizer({
         orientation: 'x',
         x: 400,
