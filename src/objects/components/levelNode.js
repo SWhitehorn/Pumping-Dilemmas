@@ -26,18 +26,21 @@ export default class LevelNode {
         this.data = data.data;
         this.controlPoints = data.controlPoints;
         
+        
         this.active = false;
         
         let shadow = this.scene.add.circle(this.x+5, this.y+10, 31, colours.BLACK).setAlpha(0.3);
         this.graphic = this.scene.add.circle(this.x, this.y, 30, colours.BLACK).setInteractive();
         
+        if (data.tutorial){
+            this.text = scene.add.text(this.x, this.y, "?", { fontFamily: 'Quantico', fontSize: '50px', color: colours.TEXTBLACK}).setOrigin(0.5);
+        }   
 
         this.graphic.setStrokeStyle(3, colours.BLACK, 1);
         
         // Interactivity
         this.graphic.on('pointerup', () => {
             this.selectNode();
-            this.graphic.setFillStyle(colours.YELLOW, 1);
         });
     }
 
@@ -130,13 +133,20 @@ export default class LevelNode {
                     this.scene.scene.run('Non_RegularLevel', {language:this.data.language, grammar: this.data.grammar});
                 }
             } else {
-                this.scene.prevNode.graphic.setFillStyle(colours.WHITE, 1);
+                if (this.scene.prevNode.active){
+                    this.scene.prevNode.graphic.setFillStyle(colours.WHITE, 1);
+                }
                 this.scene.prevNode = this;
             }
         }
         
-        this.scene.cameras.main.pan(this.x, this.y, 500);
-        this.graphic.setFillStyle(colours.YELLOW, 1)
+        console.log(this.active);
+
+        if (this.active){
+            this.graphic.setFillStyle(colours.YELLOW, 1)
+        }
+
+        this.scene.cameras.main.pan(this.x, this.y, 500);        
         this.scene.prevNode = this;
         this.scene.UI.back.visible = true;
     }

@@ -1,6 +1,16 @@
 import data from "./data.js"
 
 export default {
+    
+    startnode: {
+        x:400, y: 300,
+        children: ['node1'],
+        tutorial: true,
+        name: 'startNode',
+        type: 'start'
+    },
+
+    
     node0: {
         x: 600, y: 300, 
         children: ['node1'], 

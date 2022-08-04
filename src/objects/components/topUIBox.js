@@ -4,6 +4,11 @@ export default (scene, language) => {
     
     const createLabel = (scene, language) => {
         
+        // Catch null language
+        if (!language){
+            language = ""
+        }
+
         return scene.rexUI.add.label({
 
             width: 750,
@@ -28,6 +33,8 @@ export default (scene, language) => {
             space: {left: 10}
         });
     }
+
+    console.log(scene);
 
     return scene.rexUI.add.sizer({
         orientation: 'x',

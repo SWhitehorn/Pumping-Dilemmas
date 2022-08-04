@@ -67,6 +67,7 @@ export default class LevelSelect extends Phaser.Scene {
                 this.nodes[data.name] = new LevelNode(this, data);
             }
             
+            this.nodes['startNode'].enable();
             const start = this.nodes['node0'];
             start.enable(); 
             start.enableNextNodes(); 
@@ -100,7 +101,7 @@ export default class LevelSelect extends Phaser.Scene {
         this.UI.back = this.add.image(750, 30, 'backArrow').setInteractive().setScrollFactor(0);
         this.UI.back.visible = false;
         this.UI.back.on('pointerup', () => {
-                this.cameras.main.pan(400, 250, 500);
+                this.cameras.main.pan(400, 250, 750);
                 this.prevNode.graphic.setFillStyle(colours.WHITE, 1);
                 this.prevNode = null;
                 this.UI.back.visible = false;

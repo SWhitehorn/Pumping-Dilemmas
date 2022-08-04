@@ -59,7 +59,8 @@ export default class Level extends Phaser.Scene {
         this.cameras.main.setRoundPixels(true);
         this.textObjects = {};
 
-        this.addLanguage(language)
+        this.addLanguage(language);
+        
         // Render automata to screen
         if (automata){
             // Create automata
