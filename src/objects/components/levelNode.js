@@ -34,11 +34,10 @@ export default class LevelNode {
 
         this.graphic.setStrokeStyle(3, colours.BLACK, 1);
         
-        
-
         // Interactivity
         this.graphic.on('pointerup', () => {
             this.selectNode();
+            this.graphic.setFillStyle(colours.YELLOW, 1);
         });
     }
 
@@ -131,11 +130,13 @@ export default class LevelNode {
                     this.scene.scene.run('Non_RegularLevel', {language:this.data.language, grammar: this.data.grammar});
                 }
             } else {
+                this.scene.prevNode.graphic.setFillStyle(colours.WHITE, 1);
                 this.scene.prevNode = this;
             }
         }
         
         this.scene.cameras.main.pan(this.x, this.y, 500);
+        this.graphic.setFillStyle(colours.YELLOW, 1)
         this.scene.prevNode = this;
         this.scene.UI.back.visible = true;
     }

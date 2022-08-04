@@ -22,21 +22,12 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         this.chosenLoops = false;
 
         super.create({automata:null, word, language});
+        this.createUI();
 
-        // Add box for selected word
-        nonRegSplitsUI(this).layout();
-        
         // Remove ability to drag bars
         this.input.setDraggable(this.levelObjects.leftBar, false);
         this.input.setDraggable(this.levelObjects.rightBar, false);
 
-        // Add increase and decrease buttons, set elements to invisible until loop has been chosen
-        this.addControlButtons();
-        this.textObjects.increase.visible = false;
-        this.textObjects.decrease.visible = false;
-        this.UIElements.repeats.visible = false;
-        this.UIElements.play.visible = false;
-        
         //Add option to rechoose word
         const rechoose = this.add.text(400, this.textY+70, "Rechoose word", {fontSize: '20px', color: colours.TEXTBLACK, fontFamily: 'Quantico'})
             .setOrigin(0.5).setInteractive().on('pointerup', () => {
@@ -107,8 +98,8 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
                     onComplete: () => {
                         resetBackground(); 
                         this.chosenLoops = true;
-                        this.textObjects.increase.visible = true;
-                        this.textObjects.decrease.visible = true;
+                        this.UIElements.increase.visible = true;
+                        this.UIElements.decrease.visible = true;
                         this.UIElements.repeats.visible = true;
                         this.UIElements.play.visible = true;
                     }
@@ -145,5 +136,38 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
     nextLevel(){
         this.scene.stop("Non_RegularSelectRepeats");
         this.scene.start("LevelSelect", {passed:true})
+    }
+
+    createUI(){
+        // Add box for selected word
+        const UI = nonRegSplitsUI(this).layout();
+        const buttons = {
+            increase: UI.getElement('bottom').getElement('left').getElement('label').getElement('text'),
+            decrease: UI.getElement('bottom').getElement('right').getElement('label').getElement('text')
+        }
+    
+        buttons.increase.on('pointerover', () => {
+            buttons.increase.setColor(colours.TEXTRED)
+        });
+        buttons.increase.on('pointerout', () => {
+            buttons.increase.setColor(colours.TEXTWHITE)
+        });
+        buttons.increase.setVisible(false);
+        
+        
+        buttons.decrease.on('pointerover', () => {
+            buttons.decrease.setColor(colours.TEXTRED)
+        });
+        buttons.decrease.on('pointerout', () => {
+            buttons.decrease.setColor(colours.TEXTWHITE)
+        });
+        buttons.decrease.setVisible(false);
+
+        this.UIElements.repeats.visible = false;
+        this.UIElements.play.visible = false;
+
+        this.UIElements.increase = buttons.increase;
+        this.UIElements.decrease = buttons.decrease;
+
     }
 }

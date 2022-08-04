@@ -32,7 +32,18 @@ export default (scene) => {
                 height: 40,
             })
             .addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {bl: 20}).setStrokeStyle(3, colours.BLACK))
-        )
+            .add(scene.rexUI.add.label({
+                text: scene.add.text(650, 400, "Decrease", {fontSize: '30px', color: '#ffffff', fontFamily: 'Quantico'})
+                .setInteractive()
+                .on('pointerup', () => {
+                    // Cap at 3
+                    if (scene.numRepeats > 0) {
+                        scene.numRepeats -= 1;
+                        scene.UIElements.repeats.text = scene.numRepeats;
+                    };
+                })
+            }), {padding: {left: 100}, key: 'label'}),
+        {key: 'right'})
         .add(scene.rexUI.add.sizer(
             {
                 orientation: 'x',
@@ -42,7 +53,7 @@ export default (scene) => {
                 height: 40,
             })
             .addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {br: 20}).setStrokeStyle(3, colours.BLACK))
-            .addLabel(scene.rexUI.add.label({
+            .add(scene.rexUI.add.label({
                 text: scene.add.text(650, 400, "Increase", {fontSize: '30px', color: '#ffffff', fontFamily: 'Quantico'})
                 .setInteractive().on('pointerup', () => {
                     // Cap at 3
@@ -51,8 +62,9 @@ export default (scene) => {
                         scene.UIElements.repeats.text = scene.numRepeats;
                     };
                 })
-            }))
-        );
+            }), {padding: {left: 100}, key: 'label'}),
+        {key: 'left'});
+
     }
 
     const baseSizer = scene.rexUI.add.sizer({
@@ -65,5 +77,5 @@ export default (scene) => {
         scene.add.rexRoundRectangle(0, 0, 1, 1, 20, colours.WHITE).setStrokeStyle(3, colours.BLACK)
     );
 
-    return baseSizer.add(top()).add(bottom());
+    return baseSizer.add(top(), {key: 'top'}).add(bottom(), {key: 'bottom'});
 }

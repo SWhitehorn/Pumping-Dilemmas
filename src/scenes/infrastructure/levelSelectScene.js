@@ -101,6 +101,7 @@ export default class LevelSelect extends Phaser.Scene {
         this.UI.back.visible = false;
         this.UI.back.on('pointerup', () => {
                 this.cameras.main.pan(400, 250, 500);
+                this.prevNode.graphic.setFillStyle(colours.WHITE, 1);
                 this.prevNode = null;
                 this.UI.back.visible = false;
             });    
@@ -110,9 +111,24 @@ export default class LevelSelect extends Phaser.Scene {
             this.nodes['node0'].selectNode();
         });
 
-        this.UI.debug = this.add.text(20, 275, "Extras", { fontFamily: 'Quantico', fontSize: '30px', color: '#ffffff' }).setInteractive();
-        this.UI.debug.on('pointerup', () => {
+        this.UI.extras = this.add.text(20, 275, "Extras", { fontFamily: 'Quantico', fontSize: '30px', color: '#ffffff' }).setInteractive();
+        this.UI.extras.on('pointerup', () => {
             this.scene.start('IntroScene');
+        });
+
+        this.UI.start.on('pointerover', () => {
+            this.UI.start.setColor(colours.TEXTRED);
+
+        });
+        this.UI.start.on('pointerout', () => {
+            this.UI.start.setColor(colours.TEXTWHITE)
+        });
+
+        this.UI.extras.on('pointerover', () => {
+            this.UI.extras.setColor(colours.TEXTRED)
+        });
+        this.UI.extras.on('pointerout', () => {
+            this.UI.extras.setColor(colours.TEXTWHITE)
         });
     }    
 
