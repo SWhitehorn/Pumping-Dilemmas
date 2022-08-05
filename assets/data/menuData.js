@@ -8,7 +8,7 @@ export default {
         tutorial: true,
         name: 'openingNode',
         type: 'opening',
-        data: data.level0Data,
+        data: data.loop0Data,
     },
 
     loopTutorial: {
@@ -16,42 +16,63 @@ export default {
         tutorial: true,
         name: 'loopTutorial',
         type: 'loopTutorial',
-        data: data.level0Data
+        data: data.loop0Data,
+        children: ['loopNode1']
     },
 
-    node0: {
+    loopNode0: {
         x: 800, y: 600, 
         children: ['node1'], 
-        data: data.level0Data, 
+        data: data.loop0Data, 
         type: 'loop', 
         name: "node0",
         },
-    node1: {
+
+    loopNode1: {
         x: 1000, y: 800, 
-        children: ['node2'], 
-        data: data.level1Data, 
+        children: ['loopNode2'], 
+        data: data.loop1Data, 
         type: 'loop', 
-        name: "node1",
+        name: "loopNode1",
     },
-    node2: {
+
+    loopNode2: {
+        x: 1100, y: 800,
+        children: ['createNode1'],
+        data: data.loop2Data,
+        type: 'loop',
+        name: "loopNode2"
+    },
+
+    createNode0: {
+        x: 1200, y: 1000,
+        children: [],
+        data: data.create0Data,
+        type: 'createTutorial',
+        name: 'createNode0',
+        tutorial: true
+    },
+
+    createNode1: {
         x: 1200, y: 800,
-        children: ['node3'],
-        data: data.level2Data,
+        children: ['writeNode0'],
+        data: data.create1Data,
         type: 'create',
-        name: 'node2',
+        name: 'createNode1',
     },
-    node3: {
+    
+    writeNode0: {
         x: 1400, y: 800,
-        children: ['node4'],
-        data: data.level3Data,
-        name: 'node3',
+        children: ['writeNode1'],
+        data: data.add0Data,
+        name: 'writeNode0',
         type: 'writeWord'
     },
-    node4: {
+    writeNode1: {
         x: 1400, y: 650,
         children: [],
-        data: data.level4Data,
-        name: 'node4',
+        data: data.add0Data,
+        name: 'writeNode1',
         type: 'nonRegular'
     }
 }

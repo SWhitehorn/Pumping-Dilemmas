@@ -24,7 +24,7 @@ export default (scene, repeats) => {
                     width: 60,
                     height: 60,
                 }
-                ).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tl: 30}, colours.DARKBLUE))
+                ).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tl: 30}, colours.DARKBLUE).setStrokeStyle(3, 0x010A12))
                 .add(scene.rexUI.add.label(
                 {
                     background: scene.rexUI.add.roundRectangle(0, 0, 1, 1, 5),

@@ -30,8 +30,7 @@ export default class OpeningScene extends Level {
             "Click to try inputting some other words. Type, then click the play button to watch the automata go. Click the back arrow when ready to move on."
         ]
 
-        const content = lines.join('\f\n')
-        textBox(this, content);
+        textBox(this, lines);
         
     }
 
@@ -41,10 +40,11 @@ export default class OpeningScene extends Level {
         }
     }
 
-    addUI(){
+    textBoxCallback(){
         this.UI = addWordUI(this).layout();
         this.repeat = false;
         const play = this.UI.getElement('right').getElement('label').getElement('icon');
+        
         play.on('pointerup', () => {
             this.automata.stopComputation();
             this.automata.startComputation();

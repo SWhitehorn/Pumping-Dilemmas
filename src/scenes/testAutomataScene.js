@@ -5,8 +5,8 @@ import { calculateStartingX } from "/src/utils/utils.js";
 import lowerUIBox from "/src/objects/components/lowerUIBox.js";
 import testAutomataUI from "/src/objects/components/testAutomataUI.js";
 import popUp from "/src/objects/components/popUp.js";
-import { changeBackground } from "/src/utils/utils.js";
-import { resetBackground } from "/src/utils/utils.js";
+import { changeBackground, resetBackground } from "/src/utils/utils.js";
+import textBox from "/src/objects/components/textBox.js";
 
 export default class TestCreateLevel extends Level {
 
@@ -14,11 +14,16 @@ export default class TestCreateLevel extends Level {
     startingX = 300;
     textY = 435;
 
-    constructor(){
-        super('TestCreateLevel');
+    constructor(key){
+        
+        if (key){
+            super(key)
+        } else {
+            super('TestCreateLevel');
+        }
     }
 
-    create({automata, words, alphabet, language, inputAutomata}){
+    create({automata, words, alphabet, language, inputAutomata, message=null}){
         
         changeBackground();
 
@@ -29,10 +34,12 @@ export default class TestCreateLevel extends Level {
         this.drawingLetters = false;
         this.passedTests = false;
         this.end = false;
+        this.firstTest = true; // Set to false after first test
 
 
         this.levelObjects = {letters: [], computedLetters: []}
         this.inputWords = words
+
         this.tests = this.wordGenerator(words)
         this.test = this.tests.next();
         this.word = this.test.value.word;
@@ -40,6 +47,7 @@ export default class TestCreateLevel extends Level {
         this.alphabet = alphabet;
         this.inputAutomata = inputAutomata;
         this.language = language;
+        this.message = message;
 
         this.UI = testAutomataUI(this).layout();
         
@@ -47,7 +55,6 @@ export default class TestCreateLevel extends Level {
 
     update(){
         if (!this.drawingLetters && !this.computing && this.runTests){
-            console.log('performing test');
             this.performTest();
         } else if (!this.drawingLetters && !this.computing && !this.end){
             this.end = true;
@@ -55,6 +62,10 @@ export default class TestCreateLevel extends Level {
         }
     }
 
+    /**
+     * 
+     * @param {Object[]} words - List of word and result pairs
+     */
     *wordGenerator(words){
         for (let i = 0; i < words.length; i++){
             yield words[i];
@@ -66,8 +77,6 @@ export default class TestCreateLevel extends Level {
         
         this.prevTest = this.test.value
         this.word = this.prevTest.word
-        console.log(this.word);
-        console.log(this.test.done)
         this.computing = true;
         this.removeLetters();
         const icon = this.UI.getElement('left').getElement('label').getElement('icon');
@@ -94,12 +103,26 @@ export default class TestCreateLevel extends Level {
             
             this.textX = this.levelObjects.letters.at(-1).getTopLeft().x;
             this.drawingLetters = false;
-            this.time.delayedCall(500, this.startComputation, [], this);
+            if (this.firstTest && this.message){
+                this.firstTest = false;
+                this.time.delayedCall(500, this.displayMessage, [], this);
+            } else {
+                this.time.delayedCall(500, this.startComputation, [], this);
+            }
+            
             return;
         } 
 
         this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.word[i], { fontSize: '50px', color: colours.BLACK, fontFamily: 'Quantico'}))
         this.time.delayedCall(400, this.drawLetters, [i+1], this);
+    }
+
+    displayMessage(){
+        textBox(this, this.message, 200);
+    }
+
+    textBoxCallback(){
+        this.time.delayedCall(500, this.startComputation, [], this);
     }
 
     startDrawingLetters(){
@@ -136,7 +159,7 @@ export default class TestCreateLevel extends Level {
         } else {
             const message = '"' + this.word + '"' + " classified incorrectly"
             popUp([message, "Try a different automata!"], this)
-            this.time.delayedCall(3000, this.nextLevel, [false], this)
+            this.time.delayedCall(3500, this.nextLevel, [false], this)
         }
     }
 

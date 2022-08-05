@@ -3,6 +3,7 @@ import colours from "/src/utils/colours.js"
 import LoopLevel from "./baseLoopScene.js";
 import popUp from "../../objects/components/popUp.js";
 import { changeBackground } from "/src/utils/utils.js";
+import textBox from "/src/objects/components/textBox.js";
 
 /** 
  * Level where computer chooses the number of loops
@@ -14,11 +15,15 @@ import { changeBackground } from "/src/utils/utils.js";
         super('ComputerLoopLevel');
     }
 
-    create({automata, word, language, repeats}){
+    create({automata, word, language, repeats, message=null}){
+
         super.create({automata, word, language, repeats});
         
+        // Flags
         this.runTests = false;
         this.testsStarted = false;
+        
+        this.message = message; // String to display in popUp (null if not defined);
         
         this.tests = undefined;
         this.nextTest = undefined;
@@ -41,6 +46,25 @@ import { changeBackground } from "/src/utils/utils.js";
             this.passedTests = false;
             this.startEnd();
         }
+    }
+
+    addElements(){
+        if (this.message) {
+            
+            popUp(this.message.message, this);
+            
+            this.help = this.add.text(25, 25, "?", {color: colours.TEXTWHITE, fontSize: '30px', fontFamily: 'Quantico'})
+            .setOrigin(0.5).setInteractive().on('pointerup', () => {
+                textBox(this, this.message.lines, 200);
+            });
+
+            console.log(this.help);
+        }
+        super.addElements();
+    }
+
+    addUI(){
+        this.help.setVisible(true)
     }
 
 

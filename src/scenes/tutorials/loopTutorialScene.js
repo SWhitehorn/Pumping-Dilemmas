@@ -15,38 +15,50 @@ export default class LoopTutorial extends Level {
         this.load.image('nextPage', '../assets/arrow-down-left.png');
     }
 
-    create({automata, word, language}){
+    create({automata, word, language, repeats}){
         
+        console.log('this');
+
         this.automata = automata;
         this.word = word;
         this.language = language;
+        this.repeats = repeats;
 
 
         this.word = word;
         
         super.create(automata, language);
 
-        const lines = [
+        this.lines = [
             "If a word has more letters than the automaton has states, then the path through the automaton must visit the same state more than once.",
             "This means there must be a part of the word that starts and ends in the same state when read.",
             "This part of the word can be repeated or removed, and the resulting word will still be in the language.",
-            "Click to try this out. Adjust the repeated portion of the word by dragging the sliders, and use the arrows to add or remove repeats."
+            "Click to try this out. Adjust the repeated portion of the word by dragging the sliders and use the arrows to add or remove repeats."
         ]
 
-        const content = lines.join('\f\n')
-        textBox(this, content);
+        textBox(this, this.lines);
         
     }
 
-    update(){
-        if (this.UIAdded){
-            
-        }
-    }
+    textBoxCallback(){
+        
+        console.log('adding UI');
 
-    addUI(){
-        this.scene.stop();
-        this.scene.start('ControlLoopLevel', {automata:this.automata, word:this.word, language:this.language});
+        const lines = this.lines
+        const message = [
+            "Drag the bars to select a portion of the word that can be looped",
+            "Click play to test your selection!"
+        ]
+
+        
+        
+        this.scene.start('ComputerLoopLevel', {
+            automata: this.automata, 
+            word: this.word, 
+            language: this.language, 
+            repeats: this.repeats,
+            message: {message, lines}
+        });
 
     }
 }

@@ -1,13 +1,17 @@
 import colours from "/src/utils/colours.js";
 import addWordUI from "./addWordUI.js";
 
-export default (scene, content) => {
+export default (scene, lines, y=null) => {
     
-    const COLOR_PRIMARY = colours.LIGHTBLUE;
-    const COLOR_LIGHT = colours.WHITE;
-    const COLOR_DARK = colours.DARKBLUE;
-
     let page = 0;
+    
+
+    const content = lines.join('\f\n')
+
+    let yPos;
+
+    // Set y position to y if defined, otherwise default to bottom of screen
+    y ? yPos = y : yPos = 430;
 
     const GetValue = Phaser.Utils.Objects.GetValue;
     
@@ -23,9 +27,9 @@ export default (scene, content) => {
                 background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, colours.DARKBLUE)
                     .setStrokeStyle(2, colours.LIGHTBLUE),
 
-                text: getBuiltInText(scene, wrapWidth, fixedWidth, fixedHeight),
+                text: getTextObject(scene, wrapWidth, fixedWidth, fixedHeight),
 
-                action: scene.add.image(0, 0, 'nextPage').setTint(COLOR_LIGHT).setVisible(false),
+                action: scene.add.image(0, 0, 'nextPage').setTint(colours.WHITE).setVisible(false),
 
                 space: {
                     left: 20,
@@ -49,7 +53,14 @@ export default (scene, content) => {
                 } else {
                     if (this.isLastPage){
                         this.destroy();
-                        scene.addUI();
+                        
+                        // textBoxCallback defines what a scene does after textbox is destroyed, but may not be defined.
+                        try {
+                            scene.textBoxCallback();
+                        } catch (e) {
+                            console.log('Function does not exist');
+                        }
+                        
                         return;
                     } else {
                         this.typeNextPage(); 
@@ -84,7 +95,7 @@ export default (scene, content) => {
         return textBox;
     }
 
-    const getBuiltInText = function (scene, wrapWidth, fixedWidth, fixedHeight) {
+    const getTextObject = function (scene, wrapWidth, fixedWidth, fixedHeight) {
         return scene.add.text(0, 0, '', {
                 color: colours.TEXTWHITE,
                 fontSize: '20px',
@@ -97,21 +108,7 @@ export default (scene, content) => {
             .setFixedSize(fixedWidth, fixedHeight);
     }
 
-    const getBBcodeText = function (scene, wrapWidth, fixedWidth, fixedHeight) {
-            return scene.rexUI.add.BBCodeText(0, 0, '', {
-                fixedWidth: fixedWidth,
-                fixedHeight: fixedHeight,
-
-                fontSize: '20px',
-                wrap: {
-                    mode: 'word',
-                    width: wrapWidth
-                },
-                maxLines: 3
-            })
-    }
-
-    createTextBox(scene, 400, 430, {
+    createTextBox(scene, 400, yPos, {
             wrapWidth: 500,
             fixedWidth: 500,
             fixedHeight: 65,

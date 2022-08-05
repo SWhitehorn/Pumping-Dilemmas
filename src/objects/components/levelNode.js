@@ -56,7 +56,6 @@ export default class LevelNode {
         
         const startPoint = this.getPosition();
         for (let node of this.children){
-            console.log(node);
             let child = this.scene.nodes[node];
             child.enable();
 
@@ -136,8 +135,6 @@ export default class LevelNode {
             }
         }
         
-        console.log(this.active);
-
         if (this.active){
             this.graphic.setFillStyle(colours.YELLOW, 1)
         }
@@ -163,7 +160,7 @@ export default class LevelNode {
             },
             writeWord: {
                 scene: "AddWordLevel",
-                data: {automata:this.data.automata, language:this.data.language, grammar: this.data.grammar}
+                data: {automata:this.data.automata, language:this.data.language, grammar: this.data.grammar, message: this.data.message}
             },
             nonRegular: {
                 scene: 'Non_RegularLevel', 
@@ -176,6 +173,10 @@ export default class LevelNode {
             loopTutorial: {
                 scene: "LoopTutorial",
                 data: {automata:this.data.automata, word:this.data.word, language:this.data.language, repeats: this.data.repeats}
+            },
+            createTutorial: {
+                scene: 'CreateTutorial',
+                data: {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language}
             }
 
         }

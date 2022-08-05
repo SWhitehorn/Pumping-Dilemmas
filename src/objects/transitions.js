@@ -267,8 +267,20 @@ export default class Transitions{
     /** Add input arrow to start state */
     addStartArrow(){ 
         const startState = this.automata.getStart();
-        const tri = new Phaser.Geom.Triangle.BuildEquilateral(startState.graphic.x-this.SIZE, startState.graphic.y, this.TRISIZE);
-        Phaser.Geom.Triangle.RotateAroundXY(tri, startState.graphic.x-this.SIZE, startState.graphic.y, 1.571);
+        const direction = this.automata.getStartArrowDirection();
+        
+        // Set default to lhs
+        let x = startState.graphic.x-this.SIZE;
+        let y = startState.graphic.y;
+        let rotateBy = Phaser.Math.DegToRad(90)
+
+        if (direction === 'top'){
+            x = startState.graphic.x;
+            y = startState.graphic.y - this.SIZE;
+            rotateBy = Phaser.Math.DegToRad(180)
+        } 
+        const tri = new Phaser.Geom.Triangle.BuildEquilateral(x, y, this.TRISIZE);
+        Phaser.Geom.Triangle.RotateAroundXY(tri, x, y, rotateBy);
         this.drawTriangle(tri);
     }
 

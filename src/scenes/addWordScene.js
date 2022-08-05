@@ -3,6 +3,7 @@ import colours from "/src/utils/colours.js"
 import addWordUI from "/src/objects/components/addWordUI.js";
 import CYK from "/src/utils/CYK.js"
 import popUp from "/src/objects/components/popUp.js";
+import textBox from "/src/objects/components/textBox.js";
 
 export default class AddWordLevel extends Level {
 
@@ -14,7 +15,12 @@ export default class AddWordLevel extends Level {
         }
     }
 
-    create({automata, language, grammar}){
+    preload(){
+        super.preload();
+        this.load.image('nextPage', '../assets/arrow-down-left.png');
+    }
+
+    create({automata, language, grammar, message}){
 
         super.create(automata, language);
         
@@ -25,6 +31,12 @@ export default class AddWordLevel extends Level {
         this.CYK = new CYK(grammar);
 
         const UI = addWordUI(this).layout();
+
+        if (message){
+            textBox(this, message, 100);
+        } else {
+            this.time.delayedCall(200, popUp, [["Enter a word belonging to: " + language], this, true], this)
+        }
     }
 
     update(){
@@ -58,4 +70,5 @@ export default class AddWordLevel extends Level {
         }
 
     }
+
 }

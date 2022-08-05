@@ -168,20 +168,23 @@ export default class LoopLevel extends Level {
 
         // Base case 
         if (i === this.inputWord.length){
-            
-            this.textX = this.levelObjects.letters.at(-1).getTopRight().x;
-            this.addSlidingWindow();
-            this.finishedAddingWord = true;
-            this.UIElements.play.visible = true;
-            this.UIElements.repeats.visible = true;
-            this.enableControlButtons();
-            this.selectedWord = this.addSections(this.numRepeats);
-            this.startComputation();
+            this.addElements();
             return;
         }
 
         this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.inputWord[i], { fontSize: '50px', color: colours.TEXTBLACK, fontFamily: 'Quantico'}))
         this.time.delayedCall(400, this.drawLetters, [i+1], this);
+    }
+
+    addElements(){
+        this.textX = this.levelObjects.letters.at(-1).getTopRight().x;
+        this.addSlidingWindow();
+        this.finishedAddingWord = true;
+        this.UIElements.play.visible = true;
+        this.UIElements.repeats.visible = true;
+        this.enableControlButtons();
+        this.selectedWord = this.addSections(this.numRepeats);
+        this.startComputation();
     }
 
     /** Draws the word as it is being computed */

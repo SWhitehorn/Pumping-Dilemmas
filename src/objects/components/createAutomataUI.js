@@ -1,5 +1,6 @@
 import colours from "/src/utils/colours.js";
 import lowerUIBox from "./lowerUIBox.js";
+import popUp from "./popUp.js";
 
 export default (scene) => {
 
@@ -33,10 +34,7 @@ export default (scene) => {
                     background: scene.rexUI.add.roundRectangle(0, 0, 1, 1, 5),
                     icon: scene.add.triangle(0, 0, 0, -5, 20, 10, 0, 25, colours.WHITE)
                         .setStrokeStyle(3, 0x010A12).setInteractive().on('pointerup', () => {
-                        if (scene.validFA()) {
-                            scene.automata.bakeAutomata();
-                            scene.scene.start('TestCreateLevel', {automata:scene.automata, words:scene.words, alphabet:scene.alphabet, language:scene.language, inputAutomata:scene.inputAutomata}); 
-                        };
+                            scene.moveToTests();
                     })
                 }
                 ), {proportion: 0, expand: false, padding: {left: 20}, key: 'label'})

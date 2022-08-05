@@ -13,22 +13,25 @@ import TestCreateLevel from "/src/scenes/testAutomataScene.js";
 import colours from "/src/utils/colours.js";
 import OpeningScene from "/src/scenes/tutorials/openingScene.js";
 import LoopTutorial from "/src/scenes/tutorials/loopTutorialScene.js";
+import CreateTutorial from "/src/scenes/tutorials/automataTutorial.js";
 
 
-const scenes = [LevelSelect, 
-    IntroScene,
-    ControlLoopLevel, 
-    CreateLevel, 
-    AddWordLevel, 
-    ComputerLoopLevel, 
-    Non_RegularLevel, 
-    Non_RegularSelectRepeats,
-    LoopLevel, 
-    LevelCreator, 
-    LevelEnd,
-    TestCreateLevel,
-    OpeningScene,
-    LoopTutorial
+const scenes = [
+    
+    // Infrastructure levels (start menu, etc)
+    LevelSelect, IntroScene,
+    
+    // Loop levels
+    LoopLevel, ComputerLoopLevel, ControlLoopLevel, LoopTutorial,
+    
+    // Creation levels
+    CreateLevel, CreateTutorial,
+
+    // Choosing word levels 
+    Non_RegularLevel, Non_RegularSelectRepeats, AddWordLevel,
+    
+    // Others
+    LevelCreator, TestCreateLevel, OpeningScene,
 ]
 
 const config = {

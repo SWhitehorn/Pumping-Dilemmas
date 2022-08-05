@@ -1,10 +1,8 @@
 import Level from "./levelTemplate.js";
 import { getNextLetter, createKey, withinBounds } from "/src/utils/utils.js";
 import "/src/typedefs/typedefs.js";
-import colours from "/src/utils/colours.js"
-import lowerUIBox from "/src/objects/components/lowerUIBox.js";
 import createAutomataUI from "/src/objects/components/createAutomataUI.js";
-
+import popUp from "/src/objects/components/popUp.js";
 
 /**
  * @typedef {Object} Input
@@ -34,7 +32,7 @@ export default class CreateLevel extends Level {
      * @param {Input}
      * @extends Level.create 
      */
-    create({automata, words, alphabet, language}){
+    create({automata, words, alphabet, language, deterministic=true}){
         
         // Store original word and automata to allow for reseting
         this.words = words;
@@ -47,7 +45,8 @@ export default class CreateLevel extends Level {
         // Flags
         this.draw = false; // Flag for whether the player is currently drawing transition
         this.interactive = true; // Flag for whether player can interact with automata
-        this.deterministic = true; // Flag for whether FA has to be deterministic
+        this.deterministic = deterministic; // Flag for whether FA has to be deterministic
+        
         
         this.addUIElements();
 
@@ -100,13 +99,6 @@ export default class CreateLevel extends Level {
             this.graphics.clear();
         }
         this.transitions.updateTransitions(); 
-
-        // Hide next button is automata is not valid
-        if (this.validFA()){
-            this.nextButton.setVisible(true);
-        } else {
-            this.nextButton.setVisible(false);
-        }
     }
     
     /**
@@ -227,7 +219,15 @@ export default class CreateLevel extends Level {
 
         this.startZone = createAutomataUI(this);
         this.nextButton = this.startZone.getElement('right').getElement('label').getElement('icon');
-        console.log(this.nextButton);
+
+        if (!this.message){
+            let deterministic;
+
+            deterministic = (this.deterministic ?  " deterministic" : "")
+
+            this.time.delayedCall(150, popUp, [["Create a" + deterministic +" finite automaton for " + this.language], this, true], this)
+            
+        }
     }
 
     /**
@@ -244,5 +244,18 @@ export default class CreateLevel extends Level {
         }
 
         return false;
+    }
+
+    moveToTests(){
+        if (this.validFA()) {
+            this.automata.bakeAutomata();
+            this.scene.start('TestCreateLevel', {automata:this.automata, words:this.words, alphabet:this.alphabet, language:this.language, inputAutomata:this.inputAutomata}); 
+        } else {
+            const message = ["Not a valid automata!"];
+            if (this.deterministic){
+                message.push("Have you got a transition for each letter on every state?")
+            }
+            popUp(message, this)
+        }
     }
 }

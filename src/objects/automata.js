@@ -43,8 +43,30 @@ export default class Automata {
         return this.states;
     }
 
-    getStart(){
-        return this.states[this.start];
+    /**
+     * Get the starting state of the automata. 
+     * @param {Boolean} name - Flags whether to just return the string name. If null, returns the state itself
+     * @returns {String | State} The starting state of the automata, or its name if param is true.
+     */
+    getStart(name=false){
+        
+        if (name){
+            return this.start.name;
+        } else {
+            return this.states[this.start.name]
+        } 
+    }
+
+    /**
+     * Returns the side of the state to put the start arrow on
+     * @returns {String} Direction - up/down/left/right
+     */
+    getStartArrowDirection(){
+        if (this.start.hasOwnProperty('direction')){
+            return this.start.direction
+        } else {
+            return 'left'
+        }
     }
 
     /**
@@ -134,17 +156,19 @@ export default class Automata {
         
         // Set previous state to black
         const prevState = this.states[currState];
+        prevState.graphic.setStrokeStyle(3, colours.BLACK, 1);
         prevState.graphic.setFillStyle(colours.WHITE, 1);
+
+        if (prevState.accepting){ 
+            prevState.graphic.inner.setFillStyle(colours.WHITE, 1);
+            prevState.graphic.inner.setStrokeStyle(3, colours.BLACK, 1);
+        }
 
         // Set previous label to black
         if (key){
             this.scene.transitions.transitionObjects[key].label.setColor(colours.TEXTWHITE);
         }
         
-        if (prevState.accepting){ 
-            prevState.graphic.inner.setFillStyle(colours.WHITE, 1);
-        }
-
         // Check if word is empty. If so, end computation
         if (!word){
             this.endComputation();

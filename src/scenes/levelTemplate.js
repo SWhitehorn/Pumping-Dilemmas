@@ -91,23 +91,32 @@ export default class Level extends Phaser.Scene {
     /** Called to start the computation process */
     startComputation(){
         
+        this.automata.getStart().graphic.setStrokeStyle(3, colours.YELLOW, 1);
+        if (this.automata.getStart().accepting){
+            this.automata.getStart().graphic.inner.setStrokeStyle(3, colours.YELLOW, 1);
+        }
+
         // Check for empty word
         if (this.word){
-            
-            this.automata.getStart().graphic.setFillStyle(colours.YELLOW, 1);
             this.computing = true;
-            this.time.delayedCall(500, this.automata.resetPreviousState, [this.automata.start, this.word], this.automata);
+            const startName = this.automata.getStart(true)
+            this.time.delayedCall(500, this.automata.resetPreviousState, [startName, this.word], this.automata);
         }
         
         // Handle empty word
         else{
-            if (this.automata.getStart().accepting){
-                this.automata.getStart().graphic.setFillStyle(colours.GREEN, 1);
-                this.automata.getStart().graphic.inner.setFillStyle(colours.GREEN, 1);
-            } else{
-                this.automata.getStart().graphic.setFillStyle(colours.RED, 1);
-            }
-            this.endComputation();
+            
+            this.time.delayedCall(500, () => {
+                if (this.automata.getStart().accepting){
+                    this.automata.getStart().graphic.setFillStyle(colours.GREEN, 1);
+                    this.automata.getStart().graphic.inner.setFillStyle(colours.GREEN, 1);
+                } else{
+                    this.automata.getStart().graphic.setFillStyle(colours.RED, 1);
+                }
+                this.endComputation();
+            }, [], this)
+            
+            
         }
     }
 
