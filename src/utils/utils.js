@@ -106,15 +106,28 @@ export const withinBounds = (shape, point) => {
 }
 
 /** Changes the background colour */
-export const changeBackground = () => {
-    const game = document.querySelector("#canvas-container");
-    game.style.cssText = "background-color:#61636f"
+export const changeBackground = (scene) => {
+    scene.cameras.main.setBackgroundColor(0xb3bfc7);
+    scene.bgIcons = [];
+
+    for (let i = 0; i < 8; i++){
+        let x = 50 + (i * 85) + randomNumber(-20, 20);
+        let y = (i % 2 === 0 ? randomNumber(50, 350) : randomNumber(200, 450))
+
+        let icon = scene.add.image(x, y, 'computerIcon');
+        icon.alpha = 0.3;
+        icon.setDepth(-1);
+        scene.bgIcons.push(icon);
+    }
     
-    //game.style.cssText = 'background:repeating-linear-gradient(45deg,#8e92ac,#8e92ac 30px,#61636f 30px,#61636f 60px);';
+    
 }
 
 /** Resets the background colour */
-export const resetBackground = () => {
-    const game = document.querySelector("#canvas-container");
-    game.style.cssText = 'background-color:#78C2FF'
+export const resetBackground = (scene) => {
+    scene.cameras.main.setBackgroundColor(colours.BLUE);
+    
+    if (scene.hasOwnProperty('bgIcons')){
+        scene.bgIcons.forEach((icon) => { icon.destroy(); })
+    }
 }

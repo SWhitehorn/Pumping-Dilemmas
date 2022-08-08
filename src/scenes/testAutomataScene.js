@@ -25,7 +25,7 @@ export default class TestCreateLevel extends Level {
 
     create({automata, words, alphabet, language, inputAutomata, message=null}){
         
-        changeBackground();
+        changeBackground(this);
 
         super.create(automata, language);
         
@@ -164,7 +164,7 @@ export default class TestCreateLevel extends Level {
     }
 
     nextLevel(passed){
-        resetBackground();
+        resetBackground(this);
         if (passed){
             this.scene.stop('CreateLevel');
             this.scene.start("LevelSelect", {passed:true})

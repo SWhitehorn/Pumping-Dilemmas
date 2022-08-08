@@ -29,7 +29,9 @@ import textBox from "/src/objects/components/textBox.js";
         this.nextTest = undefined;
         
         this.UIElements.play.on('pointerup', () => {
-            changeBackground();
+            changeBackground(this);
+            this.UIElements.increase.visible = false;
+            this.UIElements.decrease.visible = false;
             this.automata.stopComputation();
             this.runTests = true;
             this.testsStarted = true;
@@ -81,8 +83,9 @@ import textBox from "/src/objects/components/textBox.js";
         this.UIElements.repeats.text = test.value;
         
         this.selectedWord = this.addSections(test.value);
-        this.startComputation();
-       
+        this.computing = true;
+
+        this.time.delayedCall(1000, this.startComputation, [], this);
         this.nextTest = this.tests.next(); 
         
         if (this.nextTest.done){

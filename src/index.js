@@ -36,7 +36,7 @@ const scenes = [
 
 const config = {
     type: Phaser.AUTO,
-    transparent: true,
+    backgroundColor: colours.BLUE,
     width: 800,
     height: 500,
     scene: scenes,

@@ -303,7 +303,8 @@ export default class Transitions{
         } else { 
             // Add fresh label
             if (!sameState(key)){
-                point = new Phaser.Math.Vector2(line.getPointAt(0.5));
+                let state = this.scene.automata.getState(splitKey(key)[0])
+                point = new Phaser.Math.Vector2(this.getControlPoint(line, key, null, null, state, endName));
             }
             
             if (!this.interactive){

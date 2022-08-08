@@ -145,7 +145,9 @@ export default class LoopLevel extends Level {
         if (!accepted && this.testsStarted){
             this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
             popUp(["Not accepted!", "Try a different selection"], this);
-            resetBackground();
+            this.UIElements.increase.visible = true;
+            this.UIElements.decrease.visible = true;
+            resetBackground(this);
             this.runTests = false;
             this.testsStarted = false;
             this.numRepeats = 1;

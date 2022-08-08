@@ -34,9 +34,13 @@ export default class Level extends Phaser.Scene {
     
     preload(){
         this.load.image('backArrow', '../assets/backArrow.png');
+        this.load.image('computerIcon', '/assets/computer-80.png')
+
         this.load.scenePlugin('rexuiplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 'rexUI', 'rexUI');
         this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
-    
+        
+
+
         this.plugins.get('rexwebfontloaderplugin').addToScene(this);
 
         let config = {

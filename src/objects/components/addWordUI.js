@@ -2,6 +2,10 @@ import lowerUIBox from "./lowerUIBox.js";
 import colours from "/src/utils/colours.js";
 import popUp from "./popUp.js";
 
+/**
+ * Adds UI for adding word
+ * @param {Scene} scene - Phaser scene to add UI to
+ */
 export default (scene) => {
     
     // Section containing word
@@ -33,9 +37,9 @@ export default (scene) => {
                     background: scene.rexUI.add.roundRectangle(0, 0, 1, 1, 5),
                     icon: scene.add.triangle(0, 0, 0, -5, 20, 10, 0, 25, colours.WHITE)
                         .setStrokeStyle(3, 0x010A12).setInteractive().on('pointerup', () => {
+                            
+                            // Only run for scenes that have CYK defined
                             if (scene.CYK){
-                            
-                            
                                 if (scene.CYK.testMembership(scene.word)){
                                     
                                     // Check key to modify effect
@@ -43,12 +47,13 @@ export default (scene) => {
                                         scene.startComputation();
                                     } else if (scene.scene.key === "Non_RegularLevel"){
                                         
+                                        // Word must be longer than pumping length
                                         if (scene.word.length > scene.numStates){
-                                            
                                             const word = scene.word;
                                             const grammar = scene.grammar;
                                             const language = scene.language;
                                             
+                                            // Advance to second stage
                                             scene.scene.stop();
                                             scene.scene.start('Non_RegularSelectRepeats', {language, word, grammar});
                                         } else {
@@ -71,6 +76,16 @@ export default (scene) => {
     
     sizer.add(createMiddle(sizer), {expand: true, key: 'middle'})
     .add(createRight(sizer), {expand:true, key: 'right'});  
+
+    // Set play button to red when pointer is over
+    const play = sizer.getElement('right').getElement('label').getElement('icon');
+    play.on('pointerover', () => {
+        play.setFillStyle(colours.RED, 1)
+    });
+    play.on('pointerout', () => {
+        play.setFillStyle(colours.WHITE, 1)
+    });
+    
     
     const textBox = scene.add.rectangle(380, 460, 230, 50, colours.WHITE).setStrokeStyle(3, colours.BLACK);
     scene.textEntry = scene.add.text(380, 460, scene.word, { fontSize: '50px', color: colours.TEXTBLACK, fontFamily: 'Quantico'}).setOrigin(0.5);

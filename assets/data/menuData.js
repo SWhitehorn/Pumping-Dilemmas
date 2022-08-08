@@ -22,7 +22,7 @@ export default {
 
     loopNode0: {
         x: 800, y: 600, 
-        children: ['node1'], 
+        children: ['loopNode1'], 
         data: data.loop0Data, 
         type: 'loop', 
         name: "node0",
@@ -42,6 +42,30 @@ export default {
         data: data.loop2Data,
         type: 'loop',
         name: "loopNode2"
+    },
+
+    loopNode3: {
+        x: 1000, y: 1000,
+        children: [],
+        data: data.loop3Data,
+        type: 'loop',
+        name: "loopNode3",
+    },
+
+    loopNode4: {
+        x: 800, y: 1000,
+        children: [],
+        data: data.loop4Data,
+        type: 'loop',
+        name: 'loopNode4'
+    },
+
+    loopNode5: {
+        x: 600, y: 1000,
+        children: [],
+        data: data.loop5Data,
+        type: 'loop',
+        name: 'loopNode5'
     },
 
     createNode0: {

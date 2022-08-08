@@ -52,7 +52,7 @@ export default class LevelSelect extends Phaser.Scene {
      */
     create({passed}){
         
-        resetBackground();
+        resetBackground(this);
 
         // Prevent objects being recreated
         if (!this.created){
