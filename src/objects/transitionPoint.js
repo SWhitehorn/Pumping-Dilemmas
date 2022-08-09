@@ -28,40 +28,8 @@ export default class TransitionPoint {
         this.scene = scene;
         this.key = key;
 
-        // this.graphic = this.scene.add.circle(x, y, this.SIZE, colours.BLACK).setInteractive();
-        // this.graphic.parent = this;
-        // this.graphic.isTransitionPoint = true;
-        
         // Flags
         this.active = false; // Whether point has moved from default (straight-line) position
-
-        // this.graphic.on('pointerup', (pointer) => {
-                
-        //    // Delete transition if right button is clicked
-        //     if (pointer.rightButtonReleased()){
-                
-        //         if (!this.scene.draw){
-        //             this.destroy();
-
-        //             this.scene.transitions.removeTransitions(this.startState, this.endName, this.key);
-        //         }
-            
-            
-        //     // Left mouse: enable user to change the letters on the transition
-        //     } else if (!this.dragging){
-                
-        //         if (this.selected){
-        //             this.removeLetters();
-                    
-        //             // Delete transition if empty
-        //             if (this.isEmptyTransition(this.startState.transitions)){
-        //                 this.destroy();
-        //             }
-        //         }
-                
-        //         this.selected = !this.selected;
-        //     }
-        // });
 
         return this;
     }
@@ -90,20 +58,10 @@ export default class TransitionPoint {
 
         this.x = x;
         this.y = y;
-
-        // this.graphic.x = x;
-        // this.graphic.y = y;
-
+    
         return this;
     }
 
-    /**
-     * Enables drag for transition point
-     */
-    // setDraggable(){
-    // //     this.scene.input.setDraggable(this.graphic);
-    //     return this;
-    // }
 
     /**
      * Destroys point

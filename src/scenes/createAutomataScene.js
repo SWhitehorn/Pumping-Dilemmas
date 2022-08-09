@@ -200,16 +200,18 @@ export default class CreateLevel extends Level {
             }
         }
 
-        this.automata.addTransition(this.firstState.stateName, targetStateName, input);
-        
-        const key = createKey(this.firstState.stateName, targetStateName);
-        const transitionData = this.transitions.getObject(key);
-        
-        if (transitionData){
-            transitionData.point.addInput(input);
-        } else {
-            this.transitions.newTransition(key, input);
+        if (this.automata.addTransition(this.firstState.stateName, targetStateName, input)){
+            const key = createKey(this.firstState.stateName, targetStateName);
+            const transitionData = this.transitions.getObject(key);
+            
+            if (transitionData){
+                transitionData.point.addInput(input);
+            } else {
+                this.transitions.newTransition(key, input);
+            }
         }
+        
+        
     }
 
     addUIElements(){
@@ -251,9 +253,11 @@ export default class CreateLevel extends Level {
             this.automata.bakeAutomata();
             this.scene.start('TestCreateLevel', {automata:this.automata, words:this.words, alphabet:this.alphabet, language:this.language, inputAutomata:this.inputAutomata}); 
         } else {
-            const message = ["Not a valid automata!"];
+            let message;
             if (this.deterministic){
-                message.push("Have you got a transition for each letter on every state?")
+                message = ["Not a valid DFA!", "Have you got a transition for each letter on every state?"]
+            } else {
+                message = ["Not a valid configuration!", "Have you used all the states?"]
             }
             popUp(message, this)
         }

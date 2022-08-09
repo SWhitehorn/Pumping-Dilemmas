@@ -415,7 +415,6 @@ export default class Transitions{
 
         if (this.transitionObjects[key]){
             this.transitionObjects[key].point.destroy();
-            //delete this.transitionObjects[key]
         }
     }
 

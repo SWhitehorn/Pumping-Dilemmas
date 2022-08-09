@@ -331,6 +331,101 @@ create3Data: {
     language: "L = {w\u{2208}{a,b}* | w starts with ba}"
 },
 
+create4Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 340, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 450, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+
+            q5: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q5'
+            },
+        },
+        start: {name: 'q1', direction: 'top'}
+    },
+    words: [{word: 'aa', result: true}, {word: 'baab', result: true}, {word: "b", result: true}, {word: 'bbbbb', result: true}, {word: 'bbba', result: false}, {word: 'ab', result: false}],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w starts and ends with the same letter}"
+},
+
+create5Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+        },
+        start: {name: 'q3'}
+    },
+    words: [{word: 'ab', result: true}, {word: 'aab', result: false}, {word: "b", result: true}, {word: 'ε', result: true}, {word: 'bba', result: false}, {word: 'bbab', result: true}],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | Every 'a' is followed by a 'b'}"
+},
+
+create6Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 340, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+
+        },
+        start: {name: 'q4'}
+    },
+    words: [{word: 'aaaa', result: true}, {word: 'bbaabbaa', result: true}, {word: "b", result: false}, {word: 'ε', result: true}, {word: 'bba', result: false}, {word: 'abbab', result: false}],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | |w| is a multiple of four}"
+},
+
 add0Data : {
     automata: {
         states: {

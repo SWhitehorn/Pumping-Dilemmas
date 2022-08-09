@@ -14,6 +14,7 @@ export default (messages, scene, long=false) => {
             color: colours.DARKBLUE, 
             fontFamily: 'Quantico',
             wordWrap: { width: 500},
+            align: 'center'
         }),
         space: {left: 20, right: 20, top: 20, bottom: 20},
         duration: {

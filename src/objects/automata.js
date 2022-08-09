@@ -109,12 +109,20 @@ export default class Automata {
      * @param {string} firstStateName - Name of first state
      * @param {string} secondStateName - Name of second state
      * @param {string} input - Symbol to define over
+     * @returns {Boolean} True if input was successfully added, false if already present 
      */
     addTransition(firstStateName, secondStateName, input){
+        
         // Add input to transitions of first state
         const startState = this.states[firstStateName];
         if (startState.transitions.hasOwnProperty(input)){
-            startState.transitions[input].push(secondStateName)
+            
+            if (startState.transitions[input].indexOf(secondStateName) === -1){
+                startState.transitions[input].push(secondStateName);
+            } else {
+                return false;
+            }
+
         } else {
             startState.transitions[input] = [secondStateName];
         }  
@@ -122,6 +130,7 @@ export default class Automata {
         // Add key
         const key = createKey(firstStateName, secondStateName);
         this.addKey(key);
+        return true;
     }
 
     /**

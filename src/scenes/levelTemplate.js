@@ -101,7 +101,7 @@ export default class Level extends Phaser.Scene {
         }
 
         // Check for empty word
-        if (this.word){
+        if (this.word && this.word !== 'ε'){
             this.computing = true;
             const startName = this.automata.getStart(true)
             this.time.delayedCall(500, this.automata.resetPreviousState, [startName, this.word], this.automata);
@@ -112,12 +112,13 @@ export default class Level extends Phaser.Scene {
             
             this.time.delayedCall(500, () => {
                 if (this.automata.getStart().accepting){
-                    this.automata.getStart().graphic.setFillStyle(colours.GREEN, 1);
-                    this.automata.getStart().graphic.inner.setFillStyle(colours.GREEN, 1);
+                    this.automata.getStart().graphic.setFillStyle(colours.GREEN, 1).setStrokeStyle(3, colours.BLACK, 1);;
+                    this.automata.getStart().graphic.inner.setFillStyle(colours.GREEN, 1).setStrokeStyle(3, colours.BLACK, 1);;
+                    this.endComputation(true)
                 } else{
-                    this.automata.getStart().graphic.setFillStyle(colours.RED, 1);
+                    this.automata.getStart().graphic.setFillStyle(colours.RED, 1).setStrokeStyle(3, colours.BLACK, 1);;
+                    this.endComputation();
                 }
-                this.endComputation();
             }, [], this)
             
             
