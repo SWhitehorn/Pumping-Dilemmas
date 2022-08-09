@@ -269,6 +269,68 @@ create1Data : {
     language: "L = {w\u{2208}{a,b}* | w contains abb as a subword}" 
 },
 
+create2Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 340, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'aa', result: true}, {word: 'ababa', result: false}, {word: 'baba', result: true}, {word: 'bbba', result: false}],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w contains exactly two 'a's}"
+},
+
+create3Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 340, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'ba', result: true}, {word: 'abab', result: false}, {word: "b", result: false}, {word: 'baba', result: true}, {word: 'bbba', result: false}],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w starts with ba}"
+},
+
 add0Data : {
     automata: {
         states: {

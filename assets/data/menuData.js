@@ -84,6 +84,22 @@ export default {
         type: 'create',
         name: 'createNode1',
     },
+
+    createNode2: {
+        x: 1200, y: 1200,
+        children: [],
+        data: data.create2Data,
+        type: 'create',
+        name: 'createNode2'
+    },
+
+    createNode3: {
+        x: 1200, y: 1400,
+        children: [],
+        data: data.create3Data,
+        type: 'create',
+        name: 'createNode3'
+    },
     
     writeNode0: {
         x: 1400, y: 800,

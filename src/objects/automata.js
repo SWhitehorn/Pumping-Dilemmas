@@ -90,6 +90,7 @@ export default class Automata {
      */
     removeKey(key){
         
+        console.log('removing ', key);
         const stateNames = key.split(",");
         const start = this.states[stateNames[0]];
         const end = this.states[stateNames[1]];

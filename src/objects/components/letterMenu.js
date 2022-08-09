@@ -80,7 +80,7 @@ export default (scene, point, input, transitionPoint) => {
             // scope: dropDownList
             onButtonClick: function (button, index, pointer, event) {
                 if (button.text === "Remove"){
-                    this.parentPoint.destroy(); // Will also destroy menu
+                    //this.parentPoint.destroy(); // Will also destroy menu
                     scene.transitions.removeTransitions(this.parentPoint.key);
                 } else {
                     this.parentPoint.changeInput(button.text);

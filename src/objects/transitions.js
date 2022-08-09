@@ -389,9 +389,12 @@ export default class Transitions{
      */
     removeTransitions(key){
         
+        console.log('key: ', key);
+
         const [startStateName, endStateName] = splitKey(key);
         const startState = this.scene.automata.getState(startStateName);
         const transitions = Object.entries(startState.transitions);
+        console.log(startState.transitions);
         
         // Iterate through [letter, states], check for endState in states
         transitions.forEach((t) => {
@@ -412,9 +415,8 @@ export default class Transitions{
 
         if (this.transitionObjects[key]){
             this.transitionObjects[key].point.destroy();
-            delete this.transitionObjects[key]
+            //delete this.transitionObjects[key]
         }
-        delete startState.keys.splice(startState.keys.indexOf(key), 1);
     }
 
     /**

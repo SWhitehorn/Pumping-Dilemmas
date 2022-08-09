@@ -109,7 +109,9 @@ export default class TransitionPoint {
      * Destroys point
      */
     destroy(){
-        this.removeLetters();
+        
+        console.log('destroying ', this.key);
+        
         this.scene.automata.removeKey(this.key);
         this.scene.transitions.transitionObjects[this.key].label.destroy();
         delete this.scene.transitions.transitionObjects[this.key];
