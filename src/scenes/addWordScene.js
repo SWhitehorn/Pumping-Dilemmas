@@ -34,13 +34,25 @@ export default class AddWordLevel extends Level {
 
         if (message){
             textBox(this, message, 100);
+            this.help = this.add.text(25, 25, "?", {color: colours.TEXTWHITE, fontSize: '30px', fontFamily: 'Quantico'})
+            .setOrigin(0.5).setVisible(false).setInteractive().on('pointerup', () => {
+                textBox(this, message, 100);
+            });
         } else {
-            this.time.delayedCall(200, popUp, [["Enter a word belonging to: " + language], this, true], this)
+            this.time.delayedCall(200, popUp, [["Show that this automaton does not accurately capture " + language], this, true], this)
         }
     }
 
     update(){
         this.textEntry.text = this.word;
+    }
+
+    /**
+     * Extends level template method to save current word
+     */
+    startComputation(){
+        this.currWord = this.word;
+        super.startComputation();
     }
 
     /**
@@ -56,19 +68,31 @@ export default class AddWordLevel extends Level {
 
         super.endComputation();
 
-        if (accepted){
-            const messages = ["The automata works for " + '"' + this.word + '"', "Try a different word!"]
+        const inLang = this.CYK.testMembership(this.currWord)
+
+        if (accepted && inLang || !accepted && !inLang){
+            const messages = ["The automata works for " + '"' + this.currWord + '"', "Try a different word!"]
             this.time.delayedCall(500, popUp, [messages, this], this)
-        } else {
-            
+        } else if (accepted && !inLang) {
             const messages = [
-                '"' + this.word + '"' + " was rejected, but belongs to the language!",
+                '"' + this.currWord + '"' + " was accepted, but does not belong to the language!",
+                "You have proved they are not the same" 
+            ]
+            this.time.delayedCall(500, popUp, [messages, this], this)
+            this.time.delayedCall(4000, returnToMenu, [], this)
+        } else if (!accepted && inLang){
+            const messages = [
+                '"' + this.currWord + '"' + " was rejected, but belongs to the language!",
                 "You have proved they are not the same" 
             ]
             this.time.delayedCall(500, popUp, [messages, this], this)
             this.time.delayedCall(4000, returnToMenu, [], this)
         }
 
+    }
+
+    textBoxCallback(){
+        this.help.visible = true;
     }
 
 }

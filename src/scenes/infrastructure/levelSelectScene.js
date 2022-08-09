@@ -89,7 +89,6 @@ export default class LevelSelect extends Phaser.Scene {
         if (passed){
             this.prevNode.enableNextNodes()
         }
-
     }
 
     update(){

@@ -46,11 +46,9 @@ export default class LoopTutorial extends Level {
 
         const lines = this.lines
         const message = [
-            "Drag the bars to select a portion of the word that can be looped",
+            "Drag the bars to select a portion of the word that can be repeated",
             "Click play to test your selection!"
         ]
-
-        
         
         this.scene.start('ComputerLoopLevel', {
             automata: this.automata, 

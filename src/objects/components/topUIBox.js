@@ -28,7 +28,9 @@ export default (scene, language) => {
             height: 50,
             background: scene.add.rexRoundRectangle(0, 0, 1, 1, {}, colours.WHITE).setStrokeStyle(2, colours.BLACK),
             icon: scene.add.image(0, 0, 'backArrow').setInteractive().on('pointerup', () => {
-                scene.scene.start('LevelSelect');
+                let passed = (scene.scene.key === 'OpeningScene' ? true : false);
+                console.log(passed);
+                scene.scene.start('LevelSelect', {passed});
             }),
             space: {left: 10}
         });

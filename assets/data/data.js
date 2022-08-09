@@ -502,6 +502,35 @@ loop6Data: {
     language: "L = {w\u{2208}{a,b}* |\nw ends in aa or bb" 
 },
 
+loop7Data: {
+    automata: {
+        states: {
+            q1: {
+                x: 364, y: 227,
+                accepting: false,
+                transitions: { b: [ 'q3' ], a: [ 'q2' ] },
+                controlPoints: { q3: { x: 516, y: 175 } } 
+            },
+            q2: {
+                x: 169, y: 230,
+                accepting: false,
+                transitions: { a: [ 'q2' ], b: [ 'q2' ] },
+            },
+            q3: {
+                x: 661, y: 231,
+                accepting: true,
+                transitions: { a: [ 'q1' ], b: [ 'q1' ] },
+                controlPoints: { q1: { x: 519, y: 292 } }
+            }
+        },
+        start: {name: 'q1', direction: 'top'}
+    },
+    word: 'babab',
+    repeats: [0, 3],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | Every odd position is a 'b'" 
+},
+
 add0Data : {
     automata: {
         states: {
@@ -537,14 +566,56 @@ add0Data : {
     grammar: "A -> ε | 2 1 | 2 3, S -> 2 1 | 2 3, 1 -> S3, 2 -> a, 3 -> b",
     message: [
         "On the screen is an automaton claimed to match the given language.", 
-        "Prove it does not match the language by entering a word belonging to the language, but that the automaton would reject.",
+        "Prove it does not match the language by entering a word.",
+        "Your word should either be in the language but rejected by the automaton, or not in the language but accepted.",
         "Then click play to test your word!"
     ] 
 },
 
+add1Data: {
+    automata: {
+        states: {
+            q1: {
+                x: 389, y: 149,
+                accepting: true,
+                transitions: { a: [ 'q4' ], b: [ 'q5' ] },
+                controlPoints: { q4: { x: 240, y: 111 }, q5: { x: 525.0485573273558, y: 101.06937033435865 } }
+            },
+            q2: {
+                x: 311, y: 316,
+                accepting: false,
+                transitions: { b: [ 'q4' ], a: [ 'q2' ] },
+                controlPoints: { q4: { x: 181.33667243959684, y: 262.18460751073127 }, q2: { x: 311, y: 256 } }
+            },
+            q3: {
+                x: 466, y: 313,
+                accepting: false,
+                transitions: { a: [ 'q5' ], b: [ 'q3' ] },
+                controlPoints: { q5: { x: 603, y: 259 }, q3: { x: 466, y: 253 } }
+            },
+            q4: {
+                x: 114, y: 139,
+                accepting: false,
+                transitions: { a: [ 'q1' ], b: [ 'q2' ] },
+                controlPoints: { q1: { x: 241, y: 194 }, q2: { x: 135.13951667874554, y: 313.60178087167884 } }
+            },
+            q5: {
+                x: 665, y: 136,
+                accepting: false,
+                transitions: { a: [ 'q3' ], b: [ 'q1' ] },
+                controlPoints: { q3: { x: 659, y: 314 }, q1: { x: 528, y: 185 }
+                }
+            }
+        },
+        start: {name: 'q1'}
+    },
+    language:"L = { { wwᴿ | w\u{2208}{a,b}*  }",
+    grammar: "S -> ε | 31 | 42 | 33 | 44, Q -> 31 | 42 | 33 | 44, 1 -> Q3, 2 -> Q4, 3 -> a, 4 -> b"
+},
+
 level4Data : {
-    language: "L = { a\u{207F}b\u{207F} | n > 0 }",
-    grammar: "A -> ε | 2 1 | 2 3, S -> 2 1 | 2 3, 1 -> S3, 2 -> a, 3 -> b"
+    language: "L = { { wwᴿ | w\u{2208}{a,b}*  }", 
+    grammar: "S -> Q, Q -> B A | D C | ϵ, A -> a, B -> A Q, C -> b, D -> C Q",
 },
 
 spareData : {
@@ -578,7 +649,7 @@ createLevelData : {
     automata: {
         states: {
             q1: {x: 379, y: 149,
-                accepting: false,
+                accepting: true,
                 transitions: {},
             },
             q2: {
@@ -589,21 +660,23 @@ createLevelData : {
             },
             q3: {
                 x: 616, y: 182,
-                accepting: true,
+                accepting: false,
                 transitions: { },
             },
             q4: {
-                x: 375, y: 347,
-                accepting: true,
-                transitions: {},
-            },
-            q5: {
-                x: 375, y: 347,
+                x: 146,
+                y: 193,
                 accepting: false,
                 transitions: {},
             },
+            q5: {
+                x: 616, y: 182,
+                accepting: false,
+                transitions: { },
+            },
+
         },
-        start: {name: 'q1'}
+        start: {name: 'q1', direction: 'top'}
     },
     words: [{word: "aabba", result: true}, {word: "bbab", result: false}, {word: "abb", result: true}],
     alphabet: ['a', 'b'],

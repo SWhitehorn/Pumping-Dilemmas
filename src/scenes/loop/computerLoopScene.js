@@ -51,16 +51,19 @@ import textBox from "/src/objects/components/textBox.js";
     }
 
     addElements(){
+        
+        
+
         if (this.message) {
             
-            popUp(this.message.message, this);
+            popUp(this.message.message, this, true);
             
             this.help = this.add.text(25, 25, "?", {color: colours.TEXTWHITE, fontSize: '30px', fontFamily: 'Quantico'})
             .setOrigin(0.5).setInteractive().on('pointerup', () => {
                 textBox(this, this.message.lines, 200);
             });
-
-            console.log(this.help);
+        } else {
+            popUp(["Drag the bars to select a part of the word that can be repeated"], this, true)
         }
         super.addElements();
     }

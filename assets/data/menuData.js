@@ -140,27 +140,46 @@ export default {
     // a^n b^n
     writeNode0: {
         x: 3000, y: 800,
-        children: ['loopNode6'],
+        children: ['writeNode1'],
         data: data.add0Data,
         name: 'writeNode0',
         type: 'writeWord', 
         tutorial: true
     },
 
+    // wwᴿ
+    writeNode1: {
+        x: 3200, y: 800,
+        children: ['loopNode6'],
+        data: data.add1Data,
+        name: "writeNode1",
+        type: 'writeWord'
+    },
+
+    // a^n b^n
+    writeNode2: {
+        x: 3400, y: 0,
+        children: [],
+        data: data.add0Data,
+        name: 'writeNode2',
+        type: 'nonRegular'
+    },
+
+    // Ends in aa or bb
     loopNode6: {
-        x: 34200, y: 800,
+        x: 3400, y: 800,
         children: [],
         data: data.loop6Data,
         type: 'loop',
         name: 'loopNode6'
     },
 
-    // a^n b^n
-    writeNode1: {
-        x: 3200, y: 0,
+    loopNode7: {
+        x: 3600, y: 800,
         children: [],
-        data: data.add0Data,
-        name: 'writeNode1',
-        type: 'nonRegular'
-    }
+        data: data.loop7Data,
+        type: 'loop',
+        name: 'loopNode7'
+    },
+
 }

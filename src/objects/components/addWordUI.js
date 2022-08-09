@@ -38,35 +38,28 @@ export default (scene) => {
                     icon: scene.add.triangle(0, 0, 0, -5, 20, 10, 0, 25, colours.WHITE)
                         .setStrokeStyle(3, 0x010A12).setInteractive().on('pointerup', () => {
                             
-                            // Only run for scenes that have CYK defined
-                            if (scene.CYK){
+                            if (scene.scene.key === "Non_RegularLevel"){
                                 if (scene.CYK.testMembership(scene.word)){
                                     
-                                    // Check key to modify effect
-                                    if (scene.scene.key === "AddWordLevel"){
-                                        scene.startComputation();
-                                    } else if (scene.scene.key === "Non_RegularLevel"){
+                                    // Word must be longer than pumping length
+                                    if (scene.word.length > scene.numStates){
+                                        const word = scene.word;
+                                        const grammar = scene.grammar;
+                                        const language = scene.language;
                                         
-                                        // Word must be longer than pumping length
-                                        if (scene.word.length > scene.numStates){
-                                            const word = scene.word;
-                                            const grammar = scene.grammar;
-                                            const language = scene.language;
-                                            
-                                            // Advance to second stage
-                                            scene.scene.stop();
-                                            scene.scene.start('Non_RegularSelectRepeats', {language, word, grammar});
-                                        } else {
-                                            popUp(["The word needs to be longer than " + scene.numStates + " letters long"], scene)
-                                        }  
-                                    }
-                                    
+                                        // Advance to second stage
+                                        scene.scene.stop();
+                                        scene.scene.start('Non_RegularSelectRepeats', {language, word, grammar});
+                                    } else {
+                                        popUp(["The word needs to be longer than " + scene.numStates + " letters long"], scene)
+                                    }  
                                     
                                 } else {
                                     popUp(["That word isn't in the language!"], scene);
                                 }
+                            } else if (scene.scene.key === "AddWordLevel"){
+                                scene.startComputation();
                             }
-                            
                         })
                     
                 }), {proportion: 0, expand: false, padding: {left: 20}, key: 'label'})
