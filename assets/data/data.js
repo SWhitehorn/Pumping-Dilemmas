@@ -92,6 +92,42 @@ loop0Data: {
     word: "baabba"
 },
 
+loop2Data_a : {
+    automata: {
+        states: {
+            q1: {x: 379, y: 149,
+                accepting: true,
+                transitions: {a: ['q2'], b: ['q3']},
+                controlPoints: {q2: {x: 250,y: 128}, q3: {x: 517,y: 139}}
+            },
+            q2: {
+                x: 146,
+                y: 193,
+                accepting: false,
+                transitions: {b: ['q1'], a: ['q4']},
+                controlPoints: { q1: { x: 277, y: 210 }, q4: { x: 239, y: 310 } }
+            },
+            q3: {
+                x: 616, y: 182,
+                accepting: false,
+                transitions: { a: [ 'q1' ], b: [ 'q4' ] },
+                controlPoints: { q1: { x: 502, y: 209 }, q4: { x: 562, y: 303 } }
+            },
+            q4: {
+                x: 375, y: 347,
+                accepting: false,
+                transitions: { a: [ 'q4' ], b: [ 'q4' ] },
+                controlPoints: { q4: { x: 375, y: 287 } }
+            }
+        },
+        start: {name: 'q1', direction: 'top'}
+    },
+    alphabet: ['a', 'b'],
+    language: "L = (ab U ba)*",
+    repeats: [3, 0], 
+    word: "ababba"
+},
+
 loop3Data: {
     automata: {
         states: {
@@ -212,7 +248,7 @@ loop5Data: {
     language: "L = {w\u{2208}{a,b}* | w contains the subword 'baba'" 
 },
 
- create0Data : {
+ create3Data : {
     automata: {
         states: {
             q1: {x: 290, y: 460, 
@@ -300,7 +336,7 @@ create2Data: {
     language: "L = {w\u{2208}{a,b}* | w contains exactly two 'a's}"
 },
 
-create3Data: {
+create0Data: {
     automata: {
         states: {
             q1: {x: 290, y: 460, 
@@ -426,6 +462,46 @@ create6Data: {
     language: "L = {w\u{2208}{a,b}* | |w| is a multiple of four}"
 },
 
+loop6Data: {
+    automata: {
+        states: {
+            q1: {
+                x: 150, y: 250,
+                accepting: false,
+                transitions: { a: [ 'q2' ], b: [ 'q5' ] },
+            },
+            q2: {
+                x: 300, y: 150,
+                accepting: false,
+                transitions: { b: [ 'q5' ], a: [ 'q3' ] },
+                controlPoints: { q5: { x: 335, y: 250 } } },
+            q3: {
+                x: 600, y: 150,
+                accepting: true,
+                transitions: { b: [ 'q5' ], a: [ 'q3' ] },
+                controlPoints: { q5: { x: 507, y: 215 }, q3: { x: 597, y: 87 } }
+            },
+            q4: {
+                x: 600, y: 350,
+                accepting: true,
+                transitions: { a: [ 'q2' ], b: [ 'q4' ] },
+                controlPoints: { q2: { x: 495, y: 280 }, q4: { x: 572, y: 298 } }
+            },
+            q5: {
+                x: 300, y: 350,
+                accepting: false,
+                transitions: { a: [ 'q2' ], b: [ 'q4' ] },
+                controlPoints: { q2: { x: 265, y: 250 }, q4: { x: 450, y: 350 } }
+            }
+        },
+        start: {name: 'q1'}
+    },
+    word: 'aababb',
+    repeats: [2, 0],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* |\nw ends in aa or bb" 
+},
+
 add0Data : {
     automata: {
         states: {
@@ -518,7 +594,7 @@ createLevelData : {
             },
             q4: {
                 x: 375, y: 347,
-                accepting: false,
+                accepting: true,
                 transitions: {},
             },
             q5: {

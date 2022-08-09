@@ -54,6 +54,8 @@ export default class LevelNode {
     /** Enables the child nodes of current node */
     enableNextNodes(){
         
+        this.graphic.setStrokeStyle(3, colours.GREEN)
+
         const startPoint = this.getPosition();
         for (let node of this.children){
             let child = this.scene.nodes[node];
