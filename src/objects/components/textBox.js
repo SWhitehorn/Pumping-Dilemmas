@@ -1,6 +1,12 @@
 import colours from "/src/utils/colours.js";
 import addWordUI from "./addWordUI.js";
 
+/**
+ * Adds a textBox to the scene, displaying the message
+ * @param {Scene} scene - Scene to add textBox to
+ * @param {String[]} lines - Message to display
+ * @param {Number} y - Overrides default y position of textBox (at bottom of screen)
+ */
 export default (scene, lines, y=null) => {
     
     let page = 0;

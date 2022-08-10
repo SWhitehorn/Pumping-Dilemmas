@@ -1,7 +1,10 @@
 import colours from "/src/utils/colours.js";
 import lowerUIBox from "./lowerUIBox.js";
+import popUp from "./popUp.js"
 
 export default (scene, repeats) => {
+
+    const extraWidth = scene.scene.key==="Non_RegularSelectRepeats" ? 150 : 0;
 
     // Section containing number of repeats
     const createLeft = (sizer, repeats) => {
@@ -64,7 +67,7 @@ export default (scene, repeats) => {
         return scene.rexUI.add.sizer(
             {
                 orientation: 1,
-                width: 320
+                width: (320 + extraWidth)
             })
             .addBackground(scene.add.rectangle(0, 0, 1, 1, colours.WHITE))
             .add(scene.rexUI.add.sizer({height: 60}).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tr: 0}, colours.WHITE).setStrokeStyle(3, 0x010A12)), {expand: true})
@@ -93,15 +96,18 @@ export default (scene, repeats) => {
                         .setStrokeStyle(2, colours.BLACK, 1).setInteractive().on('pointerup', () => {
                         // Start computation on button press if not already computing, word has been added, and selection is not empty
                         if (!scene.computing && scene.finishedAddingWord && scene.decomposeWord()[1] !== "") {
+                            
                             if (scene.scene.key === 'Non_RegularSelectRepeats'){
                                 scene.testWord();
-                            }
-                            // If normal loop scene, start computation
-                            if(scene.scene.key !== "ComputerLoopLevel"){
+                            
+                            // Prevent loop being illegal
+                            } else if (scene.loopLength > Object.keys(scene.automata.states).length){
+                                const message = `The loop must be within the first ${Object.keys(scene.automata.states).length} letters`
+                                popUp([message], scene, true);
+                            
+                                // If normal loop scene, start computation. ComputerLoopLevel logic is defined in class
+                            } else if (scene.scene.key !== "ComputerLoopLevel"){
                                 scene.startComputation();
-                                // Else check whether tests are already running and start if not
-                            } else if (!scene.runTests){
-                                scene.runTests = true;
                             }
                             
                         }
@@ -111,7 +117,7 @@ export default (scene, repeats) => {
     }
 
     let sizer = lowerUIBox(scene);
-    
+
     sizer.add(createLeft(sizer, repeats), {key: 'left'})
     .add(createMiddle(sizer), {expand: true, key: 'middle'})
     .add(createRight(sizer), {expand:true, key: 'right'});

@@ -32,6 +32,7 @@ export default class LoopTutorial extends Level {
         this.lines = [
             "If a word has more letters than the automaton has states, then the path through the automaton must visit the same state more than once.",
             "This means there must be a part of the word that starts and ends in the same state when read.",
+            "The length of this loop plus the section before it must be less than the number of states in the automaton.",
             "This part of the word can be repeated or removed, and the resulting word will still be in the language.",
             "Click to try this out. Adjust the repeated portion of the word by dragging the sliders and use the arrows to add or remove repeats."
         ]

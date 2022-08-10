@@ -8,13 +8,15 @@ import popUp from "./popUp.js";
  */
 export default (scene) => {
     
+    const extraWidth = scene.scene.key==="Non_RegularLevel" ? 100 : 0;
+
     // Section containing word
     const createMiddle = (sizer) => {
         const scene = sizer.scene;
         return scene.rexUI.add.sizer(
             {
                 orientation: 'x',
-                width: 350
+                width: 350 + extraWidth
             })
             .addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tl:30}, 0xDCF0FD).setStrokeStyle(3, 0x010A12))
     }
@@ -46,10 +48,17 @@ export default (scene) => {
                                         const word = scene.word;
                                         const grammar = scene.grammar;
                                         const language = scene.language;
+                                        const catches = scene.catches
                                         
                                         // Advance to second stage
                                         scene.scene.stop();
-                                        scene.scene.start('Non_RegularSelectRepeats', {language, word, grammar});
+                                        scene.scene.start('Non_RegularSelectRepeats', {
+                                            word: scene.word,
+                                            grammar: scene.grammar,
+                                            language: scene.language,
+                                            tutorial: scene.tutorial,
+                                            numStates: scene.numStates
+                                        });
                                     } else {
                                         popUp(["The word needs to be longer than " + scene.numStates + " letters long"], scene)
                                     }  
@@ -80,9 +89,11 @@ export default (scene) => {
     });
     
     
-    const textBox = scene.add.rectangle(380, 460, 230, 50, colours.WHITE).setStrokeStyle(3, colours.BLACK);
+    const textBox = scene.add.rectangle(380, 460, (230+(extraWidth*1.2)), 50, colours.WHITE).setStrokeStyle(3, colours.BLACK);
     scene.textEntry = scene.add.text(380, 460, scene.word, { fontSize: '50px', color: colours.TEXTBLACK, fontFamily: 'Quantico'}).setOrigin(0.5);
-        
+    
+    const maxLetters = scene.scene.key === "Non_RegularLevel" ? 12 : 8
+
     // Text entry
         scene.input.keyboard.on('keydown', (event) => {
             if (scene.scene.key === 'OpeningScene' || (!scene.computing)){ // Disable text entry when computation is happening
@@ -92,7 +103,7 @@ export default (scene) => {
                 
                 // Add key to text
                 } else if ((event.keyCode === 32 || (event.keyCode >= 48 && event.keyCode < 90)) 
-                    && scene.word.length < 8) {
+                    && scene.word.length < maxLetters) {
                     scene.word = (scene.word + event.key).toLowerCase();                
                 }
             }

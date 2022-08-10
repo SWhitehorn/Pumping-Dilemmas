@@ -34,7 +34,8 @@ export default class Level extends Phaser.Scene {
     
     preload(){
         this.load.image('backArrow', '../assets/backArrow.png');
-        this.load.image('computerIcon', '/assets/computer-80.png')
+        this.load.image('computerIcon', '/assets/computer-80.png');
+        this.load.image('nextPage', '../assets/arrow-down-left.png');
 
         this.load.scenePlugin('rexuiplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 'rexUI', 'rexUI');
         this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
@@ -103,6 +104,8 @@ export default class Level extends Phaser.Scene {
         // Check for empty word
         if (this.word && this.word !== 'ε'){
             this.computing = true;
+            this.automata.foundAccepting = false;
+            this.automata.currentPaths = 0;
             const startName = this.automata.getStart(true)
             this.time.delayedCall(500, this.automata.resetPreviousState, [startName, this.word], this.automata);
         }

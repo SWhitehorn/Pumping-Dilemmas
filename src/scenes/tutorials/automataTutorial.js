@@ -15,11 +15,6 @@ export default class CreateTutorial extends CreateLevel {
     constructor(){
         super('CreateTutorial');
     }
-
-    preload(){
-        super.preload();
-        this.load.image('nextPage', '../assets/arrow-down-left.png');
-    }
         
     create(data){
         

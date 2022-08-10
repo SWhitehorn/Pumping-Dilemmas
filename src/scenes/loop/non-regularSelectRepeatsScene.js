@@ -4,6 +4,7 @@ import "/src/typedefs/typedefs.js"
 import colours from "/src/utils/colours.js"
 import CYK from "/src/utils/CYK.js"
 import popUp from "/src/objects/components/popUp.js"
+import textBox from "/src/objects/components/textBox.js";
 import { calculateStartingX, changeBackground, resetBackground } from "/src/utils/utils.js"
 import nonRegSplitsUI from "/src/objects/components/nonRegSplitsUI.js";
 
@@ -13,10 +14,11 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         super("Non_RegularSelectRepeats");
     }
 
-    create({language, word, grammar}){  
+    create({language, word, grammar, tutorial, numStates}){  
         
         this.word = word;
         this.CYK = new CYK(grammar);
+        this.numStates = numStates
 
         //Flags 
         this.chosenLoops = false;
@@ -35,9 +37,16 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
             this.scene.start("Non_RegularLevel", {language, grammar})
         })
 
-        // Animate bars moving
-        this.moveBars();
-        
+        if (tutorial){
+            const message = [
+                "The computer will select the part of the word that it claims can be repeated.",
+                "Prove that the automaton does not exist by repeating the section to find a word outside the language."
+            ]
+            textBox(this, message, 120);
+        } else {
+            // Animate bars moving
+            this.moveBars();
+        }
     }
 
     /**
@@ -81,12 +90,6 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         const moveLeft = () => {
             
             const moveRight = () => {
-                const num = randomNumber(1, 4);
-                console.log(num);
-                let rightLetter = leftLetter + num;
-                if (rightLetter >= this.levelObjects.letters.length){
-                    rightLetter = this.levelObjects.letters.length - 1;
-                }
                 
                 const xPosRight = this.levelObjects.letters[rightLetter].getTopRight().x;
                 
@@ -102,11 +105,17 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
                         this.UIElements.decrease.visible = true;
                         this.UIElements.repeats.visible = true;
                         this.UIElements.play.visible = true;
+                        this.UIElements.play.on('pointerover', () => {
+                            this.UIElements.play.setFillStyle(colours.RED)
+                        });
+                        this.UIElements.play.on('pointerout', () => {
+                            this.UIElements.play.setFillStyle(colours.WHITE)
+                        });
                     }
                 });
             }
 
-            const leftLetter = randomNumber(0, this.word.length-2);
+            
             const xPos = this.levelObjects.letters[leftLetter].getTopLeft().x - 20
             
             this.tweens.add({
@@ -118,15 +127,24 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
             });
         }
         
+        console.log(this.numStates);
+        let leftLetter = randomNumber(0, this.numStates);
+        console.log(leftLetter);
+        const max = Math.floor(this.word.length / 2);
+        const num = randomNumber(0, max);
+        let rightLetter = leftLetter + num;
+        if (rightLetter >= this.numStates){
+            rightLetter = this.numStates-1;
+        }
+
         this.time.delayedCall(250, moveLeft, [], this)
     }
 
     testWord(){
         
         const result = this.CYK.testMembership(this.selectedWord);
-        console.log(result, this.selectedWord);
         if (result) {
-            popUp(["Still in the language!"], this);
+            popUp(["That word is still in the language!"], this);
         } else {
             popUp(["Success! That word is not in the language", "You have proved the automaton does not capture L"], this);
             this.time.delayedCall(4000, this.nextLevel, [], this)
@@ -169,5 +187,22 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         this.UIElements.increase = buttons.increase;
         this.UIElements.decrease = buttons.decrease;
 
+    }
+
+    /**
+     * 
+     * @param {String} pos - String identifier of position of loop
+     * @returns {Number[]} - Array with two elements, corresponding to left and right
+     */
+    getLoopPlaces(pos){
+
+        if (pos === 'middle'){
+            const middle = Math.floor(this.word.length / 2);
+            return [middle-1, middle];
+        }
+    }
+
+    textBoxCallback(){
+        this.moveBars();
     }
 }

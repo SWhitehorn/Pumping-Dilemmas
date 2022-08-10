@@ -230,7 +230,8 @@ export default class LoopLevel extends Level {
     addSections(numRepeats){
             
             const wordParts = this.decomposeWord(); 
-
+            this.loopLength = wordParts[0].length + wordParts[1].length;
+            
             // Check that selected section is not empty
             if (wordParts[1] === ""){
                 this.UIElements.play.visible = false;

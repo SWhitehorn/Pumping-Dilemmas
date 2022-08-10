@@ -30,7 +30,15 @@ loop0Data: {
     word: "abba",
     repeats: [2, 1],
     alphabet: ['a', 'b'],
-    language: "L = { ab\u{207F}a | n \u{2265} 0}" 
+    language: "L = { ab\u{207F}a | n \u{2265} 0}",
+    lines: [
+        "Welcome to Pumping Dilemmas!",
+        "Above is an example of a finite automaton. A finite automaton consists of states (circles) and transitions (arrows).",
+        "The automaton takes a word as input, and moves between states based on the letters of the word.",
+        "Click again to see the automaton reading the word 'abba'.",
+        "Once all letters have been read, the word is accepted if the current state is accepting, denoted by having an inner circle. The set of words accepted by an automaton is its language.",
+        "Click to try inputting some other words. Type, then click the play button to watch the automata go. Click the back arrow when ready to move on."
+    ]
 },
 
 
@@ -336,6 +344,32 @@ create2Data: {
     language: "L = {w\u{2208}{a,b}* | w contains exactly two 'a's}"
 },
 
+createTutorialData: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'abb', result: true}, {word: 'bab', result: false}, {word: "a", result: true}, {word: 'b', result: false}, {word: 'aaaa', result: false}],
+    alphabet: ['a', 'b'],
+    language: "L = {w \u{2208} {a,b}* | w starts with a}"
+},
+
 create0Data: {
     automata: {
         states: {
@@ -611,6 +645,149 @@ add1Data: {
     },
     language:"L = { { wwᴿ | w\u{2208}{a,b}*  }",
     grammar: "S -> ε | 31 | 42 | 33 | 44, Q -> 31 | 42 | 33 | 44, 1 -> Q3, 2 -> Q4, 3 -> a, 4 -> b"
+},
+
+add2Data: {
+    language: "L = { a\u{207F}b\u{207F} | n > 0 }",
+    grammar: "A -> ε | 2 1 | 2 3, S -> 2 1 | 2 3, 1 -> S3, 2 -> a, 3 -> b",
+    tutorial: true
+},
+
+add3Data: {
+    language:"L = { { wwᴿ | w\u{2208}{a,b}*  }",
+    grammar: "S -> ε | 31 | 42 | 33 | 44, Q -> 31 | 42 | 33 | 44, 1 -> Q3, 2 -> Q4, 3 -> a, 4 -> b",
+},
+
+create8Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 425, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 450, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+            q5: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q5'
+            },
+        },
+        start: {name: 'q3'}
+    },
+    words: [{word: 'aba', result: true}, {word: 'ababa', result: true}, {word: "b", result: false}, {word: 'abba', result: false}, {word: 'bba', result: false}, {word: 'abab', result: true}],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w consists of 0 or more concatenations of 'ab' and 'aba' }"
+},
+
+create7Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 425, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 450, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'aba', result: true}, {word: 'ababa', result: true}, {word: "baab", result: false}, {word: 'aaa', result: false}, {word: 'b', result: false}, {word: 'abab', result: false}],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | The second to last symbol in w is 'b' }"
+},
+
+nonDeterministicData0: {
+    automata: {
+        states: {
+            q1: {x:200, y:200, 
+                accepting: true, 
+                transitions: {b: ['q2', 'q1'], a: ['q1'] },
+                name: 'q1'
+            },
+            q2: {x:400, y:200, 
+                transitions: {b: ['q3'], a: ['q3']},
+                accepting: false, 
+                name: 'q2'
+            },
+            q3: {x:600, y:200, 
+                accepting: true, 
+                transitions: {},
+                name: 'q3'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    word: "abba",
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | The second to last symbol in w is 'b'",
+    lines: [
+        "The automata so far have been deterministic. At each state, there is only one transition they can take.",
+        "The above automaton is non-deterministic. Some nodes have more than one transition defined for a letter, others have none.",
+        "If there are no transitions, the computation fails. If there are multiple, the computation splits into two and takes both.",
+        "The word is accepted if a single computation ends in an accepting state.",
+        "Try inputting some words to see the computation path."
+    ]
+},
+
+nonDeterministicData1: {
+    automata: {
+        states: {
+            q1: {x:400, y:150, 
+                accepting: true, 
+                transitions: {b: ['q2'], ε: ['q3'] },
+                controlPoints: {q3: {x: 440, y: 240} },
+                name: 'q1'
+            },
+            q2: {x:250, y:300, 
+                accepting: false, 
+                transitions: {a: ['q2', 'q3'], b: ['q3']},
+                name: 'q2'
+            },
+            q3: {x:550, y:300, 
+                accepting: false, 
+                transitions: {a: ['q1']},
+                controlPoints: {q1: {x: 500, y: 210} },
+                name: 'q3'
+            },
+        },
+        start: {name: 'q1', direction: 'top'}
+    },
+    word: "abba",
+    alphabet: ['a', 'b'],
+    language: "L = ((ba*(aUb)a) U a)*",
+    lines: [
+        "Non-deterministic finite automata can also have ε-transitions.",
+        "If there is an ε-transition, the computation takes it without reading any input from the word."
+    ]
 },
 
 level4Data : {

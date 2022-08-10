@@ -181,7 +181,8 @@ export default class Automata {
         
         // Check if word is empty. If so, end computation
         if (!word){
-            this.endComputation();
+            this.terminatePath()
+            
         } else {
             this.scene.time.delayedCall(60, this.computation, [currState, word], this);
         }
@@ -193,7 +194,12 @@ export default class Automata {
      * @param {String} word - Current word for computation
      * */
     computation(prevStateName, word){        
+        
+        if (this.foundAccepting){
+            return;
+        }
 
+        console.log(prevStateName);
         // Get first symbol of word
         let symbol = word[0];
         word = word.slice(1);
@@ -207,14 +213,45 @@ export default class Automata {
             if (prevState.accepting){
                 prevState.graphic.inner.setFillStyle(colours.RED, 1);
             }
-            this.endComputation();
+            this.terminatePath()
+            
             return;
         }
         
-        // Index transitions of state based on symbol
-        let states = prevState.transitions[symbol];
-        for (let currState of states){
+        if (symbol in prevState.transitions){
+            // Index transitions of state based on symbol
+            let states = prevState.transitions[symbol]; 
             
+            // Increment current paths by branching of node - if only one path, do not increment
+            this.currentPaths += (states.length-1)
+
+            for (let currState of states){ 
+                this.takeComputationPath(currState, prevStateName, word)
+            }
+        }
+
+        if ("ε" in prevState.transitions){
+            word = symbol + word;
+            for (let currState of prevState.transitions['ε']){
+                this.takeComputationPath(currState, prevStateName, word)
+            }
+        }
+
+        // Draw computed word for level one
+        if (this.scene.scene.key === "Level1"){
+            this.scene.drawComputedWord();
+        }
+    
+    }
+
+    /**
+     * 
+     * @param {String} currState - State name after reading transition
+     * @param {String} prevStateName - State name before reading transition
+     * @param {String} word - Current word
+     */
+    takeComputationPath(currState, prevStateName, word){
+
             let state = this.getState(currState);
             
             // Highlight transition
@@ -232,34 +269,27 @@ export default class Automata {
                 if (state.accepting){
                     state.graphic.setFillStyle(colours.GREEN, 1);
                     state.graphic.inner.setFillStyle(colours.GREEN, 1);
+                    this.foundAccepting = true;
                     this.endComputation(true);
+                    return;
                 }
                 else{
                     state.graphic.setFillStyle(colours.RED, 1); 
-                    this.endComputation();
+                    this.terminatePath();
+                    
                 }
             }
             
             // Continue computation
             else{
-                
                 // Highlight current state in yellow;
                 state.graphic.setFillStyle(colours.YELLOW, 1);
                 if (state.accepting){ // Check if state has inner ring
                     state.graphic.inner.setFillStyle(colours.YELLOW, 1);
                 }
-                
                 // Delay next step of compuation to allow for visual display
                 this.scene.time.delayedCall(500, this.resetPreviousState, [currState, word, key], this);
-
             }
-        }
-
-        // Draw computed word for level one
-        if (this.scene.scene.key === "Level1"){
-            this.scene.drawComputedWord();
-        }
-    
     }
     
     /** Reset all states and transitions to standard colours */
@@ -382,6 +412,15 @@ export default class Automata {
         state.keys = [];
         state.transitions = {};
         
+    }
+
+    terminatePath(){
+        console.log(this.currentPaths);
+        if (this.currentPaths === 1){
+            this.endComputation();
+        } else {
+            this.currentPaths--;
+        }
     }
 
 }

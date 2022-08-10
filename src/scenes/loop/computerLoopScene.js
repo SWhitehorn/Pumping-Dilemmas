@@ -29,6 +29,11 @@ import textBox from "/src/objects/components/textBox.js";
         this.nextTest = undefined;
         
         this.UIElements.play.on('pointerup', () => {
+            
+            if (this.loopLength > Object.keys(this.automata.states).length){
+                return;
+            }
+
             changeBackground(this);
             this.UIElements.increase.visible = false;
             this.UIElements.decrease.visible = false;
