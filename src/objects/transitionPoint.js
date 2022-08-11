@@ -111,6 +111,7 @@ export default class TransitionPoint {
      * @param {string} letter - Letter to add/remove 
      */
     changeInput(letter){
+        
         const transitions = this.startState.transitions;
 
         if (transitions.hasOwnProperty(letter)){
@@ -129,7 +130,11 @@ export default class TransitionPoint {
                 }
 
                 if (this.hasEmptyTransition()){
-                    transitions["ε"] = [this.endName]
+                    if (transitions.hasOwnProperty('ε')){
+                        transitions["ε"].push(this.endName)
+                    } else {
+                        transitions["ε"] = [this.endName]
+                    }
                     this.inputs.push("ε");
                 }   
             
@@ -138,13 +143,20 @@ export default class TransitionPoint {
                 transitions[letter].splice(0, 0, this.endName);
                 this.inputs.push(letter);
             }
-            Array [ "ε" ]
             
         // Transition over input is not defined, create new transition
         } else {
             if (this.hasEmptyTransition()){
                 this.inputs = [];
-                delete transitions["ε"];
+                
+                // Delete ε-transitions
+                if (transitions['ε']){
+                    transitions['ε'].splice(index, 1);
+                    if (transitions['ε'].length === 0){
+                        delete transitions['ε']; 
+                    }
+                }
+                
             }
             
             transitions[letter] = [this.endName];
@@ -193,7 +205,7 @@ export default class TransitionPoint {
      * @returns {boolean} Returns true no inputs are present in array
      */
     hasEmptyTransition(){
-        return (this.inputs.length === 0 || this.inputs.includes("ε"));
+        return (this.inputs.length === 0 || this.inputs.includes("ε") && this.scene.deterministic);
     }
 
     /**

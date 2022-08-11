@@ -237,13 +237,57 @@ export default {
     },
 
     nonDeterministicNode1: {
-        x:4400, y: 600,
-        children: [],
+        x:4400, y: 1000,
+        children: ['createNode9', 'createNode11'],
         tutorial: true,
         name: 'nonDeterministicNode1',
         type: 'opening',
         data: data.nonDeterministicData1,
     },
+
+    createNode9: {
+        x: 4400, y: 1200,
+        children: [],
+        data: data.create9Data,
+        name: 'createNode9',
+        type: 'create',
+    },
+
+    createNode10: {
+        x: 4400, y: 1400,
+        children: [],
+        name: 'createNode10',
+        data: data.create10Data,
+        type:'create',
+    },
+
+    create11Node: {
+        x: 4600, y: 800,
+        children: ['writeNode5'],
+        name: 'createNode10',
+        data: data.create11Data,
+        type:'create',
+    },
+
+    writeNode5: {
+        x: 4800, y: 800,
+        children: ['writeNode6'],
+        data: data.add5Data,
+        name: 'writeNode5',
+        type: 'nonRegular'
+    },
+    
+    writeNode6: {
+        x: 5000, y: 700,
+        children: [],
+        data: data.add6Data,
+        name: 'writeNode6',
+        type: 'nonRegular'
+    },
+
+    
+
+    
 
 
 

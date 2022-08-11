@@ -656,13 +656,15 @@ add2Data: {
 add3Data: {
     language:"L = { { wwᴿ | w\u{2208}{a,b}*  }",
     grammar: "S -> ε | 31 | 42 | 33 | 44, Q -> 31 | 42 | 33 | 44, 1 -> Q3, 2 -> Q4, 3 -> a, 4 -> b",
-    numStates: 2
+    numStates: 2,
+    posKey: 'middle'
 },
 
 add4Data: {
     language:"L = { { wwᴿ | w\u{2208}{a,b}*  }",
     grammar: "S -> ε | 31 | 42 | 33 | 44, Q -> 31 | 42 | 33 | 44, 1 -> Q3, 2 -> Q4, 3 -> a, 4 -> b",
-    numStates: 4
+    numStates: 4,
+    posKey: 'middle'
 },
 
 create8Data: {
@@ -795,6 +797,144 @@ nonDeterministicData1: {
         "Non-deterministic finite automata can also have ε-transitions.",
         "If there is an ε-transition, the computation takes it without reading any input from the word."
     ]
+},
+
+create11Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+        },
+        start: {name: 'q3'}
+    },
+    words: [{word: 'aba', result: true}, {word: 'ababa', result: true}, {word: "b", result: false}, {word: 'abba', result: false}, {word: 'bba', result: false}, {word: 'abab', result: true}],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w consists of 0 or more concatenations of 'ab' and 'aba' }",
+    deterministic: false
+},
+
+add7Data: {
+    language:"L = { words not of the form\nww for w\u{2208}{a,b}*}",
+    numStates: 3,
+    grammar: `0 -> ε | AB | BA | a | b | Z1
+            S -> AB | BA | a | b | Z1
+            E -> AB | BA
+            A -> a | Z2
+            B -> b | Z3
+            U -> a | b | Z1
+            Z -> a | b
+            1 -> UZ
+            2 -> AZ
+            3 -> BZ`
+},
+
+add6Data: {
+    language: "L = { { w\u{2208}{a,b}* |\nw has twice as many 'a's as 'b's}",
+    grammar: `S -> ε | QQ | 15 1 | 16 2 | 16 3 | 15 4 | 15 5 | 15 6 | 16 7 | 16 8 | 16 9 | 16 10 | 16 11 | 16 12
+    Q -> QQ | 15 1 | 16 2 | 16 3 | 15 4 | 15 5 | 15 6 | 16 7 | 16 8 | 16 9 | 16 10 | 16 11 | 16 12
+     1 -> Q 4
+     2 -> Q 7
+     3 -> Q 10
+     4 ->  16 13
+     5 -> Q 6
+     6 ->  16 16
+     7 ->  15 13
+     8 -> Q 9
+     9 ->  15 16
+     10 ->  16 14
+     11 -> Q 12
+     12 ->  16 15
+     13 -> Q 16
+     14 -> Q 15
+     15 -> b
+     16 -> a`,
+     posKey: 'double'
+},
+
+add5Data: {
+    language:"L = { { w\u{2208}{a,b}* |\nw has more 'a's than 'b's }",
+    grammar: `S -> R Q | a | QR | QA | Q 1 | 4A
+    Q -> R Q | a | QR | QA | Q 1 | 4A
+   A -> a | A 4
+   R -> RR | 4 2 | 5 3 | 4 5 | 5 4
+   1 -> RA
+   2 -> R 5
+   3 -> R 4
+   4 -> a
+   5 -> b`,
+   posKey: 'balance'
+},
+
+create9Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'abab', result: true}, {word: 'abbb', result: false}, {word: "ab", result: true}, {word: 'aaa', result: false}, {word: 'b', result: false}, {word: 'ε', result: false}, ],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w ends in 'ab' }",
+    deterministic: false,
+},
+
+create10Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 425, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 450, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'abab', result: true}, {word: 'abc', result: false}, {word: "cbbc", result: true}, {word: 'bcaaa', result: false}, {word: 'b', result: true}, {word: 'ε', result: true}, ],
+    alphabet: ['a', 'b', 'c'],
+    language: "L = {w\u{2208}{a,b,c}* | w does not contain every letter of the alphabet }",
+    deterministic: false,
 },
 
 level4Data : {

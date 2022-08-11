@@ -53,7 +53,8 @@ export default (scene) => {
                                             grammar: scene.grammar,
                                             language: scene.language,
                                             tutorial: scene.tutorial,
-                                            numStates: scene.numStates
+                                            numStates: scene.numStates,
+                                            posKey: scene.posKey
                                         });
                                     } else {
                                         popUp(["The word needs to be longer than " + scene.numStates + " letters long"], scene)

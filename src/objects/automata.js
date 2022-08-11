@@ -113,6 +113,7 @@ export default class Automata {
         
         // Add input to transitions of first state
         const startState = this.states[firstStateName];
+        
         if (startState.transitions.hasOwnProperty(input)){
             
             if (startState.transitions[input].indexOf(secondStateName) === -1){
@@ -158,9 +159,10 @@ export default class Automata {
      * First half of computation, resets previous state and checks for empty word 
      * @param {string} currState - name of current state 
      * @param {String} word - Current word for computation
-     * @param {String} key - Key for previous transition
+     * @param {String} [key] - Key for previous transition
+     * @param {Boolean} [end] - Flag to stop computation
     */
-    resetPreviousState(currState, word, key){
+    resetPreviousState(currState, word, key, end){
         
         // Set previous state to black
         const prevState = this.states[currState];
@@ -178,8 +180,16 @@ export default class Automata {
         }
         
         // Check if word is empty. If so, end computation
-        if (!word){
-            this.terminatePath()
+        if (!word | end){
+            if ("ε" in prevState.transitions){
+                console.log('taking final leap');
+                for (let state of prevState.transitions['ε']){
+                    this.takeComputationPath(state, currState, word);
+                }
+            } else {
+                this.terminatePath();
+            }
+            
             
         } else {
             this.scene.time.delayedCall(60, this.computation, [currState, word], this);
@@ -197,6 +207,8 @@ export default class Automata {
             return;
         }
 
+        this.takenPath = false;
+
         // Get first symbol of word
         let symbol = word[0];
         word = word.slice(1);
@@ -204,14 +216,13 @@ export default class Automata {
         
         // Exit if transition over symbol is not defined
         if (!(symbol in prevState.transitions) && !("ε" in prevState.transitions)){
-
+            
             // Colour state red
             prevState.graphic.setFillStyle(colours.RED, 1);
             if (prevState.accepting){
                 prevState.graphic.inner.setFillStyle(colours.RED, 1);
             }
-            this.terminatePath()
-            
+            this.scene.time.delayedCall(500, this.resetPreviousState, [prevStateName, word, null, true], this);
             return;
         }
         
@@ -220,7 +231,8 @@ export default class Automata {
             let states = prevState.transitions[symbol]; 
             
             // Increment current paths by branching of node - if only one path, do not increment
-            this.currentPaths += (states.length-1)
+            this.currentPaths += (states.length-1);
+            this.takenPath = true;
 
             for (let currState of states){ 
                 this.takeComputationPath(currState, prevStateName, word)
@@ -229,6 +241,10 @@ export default class Automata {
 
         if ("ε" in prevState.transitions){
             word = symbol + word;
+            
+            this.currentPaths += (prevState.transitions['ε'].length-1);
+            this.currentPaths += this.takenPath ? 1 : 0;
+            
             for (let currState of prevState.transitions['ε']){
                 this.takeComputationPath(currState, prevStateName, word)
             }
@@ -260,7 +276,7 @@ export default class Automata {
             }
 
             // Colour state green or red is word is empty, having taken tranition
-            if (!word){
+            if (!word && !("ε" in state.transitions)){
                 
                 // Change to green if accepting, red if not
                 if (state.accepting){
@@ -272,13 +288,13 @@ export default class Automata {
                 }
                 else{
                     state.graphic.setFillStyle(colours.RED, 1); 
-                    this.terminatePath();
-                    
+                    this.scene.time.delayedCall(500, this.resetPreviousState, [currState, word, key], this);
+                    return;
                 }
             }
             
             // Continue computation
-            else{
+            else if (!this.foundAccepting){
                 // Highlight current state in yellow;
                 state.graphic.setFillStyle(colours.YELLOW, 1);
                 if (state.accepting){ // Check if state has inner ring
@@ -337,6 +353,7 @@ export default class Automata {
             state.x = state.graphic.x;
             state.y = state.graphic.y;
             state.controlPoints = {}
+            
             state.keys.forEach((key) => {
                 let [s1, s2] = splitKey(key);
                 if (s1 === state.name && !sameState(key)){
@@ -412,7 +429,7 @@ export default class Automata {
     }
 
     terminatePath(){
-        if (this.currentPaths === 1 | this.currentPaths === 0){
+        if (this.currentPaths === 0){
             this.endComputation();
         } else {
             this.currentPaths--;

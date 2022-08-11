@@ -13,11 +13,13 @@ export default class Non_RegularLevel extends Level {
         super("Non_RegularLevel");
     }
 
-    create({language, grammar, tutorial, numStates}){
+    create({language, grammar, tutorial, numStates, posKey}){
         
         this.grammar = grammar;
         this.language = language;
         this.tutorial = tutorial;
+        this.posKey = posKey;
+
 
         // Create level without automata
         super.create(null, language);

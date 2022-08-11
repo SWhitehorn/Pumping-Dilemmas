@@ -37,7 +37,6 @@ export default class CreateLevel extends Level {
         // Store original word and automata to allow for reseting
         this.words = words;
         this.inputAutomata = structuredClone(automata);
-        console.log(this.inputAutomata);
 
         this.alphabet = alphabet;
         this.language = language;
@@ -69,7 +68,7 @@ export default class CreateLevel extends Level {
                         this.firstState = {state, stateName};
                     } else {
                         this.draw = false;
-                        this.connectStates(stateName)
+                        this.connectStates(stateName);
                     }
                     
                 }
@@ -200,7 +199,9 @@ export default class CreateLevel extends Level {
             }
         }
 
+        // Add transition returns true if input was added 
         if (this.automata.addTransition(this.firstState.stateName, targetStateName, input)){
+            
             const key = createKey(this.firstState.stateName, targetStateName);
             const transitionData = this.transitions.getObject(key);
             
@@ -249,9 +250,18 @@ export default class CreateLevel extends Level {
     }
 
     moveToTests(){
+        console.log(this.automata);
         if (this.validFA()) {
             this.automata.bakeAutomata();
-            this.scene.start('TestCreateLevel', {automata:this.automata, words:this.words, alphabet:this.alphabet, language:this.language, inputAutomata:this.inputAutomata}); 
+            
+            this.scene.start('TestCreateLevel', {
+                automata:this.automata, 
+                words:this.words, 
+                alphabet:this.alphabet, 
+                language:this.language, 
+                inputAutomata:this.inputAutomata, 
+                deterministic:this.deterministic
+            }); 
         } else {
             let message;
             if (this.deterministic){

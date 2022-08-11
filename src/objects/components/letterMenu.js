@@ -18,9 +18,9 @@ export default (scene, point, input, transitionPoint) => {
     const COLOR_DARK = colours.DARKBLUE;
 
     // Option for each of the letters in the alphabet
-    let options = [...scene.alphabet, 'Remove']
-
-    const width = scene.alphabet.length * 15;
+    let options = [...scene.alphabet, 'ε', 'Remove']
+    
+    const width = (options.length-1) * 15;
     
     // Returns text object
     const createTextObject = function (scene, text) {
@@ -55,9 +55,9 @@ export default (scene, point, input, transitionPoint) => {
                 
                 let background = scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0);
                 
-                // Outline in white if option is included
+                // Outline if option is included
                 if (this.text.includes(option)){
-                    background.setStrokeStyle(1, colours.BLACK);
+                    background.setStrokeStyle(2, colours.BLACK);
                 }
 
                 let button = scene.rexUI.add.label({
@@ -117,7 +117,6 @@ export default (scene, point, input, transitionPoint) => {
         if (pointer.rightButtonReleased()){
             if (!menu.scene.draw){
                 point = menu.parentPoint;
-                
             }
         } 
     });

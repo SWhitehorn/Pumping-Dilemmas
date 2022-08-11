@@ -14,11 +14,12 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         super("Non_RegularSelectRepeats");
     }
 
-    create({language, word, grammar, tutorial, numStates}){  
+    create({language, word, grammar, tutorial, numStates, posKey}){  
         
         this.word = word;
         this.CYK = new CYK(grammar);
         this.numStates = numStates;
+        this.posKey = posKey;
 
         this.called = 0;
 
@@ -190,13 +191,27 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
      */
     getLoopPlaces(){
 
-        if (this.language === 'L = { { wwᴿ | w\u{2208}{a,b}*  }'){
-            const middle = Math.floor(this.word.length / 2);
-            console.log(middle);
-            if (middle < this.numStates){
-                return {leftLetter: middle-1, rightLetter: middle};
-            }     
-        } 
+        // posKey is an optional string flagging where to locate the loop
+        if (this.posKey){
+            if (this.posKey === 'middle'){
+                const middle = Math.floor(this.word.length / 2);
+                console.log(middle);
+                if (middle < this.numStates){
+                    return {leftLetter: middle-1, rightLetter: middle};
+                }     
+            } else if (this.posKey === "balance"){
+                let left = this.word.search("ab|ba");
+                if (left < this.numStates-1){
+                    return {leftLetter: left, rightLetter: left+1}
+                }
+            } else if (this.posKey === "double"){
+                let left = this.word.search("aba|aab|baa");
+                if (left < this.numStates-2){
+                    return {leftLetter: left, rightLetter: left+2}
+                }
+            }
+        }
+        
         
 
         // Choose randomly if conditions fail

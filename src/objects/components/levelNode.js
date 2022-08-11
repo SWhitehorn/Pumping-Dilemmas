@@ -29,6 +29,7 @@ export default class LevelNode {
         this.levelDict = this.createLookUpDict();
         
         this.active = false;
+        this.passed = false;
         
         let shadow = this.scene.add.circle(this.x+5, this.y+10, 31, colours.BLACK).setAlpha(0.3);
         this.graphic = this.scene.add.circle(this.x, this.y, 30, colours.BLACK).setInteractive();
@@ -54,8 +55,7 @@ export default class LevelNode {
     /** Enables the child nodes of current node */
     enableNextNodes(){
         
-        this.graphic.setStrokeStyle(3, colours.GREEN)
-
+        this.graphic.setFillStyle(0x80ff77);
         const startPoint = this.getPosition();
         for (let node of this.children){
             let child = this.scene.nodes[node];
@@ -131,7 +131,10 @@ export default class LevelNode {
 
             } else {
                 if (this.scene.prevNode.active){
-                    this.scene.prevNode.graphic.setFillStyle(colours.WHITE, 1);
+                    
+                    let colour = this.scene.prevNode.passed ? 0x80ff77 : colours.WHITE
+                    
+                    this.scene.prevNode.graphic.setFillStyle(colour, 1);
                 }
                 this.scene.prevNode = this;
             }
@@ -158,7 +161,7 @@ export default class LevelNode {
             },
             create: {
                 scene: 'CreateLevel', 
-                data: {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language}
+                data: {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language, deterministic:this.data.deterministic}
             },
             writeWord: {
                 scene: "AddWordLevel",
@@ -166,7 +169,7 @@ export default class LevelNode {
             },
             nonRegular: {
                 scene: 'Non_RegularLevel', 
-                data: {language:this.data.language, grammar: this.data.grammar, tutorial: this.data.tutorial, numStates: this.data.numStates}
+                data: {language:this.data.language, grammar: this.data.grammar, tutorial: this.data.tutorial, numStates: this.data.numStates, posKey:this.data.posKey}
             },
             opening: {
                 scene: "OpeningScene", 

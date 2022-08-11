@@ -113,16 +113,16 @@ export default class Level extends Phaser.Scene {
         // Handle empty word
         else{
             
-            this.time.delayedCall(500, () => {
+
                 if (this.automata.getStart().accepting){
                     this.automata.getStart().graphic.setFillStyle(colours.GREEN, 1).setStrokeStyle(3, colours.BLACK, 1);;
                     this.automata.getStart().graphic.inner.setFillStyle(colours.GREEN, 1).setStrokeStyle(3, colours.BLACK, 1);;
                     this.endComputation(true)
                 } else{
-                    this.automata.getStart().graphic.setFillStyle(colours.RED, 1).setStrokeStyle(3, colours.BLACK, 1);;
-                    this.endComputation();
+                    this.automata.getStart().graphic.setFillStyle(colours.RED, 1).setStrokeStyle(3, colours.BLACK, 1);
+                    this.endComputation(false);
                 }
-            }, [], this)
+
             
             
         }
