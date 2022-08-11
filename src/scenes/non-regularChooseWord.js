@@ -13,7 +13,7 @@ export default class Non_RegularLevel extends Level {
         super("Non_RegularLevel");
     }
 
-    create({language, grammar, tutorial}){
+    create({language, grammar, tutorial, numStates}){
         
         this.grammar = grammar;
         this.language = language;
@@ -22,8 +22,7 @@ export default class Non_RegularLevel extends Level {
         // Create level without automata
         super.create(null, language);
 
-        let numStates =  randomNumber(3, 5);
-        this.numStates = numStates;
+        this.numStates = numStates ? numStates : randomNumber(3, 5);
         this.word = "";
         this.CYK = new CYK(grammar);
         

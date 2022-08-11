@@ -4,7 +4,7 @@ export default {
     
     openingNode: {
         x:600, y: 800,
-        children: ['loopTutorial'],
+        children: ['createTutorial'],
         tutorial: true,
         name: 'openingNode',
         type: 'opening',
@@ -186,25 +186,34 @@ export default {
     // a^n b^n
     writeNode2: {
         x: 3800, y: 800,
-        children: [],
+        children: ['writeNode3'],
         data: data.add2Data,
         name: 'writeNode2',
         type: 'nonRegular',
         tutorial: true
     },
 
-    // wwᴿ
+    // wwᴿ, 2 states
     writeNode3: {
         x: 4000, y: 800,
-        children: ['createNode7'],
+        children: ['writeNode4', 'createNode7'],
         data: data.add3Data,
         name: 'writeNode3',
         type: 'nonRegular',
     },
 
+    // wwᴿ, 4  states
+    writeNode4: {
+        x: 4000, y: 1000,
+        children: [],
+        data: data.add4Data,
+        name: 'writeNode4',
+        type: 'nonRegular',
+    },
+
     createNode7: {
         x: 4200, y: 800,
-        children: ['createNode8', 'nonDeterministicNode'],
+        children: ['createNode8', 'nonDeterministicNode0'],
         data: data.create7Data,
         name: 'createNode7',
         type: 'create'

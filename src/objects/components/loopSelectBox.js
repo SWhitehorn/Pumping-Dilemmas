@@ -94,25 +94,9 @@ export default (scene, repeats) => {
                     space: {left: 3, right: 3},
                     icon: scene.add.triangle(0, 0, 0, -5, 20, 10, 0, 25, colours.WHITE)
                         .setStrokeStyle(2, colours.BLACK, 1).setInteractive().on('pointerup', () => {
-                        // Start computation on button press if not already computing, word has been added, and selection is not empty
-                        if (!scene.computing && scene.finishedAddingWord && scene.decomposeWord()[1] !== "") {
-                            
-                            if (scene.scene.key === 'Non_RegularSelectRepeats'){
-                                scene.testWord();
-                            
-                            // Prevent loop being illegal
-                            } else if (scene.loopLength > Object.keys(scene.automata.states).length){
-                                const message = `The loop must be within the first ${Object.keys(scene.automata.states).length} letters`
-                                popUp([message], scene, true);
-                            
-                                // If normal loop scene, start computation. ComputerLoopLevel logic is defined in class
-                            } else if (scene.scene.key !== "ComputerLoopLevel"){
-                                scene.startComputation();
-                            }
-                            
-                        }
-                    }),
-                }
+                            scene.pressPlay();
+                        }),
+                    }
                 ), {proportion: 0, expand: false, padding: {left: 20}, key: 'label'})
     }
 

@@ -27,16 +27,16 @@ loop0Data: {
         },
         start: {name: 'q1'}
     },
-    word: "abba",
+    word: "abbba",
     repeats: [2, 1],
     alphabet: ['a', 'b'],
     language: "L = { ab\u{207F}a | n \u{2265} 0}",
     lines: [
         "Welcome to Pumping Dilemmas!",
         "Above is an example of a finite automaton. A finite automaton consists of states (circles) and transitions (arrows).",
-        "The automaton takes a word as input, and moves between states based on the letters of the word.",
-        "Click again to see the automaton reading the word 'abba'.",
-        "Once all letters have been read, the word is accepted if the current state is accepting, denoted by having an inner circle. The set of words accepted by an automaton is its language.",
+        "The automaton takes a word (a sequence of letters) as an input, and moves between states based on the letters of the word.",
+        "Click again to see the automaton reading the word 'abbba'.",
+        "Once all letters have been read, the word is accepted if the final state has an inner circle. The set of words accepted by an automaton is its language.",
         "Click to try inputting some other words. Type, then click the play button to watch the automata go. Click the back arrow when ready to move on."
     ]
 },
@@ -365,7 +365,7 @@ createTutorialData: {
         },
         start: {name: 'q1'}
     },
-    words: [{word: 'abb', result: true}, {word: 'bab', result: false}, {word: "a", result: true}, {word: 'b', result: false}, {word: 'aaaa', result: false}],
+    words: [{word: 'abb', result: true}, {word: 'bab', result: false}, {word: "a", result: true}, {word: 'b', result: false}, {word: 'aaaa', result: true}],
     alphabet: ['a', 'b'],
     language: "L = {w \u{2208} {a,b}* | w starts with a}"
 },
@@ -599,7 +599,7 @@ add0Data : {
     language: "L = { a\u{207F}b\u{207F} | n > 0 }",
     grammar: "A -> ε | 2 1 | 2 3, S -> 2 1 | 2 3, 1 -> S3, 2 -> a, 3 -> b",
     message: [
-        "On the screen is an automaton claimed to match the given language.", 
+        "On the screen is an automaton the computer has made, that it claims matches L = { a\u{207F}b\u{207F} | n > 0 }.", 
         "Prove it does not match the language by entering a word.",
         "Your word should either be in the language but rejected by the automaton, or not in the language but accepted.",
         "Then click play to test your word!"
@@ -656,6 +656,13 @@ add2Data: {
 add3Data: {
     language:"L = { { wwᴿ | w\u{2208}{a,b}*  }",
     grammar: "S -> ε | 31 | 42 | 33 | 44, Q -> 31 | 42 | 33 | 44, 1 -> Q3, 2 -> Q4, 3 -> a, 4 -> b",
+    numStates: 2
+},
+
+add4Data: {
+    language:"L = { { wwᴿ | w\u{2208}{a,b}*  }",
+    grammar: "S -> ε | 31 | 42 | 33 | 44, Q -> 31 | 42 | 33 | 44, 1 -> Q3, 2 -> Q4, 3 -> a, 4 -> b",
+    numStates: 4
 },
 
 create8Data: {
@@ -720,7 +727,7 @@ create7Data: {
         },
         start: {name: 'q1'}
     },
-    words: [{word: 'aba', result: true}, {word: 'ababa', result: true}, {word: "baab", result: false}, {word: 'aaa', result: false}, {word: 'b', result: false}, {word: 'abab', result: false}],
+    words: [{word: 'aba', result: true}, {word: 'abbb', result: true}, {word: "baab", result: false}, {word: 'aaa', result: false}, {word: 'b', result: false}, {word: 'abab', result: false}],
     alphabet: ['a', 'b'],
     language: "L = {w\u{2208}{a,b}* | The second to last symbol in w is 'b' }"
 },

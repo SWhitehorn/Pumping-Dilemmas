@@ -149,6 +149,7 @@ export default class Level extends Phaser.Scene {
      * @param {String} language - String describing language
      */
     addLanguage(language){
+        this.language = language;
         topUIBox(this, language).layout();    
     }
 

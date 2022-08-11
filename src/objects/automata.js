@@ -89,8 +89,6 @@ export default class Automata {
      * @param {string} key - Key of transition to remove 
      */
     removeKey(key){
-        
-        console.log('removing ', key);
         const stateNames = key.split(",");
         const start = this.states[stateNames[0]];
         const end = this.states[stateNames[1]];
@@ -199,7 +197,6 @@ export default class Automata {
             return;
         }
 
-        console.log(prevStateName);
         // Get first symbol of word
         let symbol = word[0];
         word = word.slice(1);
@@ -415,8 +412,7 @@ export default class Automata {
     }
 
     terminatePath(){
-        console.log(this.currentPaths);
-        if (this.currentPaths === 1){
+        if (this.currentPaths === 1 | this.currentPaths === 0){
             this.endComputation();
         } else {
             this.currentPaths--;

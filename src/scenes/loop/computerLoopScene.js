@@ -24,25 +24,10 @@ import textBox from "/src/objects/components/textBox.js";
         this.testsStarted = false;
         
         this.message = message; // String to display in popUp (null if not defined);
+        this.repeats = repeats; 
         
-        this.tests = undefined;
         this.nextTest = undefined;
-        
-        this.UIElements.play.on('pointerup', () => {
-            
-            if (this.loopLength > Object.keys(this.automata.states).length){
-                return;
-            }
-
-            changeBackground(this);
-            this.UIElements.increase.visible = false;
-            this.UIElements.decrease.visible = false;
-            this.automata.stopComputation();
-            this.runTests = true;
-            this.testsStarted = true;
-            this.tests = this.testGenerator(repeats);
-            this.nextTest = this.tests.next(); 
-        })
+        this.tests = undefined;
     }
 
     update(){
@@ -111,6 +96,35 @@ import textBox from "/src/objects/components/textBox.js";
 
     endingScreen(){
         this.scene.start('LevelSelect', {passed: true})
+    }
+
+    /** Called when play button is pressed. */
+    pressPlay(){
+        
+        if (this.finishedAddingWord && this.decomposeWord()[1] !== ""){
+            
+            if (this.loopLength > Object.keys(this.automata.states).length){
+                const message = `The loop must be within the first ${Object.keys(this.automata.states).length} letters`
+                popUp([message], this, true);
+            } else {
+                changeBackground(this);
+                
+                this.UIElements.increase.visible = false;
+                this.UIElements.decrease.visible = false;
+                
+                this.automata.stopComputation();
+                
+                // Reset tests
+                this.tests = this.testGenerator(this.repeats);
+                this.nextTest = this.tests.next(); 
+
+                // Flag to start running tests
+                this.runTests = true;
+                this.testsStarted = true;
+            }
+    
+            
+        }
     }
 
  }

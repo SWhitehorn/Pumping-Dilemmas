@@ -18,7 +18,9 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         
         this.word = word;
         this.CYK = new CYK(grammar);
-        this.numStates = numStates
+        this.numStates = numStates;
+
+        this.called = 0;
 
         //Flags 
         this.chosenLoops = false;
@@ -128,14 +130,7 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         }
         
         console.log(this.numStates);
-        let leftLetter = randomNumber(0, this.numStates);
-        console.log(leftLetter);
-        const max = Math.floor(this.word.length / 2);
-        const num = randomNumber(0, max);
-        let rightLetter = leftLetter + num;
-        if (rightLetter >= this.numStates){
-            rightLetter = this.numStates-1;
-        }
+        const {leftLetter, rightLetter} = this.getLoopPlaces();
 
         this.time.delayedCall(250, moveLeft, [], this)
     }
@@ -146,13 +141,13 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         if (result) {
             popUp(["That word is still in the language!"], this);
         } else {
-            popUp(["Success! That word is not in the language", "You have proved the automaton does not capture L"], this);
-            this.time.delayedCall(4000, this.nextLevel, [], this)
+            popUp(["Success! That word is not in the language", `You have proved that there cannot be an automaton with ${this.numStates} states for this language`], this);
+            this.time.delayedCall(4000, this.ending, [], this)
         }
     }
 
-    nextLevel(){
-        this.scene.stop("Non_RegularSelectRepeats");
+    ending(){
+        this.scene.stop();
         this.scene.start("LevelSelect", {passed:true})
     }
 
@@ -190,19 +185,45 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
     }
 
     /**
-     * 
-     * @param {String} pos - String identifier of position of loop
+     * Selects where to place loop. Optionally predefine place, otherwise choose randomly
      * @returns {Number[]} - Array with two elements, corresponding to left and right
      */
-    getLoopPlaces(pos){
+    getLoopPlaces(){
 
-        if (pos === 'middle'){
+        if (this.language === 'L = { { wwᴿ | w\u{2208}{a,b}*  }'){
             const middle = Math.floor(this.word.length / 2);
-            return [middle-1, middle];
+            console.log(middle);
+            if (middle < this.numStates){
+                return {leftLetter: middle-1, rightLetter: middle};
+            }     
+        } 
+        
+
+        // Choose randomly if conditions fail
+        let leftLetter = randomNumber(0, this.numStates);
+        console.log(leftLetter);
+        const max = Math.floor(this.word.length / 2);
+        const num = randomNumber(0, max);
+        let rightLetter = leftLetter + num;
+        if (rightLetter >= this.numStates){
+            rightLetter = this.numStates-1;
         }
+        return {leftLetter, rightLetter}
+        
+
+        
     }
 
     textBoxCallback(){
         this.moveBars();
     }
+
+    pressPlay(){
+        
+        if (this.finishedAddingWord && this.decomposeWord()[1] !== ""){
+            this.testWord();
+        }
+    }
+
+    
 }

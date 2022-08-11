@@ -45,11 +45,7 @@ export default (scene) => {
                                     
                                     // Word must be longer than pumping length
                                     if (scene.word.length > scene.numStates){
-                                        const word = scene.word;
-                                        const grammar = scene.grammar;
-                                        const language = scene.language;
-                                        const catches = scene.catches
-                                        
+
                                         // Advance to second stage
                                         scene.scene.stop();
                                         scene.scene.start('Non_RegularSelectRepeats', {

@@ -17,8 +17,6 @@ export default class LoopTutorial extends Level {
 
     create({automata, word, language, repeats}){
         
-        console.log('this');
-
         this.automata = automata;
         this.word = word;
         this.language = language;
@@ -43,8 +41,6 @@ export default class LoopTutorial extends Level {
 
     textBoxCallback(){
         
-        console.log('adding UI');
-
         const lines = this.lines
         const message = [
             "Drag the bars to select a portion of the word that can be repeated",

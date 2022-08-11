@@ -54,6 +54,8 @@ export default class LevelSelect extends Phaser.Scene {
         
         resetBackground(this);
 
+        
+
         // Prevent objects being recreated
         if (!this.created){
             this.graphics = this.add.graphics({ lineStyle: { width: 3, color: colours.BLACK } })
@@ -87,6 +89,7 @@ export default class LevelSelect extends Phaser.Scene {
         }
 
         if (passed){
+            console.log('enabling next nodes');
             this.prevNode.enableNextNodes()
         }
     }

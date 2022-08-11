@@ -166,7 +166,7 @@ export default class LevelNode {
             },
             nonRegular: {
                 scene: 'Non_RegularLevel', 
-                data: {language:this.data.language, grammar: this.data.grammar, tutorial: this.data.tutorial}
+                data: {language:this.data.language, grammar: this.data.grammar, tutorial: this.data.tutorial, numStates: this.data.numStates}
             },
             opening: {
                 scene: "OpeningScene", 

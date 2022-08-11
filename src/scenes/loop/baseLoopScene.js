@@ -384,4 +384,9 @@ export default class LoopLevel extends Level {
             this.UIElements.play.setFillStyle(colours.WHITE)
         });
     }
+
+    /** Called when play button is pressed. Can be overridden by subclasses.*/
+    pressPlay(){
+        this.startComputation();
+    }
 }
