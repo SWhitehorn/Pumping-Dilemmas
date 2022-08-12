@@ -342,7 +342,7 @@ export default {
     },
 
     createNode13: {
-        x: 6200, y: 800,
+        x: 6200, y: 700,
         children: [],
         data: data.create13Data,
         name: 'createNode13',
