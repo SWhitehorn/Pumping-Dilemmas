@@ -95,7 +95,7 @@ loop0Data: {
         start: {name: 'q1', direction: 'top'}
     },
     alphabet: ['a', 'b'],
-    language: "L = (ab U ba)*",
+    language: "L = {w \u{2208} {a,b}* | w is formed of non-overlapping substrings 'ab' and 'ba'}",
     repeats: [2, 0, 3], 
     word: "baabba"
 },
@@ -174,7 +174,7 @@ loop3Data: {
     word: 'ababab',
     repeats: [2, 0],
     alphabet: ['a', 'b'],
-    language: "L = {w\u{2208}{a,b}* |\nw has an odd number of 'a's and each a is followed by at least one b" 
+    language: "L = {w\u{2208}{a,b}* | w has an odd number of 'a's and each a is followed by at least one b" 
 },
 
 loop4Data: {
@@ -211,7 +211,7 @@ loop4Data: {
     word: 'bbabb',
     repeats: [0, 3],
     alphabet: ['a', 'b'],
-    language: "L = {w\u{2208}{a,b}* |\nw has an odd number of 'a's and an even number of 'b's" 
+    language: "L = {w\u{2208}{a,b}* | w has an odd number of 'a's and an even number of 'b's" 
 },
 
 loop5Data: {
@@ -533,7 +533,7 @@ loop6Data: {
     word: 'aababb',
     repeats: [2, 0],
     alphabet: ['a', 'b'],
-    language: "L = {w\u{2208}{a,b}* |\nw ends in aa or bb" 
+    language: "L = {w\u{2208}{a,b}* | w ends in aa or bb" 
 },
 
 loop7Data: {
@@ -657,14 +657,14 @@ add3Data: {
     language:"L = { { wwᴿ | w\u{2208}{a,b}*  }",
     grammar: "S -> ε | 31 | 42 | 33 | 44, Q -> 31 | 42 | 33 | 44, 1 -> Q3, 2 -> Q4, 3 -> a, 4 -> b",
     numStates: 2,
-    posKey: 'middle'
+    posKey: 'middle2'
 },
 
 add4Data: {
     language:"L = { { wwᴿ | w\u{2208}{a,b}*  }",
     grammar: "S -> ε | 31 | 42 | 33 | 44, Q -> 31 | 42 | 33 | 44, 1 -> Q3, 2 -> Q4, 3 -> a, 4 -> b",
     numStates: 4,
-    posKey: 'middle'
+    posKey: 'middle2'
 },
 
 create8Data: {
@@ -826,23 +826,8 @@ create11Data: {
     deterministic: false
 },
 
-add7Data: {
-    language:"L = { words not of the form\nww for w\u{2208}{a,b}*}",
-    numStates: 3,
-    grammar: `0 -> ε | AB | BA | a | b | Z1
-            S -> AB | BA | a | b | Z1
-            E -> AB | BA
-            A -> a | Z2
-            B -> b | Z3
-            U -> a | b | Z1
-            Z -> a | b
-            1 -> UZ
-            2 -> AZ
-            3 -> BZ`
-},
-
 add6Data: {
-    language: "L = { { w\u{2208}{a,b}* |\nw has twice as many 'a's as 'b's}",
+    language: "L = { { w\u{2208}{a,b}* | w has twice as many 'a's as 'b's}",
     grammar: `S -> ε | QQ | 15 1 | 16 2 | 16 3 | 15 4 | 15 5 | 15 6 | 16 7 | 16 8 | 16 9 | 16 10 | 16 11 | 16 12
     Q -> QQ | 15 1 | 16 2 | 16 3 | 15 4 | 15 5 | 15 6 | 16 7 | 16 8 | 16 9 | 16 10 | 16 11 | 16 12
      1 -> Q 4
@@ -861,11 +846,11 @@ add6Data: {
      14 -> Q 15
      15 -> b
      16 -> a`,
-     posKey: 'double'
+     posKey: 'aba|aab|baa'
 },
 
 add5Data: {
-    language:"L = { { w\u{2208}{a,b}* |\nw has more 'a's than 'b's }",
+    language:"L = { { w\u{2208}{a,b}* | w has more 'a's than 'b's }",
     grammar: `S -> R Q | a | QR | QA | Q 1 | 4A
     Q -> R Q | a | QR | QA | Q 1 | 4A
    A -> a | A 4
@@ -875,7 +860,19 @@ add5Data: {
    3 -> R 4
    4 -> a
    5 -> b`,
-   posKey: 'balance'
+   posKey: 'ab|ba'
+},
+
+add7Data: {
+    language: "L = { { w\u{2208}{a,b}* | w is a palindrome",
+    grammar: `<S0> -> ε | a | b | 31 | 42 | 33 | 44,
+    S -> a | b | 31 | 42 | 33 | 44,
+    1 -> S3,
+    2 -> S4,
+    3 -> a,
+    4 -> b`,
+    posKey: 'middle1',
+    numStates: 4
 },
 
 create9Data: {
@@ -931,42 +928,199 @@ create10Data: {
         },
         start: {name: 'q1'}
     },
-    words: [{word: 'abab', result: true}, {word: 'abc', result: false}, {word: "cbbc", result: true}, {word: 'bcaaa', result: false}, {word: 'b', result: true}, {word: 'ε', result: true}, ],
+    words: [{word: 'abab', result: true}, {word: 'abc', result: false}, {word: "cbbc", result: true}, {word: 'bcaaa', result: false}, {word: 'b', result: true} ],
     alphabet: ['a', 'b', 'c'],
     language: "L = {w\u{2208}{a,b,c}* | w does not contain every letter of the alphabet }",
+    deterministic: false,
+},
+
+create11Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 450, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'abab', result: true}, {word: 'baba', result: true}, {word: "abba", result: false}, {word: 'aaba', result: false}, {word: 'b', result: true}, {word: 'ε', result: false}, ],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w is non-empty and does not contain two consecutive occurrences of the same symbol }",
+    deterministic: false,
+},
+
+create12Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 340, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'abaaaba', result: true}, {word: 'abaaba', result: false}, {word: "baab", result: false}, {word: 'bbab', result: true}, {word: 'bbbb', result: true}, {word: 'ab', result: false}, ],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w contains a pair of bs seperated by an odd number of symbols}",
+    deterministic: false,
+},
+
+create13Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 450, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'bbb', result: true}, {word: 'bbbaa', result: true}, {word: "baabb", result: false}, {word: 'abb', result: false}, {word: 'baaaa', result: true}, ],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w has an even number of 'a's, an odd number of 'b's, and does not contain the substring 'ab'",
+    deterministic: false
+},
+
+add8Data: {
+    language: "L = {w\u{2208}{a,b}* | w has odd length and the middle symbol is 'a'",
+    grammar: `S -> a | 31 | 42 | 32 | 41,
+    Q -> a | 31 | 42 | 32 | 41,
+    1 -> Q3,
+    2 -> Q4,
+    3 -> a,
+    4 -> b`,
+    posKey: 'a(a|b)'
+},
+
+add9Data: {
+    language: "L = { 𝘸c𝘹 | 𝘸ᴿ is a substring of 𝘹 for 𝘸,𝘹 \u{2208}{a,b}* }",
+    grammar: `S -> TX | c | 3X | 41 | 52,
+    Q -> TX | c | 3X | 41 | 52,
+    T -> c | 3X | 41 | 52,
+    X -> a | b | 4X | 5X,
+    1 -> T4,
+    2 -> T5,
+    3 -> c,
+    4 -> a,
+    5 -> b`,
+    posKey: "afterC",
+    numStates: 5
+},
+
+add10Data: {
+    language: "L = {w \u{2208}{a,b}* | in every prefix of w, the number of 'a's is at least the number of 'b's }",
+    grammar: `S -> ε | a | A1 | 5Q | A5 | 52 | 53 | 54 | 56,
+    Q -> a | A1 | 5Q | A5 | 52 | 53 | 54 | 56,
+    A -> 52 | 53 | 54 | 56,
+    1 -> 5Q,
+    2 -> A3,
+    3 -> 6A,
+    4 -> A6,
+    5 -> a,
+    6 -> b`,
+    numStates: 5,
+    posKey: "ab"
+},
+
+add11Data: {
+    language:"L = { words not of the form ww for w\u{2208}{a,b}*}",
+    numStates: 3,
+    grammar: `0 -> ε | AB | BA | a | b | Z1
+            S -> AB | BA | a | b | Z1
+            E -> AB | BA
+            A -> a | Z2
+            B -> b | Z3
+            U -> a | b | Z1
+            Z -> a | b
+            1 -> UZ
+            2 -> AZ
+            3 -> BZ`
+},
+
+create14Data: {
+    automata: {
+        states: {
+            q1: {x: 290, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q1'
+            },
+            q2: {x: 315, y: 460, 
+                accepting: false,
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x: 425, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q3'
+            },
+            q4: {x: 450, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q4'
+            },
+            q5: {x: 475, y: 460, 
+                accepting: true,
+                transitions: {},
+                name: 'q5'
+            },
+        },
+        start: {name: 'q3'}
+    },
+    words: [{word: 'aba', result: true}, {word: 'abab', result: false}, {word: "aaa", result: true}, {word: 'bbab', result: true}, {word: 'baabaa', result: false}, {word: 'ab', result: false}, ],
+    alphabet: ['a', 'b'],
+    language: "L = {w\u{2208}{a,b}* | w contains an equal number of occurrences of the substrings ab and ba}",
     deterministic: false,
 },
 
 level4Data : {
     language: "L = { { wwᴿ | w\u{2208}{a,b}*  }", 
     grammar: "S -> Q, Q -> B A | D C | ϵ, A -> a, B -> A Q, C -> b, D -> C Q",
-},
-
-spareData : {
-    automata: {
-        states: {
-            q1: {x: 150, y: 225, 
-                accepting: false,
-                transitions: {b: ['q2'], a: ['q4']}
-            },
-            q2: {x: 400, y: 125, 
-                accepting: false,
-                transitions: {a: ['q3'], b: ['q2']}
-            },
-            q3: {x: 700, y: 225, 
-                accepting: true,
-                transitions: {a: ['q3'], b: ['q4']}
-            },
-            q4: {x: 400, y: 325, 
-                accepting: false,
-                transitions: {a: ['q4'], b: ['q4']}
-            },
-            },
-        start: {name: 'q1'}
-        },
-    word: ["bbbaaa"],
-    alphabet: ['a','b'],
-    language: "L = {b\u{207F}a\u{1D50}|n>0,m>0}" 
 },
 
 createLevelData : {
@@ -1006,41 +1160,6 @@ createLevelData : {
     alphabet: ['a', 'b'],
     language: "L = {w\u{2208}{a,b}* | w contains abb as a subword}" 
 },
-
-testData1 : {
-    automata: {
-        states: {
-            q1: {x: 150, 
-                y: 400, 
-                accepting: false,
-                transitions: {}
-            },
-            q2: {x: 300, 
-                y: 400, 
-                accepting: false,
-                transitions: {}
-            },
-            q3: {x: 450, 
-                y: 400, 
-                accepting: true,
-                transitions: {}
-            },
-            q4: {x: 600, 
-                y: 400, 
-                accepting: false,
-                transitions: {}
-            },
-            },
-        start: {name: 'q1'}
-        },
-    word: ["aaabbb"],
-    alphabet: ['a', 'b'],
-    language: "L = {a\u{207F}b\u{1D50}|n>0,m>0}" 
-},
-
- testData2 : {
-    language: "L = {a\u{207F}b\u{207F}|n>0}"
-}
 
 
 }

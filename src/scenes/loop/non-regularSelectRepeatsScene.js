@@ -37,7 +37,7 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         const rechoose = this.add.text(400, this.textY+70, "Rechoose word", {fontSize: '20px', color: colours.TEXTBLACK, fontFamily: 'Quantico'})
             .setOrigin(0.5).setInteractive().on('pointerup', () => {
             this.scene.stop("Non_RegularSelectRepeats");
-            this.scene.start("Non_RegularLevel", {language, grammar})
+            this.scene.start("Non_RegularLevel", {language, word, grammar, numStates, posKey})
         })
 
         if (tutorial){
@@ -193,26 +193,46 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
 
         // posKey is an optional string flagging where to locate the loop
         if (this.posKey){
-            if (this.posKey === 'middle'){
+            
+            // Locate loop in middle
+            if (this.posKey === 'middle2' | this.posKey === "middle1"){
+                
                 const middle = Math.floor(this.word.length / 2);
-                console.log(middle);
-                if (middle < this.numStates){
-                    return {leftLetter: middle-1, rightLetter: middle};
-                }     
-            } else if (this.posKey === "balance"){
-                let left = this.word.search("ab|ba");
-                if (left < this.numStates-1){
-                    return {leftLetter: left, rightLetter: left+1}
+
+                if (this.posKey === 'middle2' | this.word.length % 2 === 0){
+                    if (middle < this.numStates){
+                        return {leftLetter: middle-1, rightLetter: middle};
+                    } else {
+                        return {leftLetter: this.numStates-2, rightLetter: this.numStates-1}
+                    }
+                } else {
+                    if (middle < this.numStates){
+                        return {leftLetter: middle, rightLetter: middle};
+                    } else {
+                        return {leftLetter: this.numStates-2, rightLetter: this.numStates-1}
+                    }
                 }
-            } else if (this.posKey === "double"){
-                let left = this.word.search("aba|aab|baa");
-                if (left < this.numStates-2){
-                    return {leftLetter: left, rightLetter: left+2}
+                
+            } else if (this.posKey == "afterC"){
+                let index = this.word.search(/c/);
+                if (index < this.numStates-1){
+                    return {leftLetter: index+1, rightLetter: index+1}
+                } else {
+                    let rightLetter = (index <= this.numStates ? index-1 : this.numStates-1);
+                    let leftLetter = rightLetter -1
+                    return {leftLetter, rightLetter }
                 }
+                    
+            // posKey is a regEx
+            } else {
+                let regEx = RegExp(this.posKey, "d")
+                let result = regEx.exec(this.word)
+                let left = result.index
+                if (left < this.numStates-1 && left !== -1){
+                        return {leftLetter: left, rightLetter: left+(result[0].length-1)}
+                    } 
             }
         }
-        
-        
 
         // Choose randomly if conditions fail
         let leftLetter = randomNumber(0, this.numStates);
@@ -224,9 +244,6 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
             rightLetter = this.numStates-1;
         }
         return {leftLetter, rightLetter}
-        
-
-        
     }
 
     textBoxCallback(){

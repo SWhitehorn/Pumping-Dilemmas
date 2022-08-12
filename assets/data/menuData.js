@@ -279,16 +279,90 @@ export default {
     
     writeNode6: {
         x: 5000, y: 700,
-        children: [],
+        children: ['createNode11'],
         data: data.add6Data,
         name: 'writeNode6',
         type: 'nonRegular'
     },
 
-    
+    writeNode7: {
+        x: 5000, y: 900,
+        children: ['createNode12'],
+        data: data.add7Data,
+        name: 'writeNode7',
+        type: 'nonRegular'
+    },
+
+    createNode11: {
+        x: 5200, y: 700,
+        children: ['writeNode8'],
+        data: data.create11Data,
+        name: 'createNode11',
+        type: 'create'
+    },
+
+    createNode12: {
+        x: 5200, y: 900,
+        children: ['writeNode8'],
+        data: data.create12Data,
+        name: 'createNode12',
+        type: 'create'
+    },
+
+    writeNode8: {
+        x: 5400, y: 800,
+        children: [],
+        data: data.add8Data,
+        name: 'writeNode8',
+        type: 'nonRegular'
+    },
+
+    writeNode9: {
+        x: 5600, y: 800,
+        children: [],
+        data: data.add9Data,
+        name: 'writeNode9',
+        type: 'nonRegular'
+    },
+
+    writeNode10: {
+        x: 5800, y: 800,
+        children: [],
+        data: data.add10Data,
+        name: 'writeNode10',
+        type: 'nonRegular'
+    },
+
+    writeNode11: {
+        x: 6000, y: 800,
+        children: ['createNode13', 'createNode14'],
+        data: data.add11Data,
+        name: 'writeNode11',
+        type: 'nonRegular'
+    },
+
+    createNode13: {
+        x: 6200, y: 800,
+        children: [],
+        data: data.create13Data,
+        name: 'createNode13',
+        type: 'create'
+    },
+
+    createNode14: {
+        x: 6200, y: 900,
+        children: [],
+        data: data.create14Data,
+        name: 'createNode14',
+        type: 'create'
+    },
+
+
+
 
     
 
+    
 
 
 

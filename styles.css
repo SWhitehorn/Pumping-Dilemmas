@@ -8,7 +8,9 @@ html, body {
     position: relative;
     margin: 0;
     padding: 0;
-    background: #222;
+    background: #02213B;
+    display: flex;
+    justify-content: center;
 }
 
 #canvas-container {
@@ -16,7 +18,8 @@ html, body {
     height: 500px;
     text-align: center;
     background-color: #78C2FF;
-    margin: 0 auto
+    margin: auto;
+    border: 10px solid white;
  }
 
 canvas {

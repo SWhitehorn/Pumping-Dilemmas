@@ -57,7 +57,13 @@ export default class Non_RegularLevel extends Level {
         const text = `I have created an automaton with ${this.numStates} states \nfor the language:`
         this.add.text(400, 200, text, this.textSettings).setOrigin(0.5);
 
-        this.add.text(400, 280, this.language, {fontSize: '35px', color: colours.TEXTRED, fontFamily: 'Quantico', align: 'center'}).setOrigin(0.5);
+        this.add.text(400, 280, this.language, {
+            fontSize: '30px', 
+            color: colours.TEXTRED, 
+            fontFamily: 'Quantico', 
+            align: 'center',
+            wordWrap: { width: 580},
+        }).setOrigin(0.5);
 
         this.add.text(400, 350, "Enter a word in the language: ", this.textSettings).setOrigin(0.5);
     }
