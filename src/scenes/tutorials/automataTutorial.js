@@ -31,7 +31,7 @@ export default class CreateTutorial extends CreateLevel {
     
     textBoxCallback(){
         this.help.setVisible(true);
-        this.time.delayedCall(200, popUp, [["Create an automata for " + this.language], this, true], this)
+        this.time.delayedCall(200, popUp, [["Create a deterministic automata for " + this.language], this, true], this)
     }
 
     moveToTests(){

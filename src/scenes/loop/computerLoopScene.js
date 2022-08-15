@@ -15,7 +15,7 @@ import textBox from "/src/objects/components/textBox.js";
         super('ComputerLoopLevel');
     }
 
-    create({automata, word, language, repeats, message=null}){
+    create({automata, word, language, repeats, lines}){
 
         super.create({automata, word, language, repeats});
         
@@ -23,7 +23,7 @@ import textBox from "/src/objects/components/textBox.js";
         this.runTests = false;
         this.testsStarted = false;
         
-        this.message = message; // String to display in popUp (null if not defined);
+        this.lines = lines; // String to display in popUp (null if not defined);
         this.repeats = repeats; 
         
         this.nextTest = undefined;
@@ -44,16 +44,22 @@ import textBox from "/src/objects/components/textBox.js";
         
         
 
-        if (this.message) {
+        if (this.lines) {
             
-            popUp(this.message.message, this, true);
+            popUp(["Drag the bars to select a part of the word corresponding to a loop in the automaton", "Click the arrows under the number to try repeating or removing your selection", "Then click play when ready to test your selection!"], this, true);
             
             this.help = this.add.text(25, 25, "?", {color: colours.TEXTWHITE, fontSize: '30px', fontFamily: 'Quantico'})
             .setOrigin(0.5).setInteractive().on('pointerup', () => {
-                textBox(this, this.message.lines, 200);
+                textBox(this, this.lines);
+            });
+            this.help.on('pointerover', () => {
+                this.help.setColor(colours.TEXTRED)
+            });
+            this.help.on('pointerout', () => {
+                this.help.setColor(colours.TEXTWHITE)
             });
         } else {
-            popUp(["Drag the bars to select a part of the word that can be repeated"], this, true)
+            popUp(["Drag the bars to select a part of the word corresponding to a loop in the automaton"], this, true)
         }
         super.addElements();
     }

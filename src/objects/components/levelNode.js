@@ -157,7 +157,7 @@ export default class LevelNode {
         return {
             loop: {
                 scene: "ComputerLoopLevel", 
-                data: {automata:this.data.automata, word:this.data.word, language:this.data.language, repeats: this.data.repeats}
+                data: {automata:this.data.automata, word:this.data.word, language:this.data.language, repeats: this.data.repeats, lines:this.data.lines}
             },
             create: {
                 scene: 'CreateLevel', 

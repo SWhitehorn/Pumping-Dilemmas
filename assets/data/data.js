@@ -1,7 +1,7 @@
 
 export default {
 
-loop0Data: {
+loopTutorialData: {
     automata: {
         states: {
             q1: {x:100, y:150, 
@@ -28,21 +28,27 @@ loop0Data: {
         start: {name: 'q1'}
     },
     word: "abbba",
-    repeats: [2, 1],
+    repeats: [2, 3, 0],
     alphabet: ['a', 'b'],
     language: "L = { ab\u{207F}a | n \u{2265} 0}",
     lines: [
-        "Welcome to Pumping Dilemmas!",
-        "Above is an example of a finite automaton. A finite automaton consists of states (circles) and transitions (arrows).",
-        "The automaton takes a word (a sequence of letters) as an input, and moves between states based on the letters of the word.",
-        "Click again to see the automaton reading the word 'abbba'.",
-        "Once all letters have been read, the word is accepted if the final state has an inner circle. The set of words accepted by an automaton is its language.",
-        "Click to try inputting some other words. Type, then click the play button to watch the automata go. Click the back arrow when ready to move on."
+        "If a word has more letters than the automaton has states, then the path through the automaton must visit the same state more than once.",
+        "This means there must be a part of the word that starts and ends in the same state when read.",
+        "The length of this loop plus the section before it must be less than the number of states in the automaton.",
+        "This part of the word can be repeated or removed, and the resulting word will still be in the language.",
     ]
+    // lines: [
+    //     "Welcome to Pumping Dilemmas!",
+    //     "Above is an example of a finite automaton. A finite automaton consists of states (circles) and transitions (arrows).",
+    //     "The automaton takes a word (a sequence of letters) as an input, and moves between states based on the letters of the word.",
+    //     "Click again to see the automaton reading the word 'abbba'.",
+    //     "Once all letters have been read, the word is accepted if the final state has an inner circle. The set of words accepted by an automaton is its language.",
+    //     "Click to try inputting some other words. Type, then click the play button to watch the automata go. Click the back arrow when ready to move on."
+    // ]
 },
 
 
- loop1Data : {
+ loop0Data : {
     automata: {
         states: {
             q1: {x:250, y:233, 
@@ -62,6 +68,40 @@ loop0Data: {
     repeats: [2, 0],
     alphabet: ['a', 'b'],
     language: "L = {w \u{2208} {a,b}* | w has an odd number of 'a' symbols}"
+},
+
+loop1Data: {
+    automata: {
+        states: {
+            q1: {x:100, y:150, 
+                accepting: false, 
+                transitions: {a: ['q2'], b: ['q4']},
+                name: 'q1'
+            },
+            q2: {x:400, y:150, 
+                accepting: false, 
+                transitions: {a: ['q3'], b: ['q4']},
+                controlPoints: {q4: {x:360 , y:250} },
+                name: 'q2'
+            },
+            q3: {x:700, y:150, 
+                accepting: true, 
+                transitions: {a: ['q3'], b: ['q3']},
+                name: 'q3'
+            },
+            q4: {x:400, y:350, 
+                accepting: false, 
+                transitions: {a: ['q2'], b: ['q3']},
+                controlPoints: {q2: {x:440 , y:250} },
+                name: 'q4'
+            }
+        },
+        start: {name: 'q1'}
+    },
+    word: "ababba",
+    repeats: [3, 0, 2],
+    alphabet: ['a', 'b'],
+    language: "L = { w \u{2208} {a,b}* | w contains a consecutively repeated letter }",
 },
 
  loop2Data : {
@@ -131,7 +171,7 @@ loop2Data_a : {
         start: {name: 'q1', direction: 'top'}
     },
     alphabet: ['a', 'b'],
-    language: "L = (ab U ba)*",
+    language: "L = {w \u{2208} {a,b}* | w is formed of non-overlapping substrings 'ab' and 'ba'}",
     repeats: [3, 0], 
     word: "ababba"
 },

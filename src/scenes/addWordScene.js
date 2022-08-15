@@ -33,13 +33,13 @@ export default class AddWordLevel extends Level {
         const UI = addWordUI(this).layout();
 
         if (message){
-            textBox(this, message, 100);
+            textBox(this, message);
             this.help = this.add.text(25, 25, "?", {color: colours.TEXTWHITE, fontSize: '30px', fontFamily: 'Quantico'})
             .setOrigin(0.5).setVisible(false).setInteractive().on('pointerup', () => {
                 textBox(this, message, 100);
             });
         } else {
-            this.time.delayedCall(200, popUp, [["Show that this automaton does not accurately capture " + language], this, true], this)
+            this.time.delayedCall(200, popUp, [["Enter a word to show that this automaton does not accurately capture " + language], this, true], this)
         }
     }
 
@@ -92,7 +92,9 @@ export default class AddWordLevel extends Level {
     }
 
     textBoxCallback(){
+        console.log('callback');
         this.help.visible = true;
+        this.time.delayedCall(200, popUp, [["Enter a word to show that this automaton does not accurately capture " + this.language], this, true], this)
     }
 
 }

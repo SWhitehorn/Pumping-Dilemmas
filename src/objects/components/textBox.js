@@ -17,7 +17,7 @@ export default (scene, lines, y=null) => {
     let yPos;
 
     // Set y position to y if defined, otherwise default to bottom of screen
-    y ? yPos = y : yPos = 430;
+    y ? yPos = y : yPos = 450;
 
     const GetValue = Phaser.Utils.Objects.GetValue;
     
@@ -98,6 +98,8 @@ export default (scene, lines, y=null) => {
         //.on('type', function () {
         //})
 
+
+        textBox.setDepth(2);
         return textBox;
     }
 
