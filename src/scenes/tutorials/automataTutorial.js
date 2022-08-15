@@ -20,12 +20,12 @@ export default class CreateTutorial extends CreateLevel {
         
         super.create(data);
 
-        textBox(this, this.message, 200);
+        textBox(this, this.message, 110);
 
         this.help = this.add.text(25, 25, "?", {color: colours.TEXTWHITE, fontSize: '30px', fontFamily: 'Quantico'})
         .setOrigin(0.5).setVisible(false).setInteractive().on('pointerup', () => {
             this.help.setVisible(false);
-            textBox(this, this.message, 200);
+            textBox(this, this.message, 100);
         });
     }
     

@@ -40,7 +40,10 @@ const config = {
     width: 800,
     height: 500,
     scene: scenes,
-    parent: 'canvas-container'
+    parent: 'canvas-container',
+    dom: {
+        createContainer: true
+    }
     
 };
 

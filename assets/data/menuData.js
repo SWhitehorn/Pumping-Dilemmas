@@ -11,81 +11,8 @@ export default {
     //     data: data.loop0Data,
     // },
 
-    // ab^na
-    loopTutorial: {
-        x: 600, y: 800,
-        tutorial: true,
-        name: 'loopTutorial',
-        type: 'loop',
-        data: data.loopTutorialData,
-        children: ['loopNode0']
-    },
-
-    // Odd number of as
-    loopNode0: {
-        x: 800, y: 800, 
-        children: ['loopNode1'], 
-        data: data.loop1Data, 
-        type: 'loop', 
-        name: "loopNode0",
-    },
-
-    loopNode1: {
-        x: 1000, y: 800, 
-        children: ['loopNode2'], 
-        data: data.loop1Data, 
-        type: 'loop', 
-        name: "loopNode1",
-    },
-
-    // (ab U ba)* 
-    loopNode2: {
-        x: 1200, y: 800,
-        children: ['loopNode4', 'loopNode2a'],
-        data: data.loop2Data,
-        type: 'loop',
-        name: "loopNode2"
-    },
-
-    // (ab U ba)* 
-    loopNode2a: {
-        x: 1200, y: 600,
-        children: [],
-        data: data.loop2Data_a,
-        type: 'loop',
-        name: "loopNode2a"
-    },
-
-    // w has an odd number of 'a's and each a is followed by at least one b
-    loopNode3: {
-        x: 1400, y: 600,
-        children: [],
-        data: data.loop3Data,
-        type: 'loop',
-        name: "loopNode3",
-    },
-
-    // w has an odd number of 'a's and an even number of 'b's
-    loopNode4: {
-        x: 1400, y: 800,
-        children: ['loopNode3', 'loopNode5'],
-        data: data.loop4Data,
-        type: 'loop',
-        name: 'loopNode4'
-    },
-
-    // w contains the subword 'baba'
-    loopNode5: {
-        x: 1600, y: 800,
-        children: ['createNode4', 'createNode6'],
-        data: data.loop5Data,
-        type: 'loop',
-        name: 'loopNode5'
-    },
-
-
     createTutorial: {
-        x: 1800, y: 800,
+        x: 600, y: 800,
         tutorial: true,
         name: 'createTutorial',
         type: 'createTutorial',
@@ -95,7 +22,7 @@ export default {
 
     // Starts with ba
     createNode0: {
-        x: 2000, y: 800,
+        x: 800, y: 800,
         children: ['createNode3'],
         data: data.create0Data,
         type: 'create',
@@ -104,7 +31,7 @@ export default {
 
     // Ends in ab
     createNode3: {
-        x: 2200, y: 800,
+        x: 1000, y: 800,
         children: ['createNode1', 'createNode2'],
         data: data.create3Data,
         type: 'create',
@@ -113,7 +40,7 @@ export default {
 
     // Contains abb as a subword
     createNode1: {
-        x: 2400, y: 700,
+        x: 1200, y: 700,
         children: ['createNode5'],
         data: data.create1Data,
         type: 'create',
@@ -122,7 +49,7 @@ export default {
 
     // Contains exactly two as
     createNode2: {
-        x: 2400, y: 900,
+        x: 1200, y: 900,
         children: ['createNode5'],
         data: data.create2Data,
         type: 'create',
@@ -131,11 +58,83 @@ export default {
 
     // Every a is followed by a 'b'
     createNode5: {
-        x: 2600, y: 800,
+        x: 1400, y: 800,
         children: ['loopTutorial'],
         data: data.create5Data,
         type: 'create',
         name: 'createNode5'
+    },
+
+    // ab^na
+    loopTutorial: {
+        x: 1600, y: 800,
+        tutorial: true,
+        name: 'loopTutorial',
+        type: 'loop',
+        data: data.loopTutorialData,
+        children: ['loopNode0']
+    },
+
+    // Odd number of as
+    loopNode0: {
+        x: 1800, y: 800, 
+        children: ['loopNode1'], 
+        data: data.loop0Data, 
+        type: 'loop', 
+        name: "loopNode0",
+    },
+
+    loopNode1: {
+        x: 2000, y: 800, 
+        children: ['loopNode2'], 
+        data: data.loop1Data, 
+        type: 'loop', 
+        name: "loopNode1",
+    },
+
+    // (ab U ba)* 
+    loopNode2: {
+        x: 2200, y: 800,
+        children: ['loopNode4', 'loopNode2a'],
+        data: data.loop2Data,
+        type: 'loop',
+        name: "loopNode2"
+    },
+
+    // (ab U ba)* 
+    loopNode2a: {
+        x: 2200, y: 600,
+        children: [],
+        data: data.loop2Data_a,
+        type: 'loop',
+        name: "loopNode2a"
+    },
+
+    // w has an odd number of 'a's and each a is followed by at least one b
+    loopNode3: {
+        x: 2400, y: 600,
+        children: [],
+        data: data.loop3Data,
+        type: 'loop',
+        name: "loopNode3",
+    },
+
+    // w has an odd number of 'a's and an even number of 'b's
+    loopNode4: {
+        x: 2400, y: 800,
+        children: ['loopNode3', 'loopNode5'],
+        data: data.loop4Data,
+        type: 'loop',
+        name: 'loopNode4'
+    },
+
+    // w contains the subword 'baba'
+    loopNode5: {
+        x: 2600, y: 800,
+        children: ['createNode4', 'createNode6'],
+        data: data.loop5Data,
+        type: 'loop',
+        name: 'loopNode5'
     },
 
     // Starts and ends with same letter

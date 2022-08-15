@@ -30,6 +30,11 @@ export default class LoopLevel extends Level {
         }
     }
 
+    preload(){
+        super.preload();
+        this.load.image('dashedLine', '/assets/dashedLine.png');
+    }
+
     /**
      * Create level, initialising level objects and flags
      * @param {Input}
@@ -179,7 +184,12 @@ export default class LoopLevel extends Level {
     }
 
     addElements(){
-        this.textX = this.levelObjects.letters.at(-1).getTopRight().x;
+        
+        const numStates = Object.keys(this.automata.states).length;
+        this.textX = this.levelObjects.letters.at(numStates-1).getTopRight().x;
+
+        this.add.image(this.textX, this.textY+22, 'dashedLine').setScale(0.75);
+
         this.addSlidingWindow();
         this.finishedAddingWord = true;
         this.UIElements.play.visible = true;
@@ -297,8 +307,9 @@ export default class LoopLevel extends Level {
         });
         
         // Add right bar
-        const rightTop = this.levelObjects.letters.at(-1).getTopRight();
-        this.levelObjects.rightBar = this.add.rexRoundRectangle(rightTop.x+10, rightTop.y, 10, 50, 
+        const numStates = Object.keys(this.automata.states).length;
+        const rightTop = this.levelObjects.letters.at(numStates-1).getTopRight();
+        this.levelObjects.rightBar = this.add.rexRoundRectangle(this.textX, rightTop.y, 10, 50, 
             {
                 tr: 8, br: 8
             }, 
@@ -316,11 +327,11 @@ export default class LoopLevel extends Level {
         // Enabling dragging on bars
         this.input.setDraggable(this.levelObjects.leftBar);
         this.input.setDraggable(this.levelObjects.rightBar);
-        const rightBound = this.textX + 10
+        const rightBound = this.textX
         this.input.on('drag', function(pointer, line, dragX, dragY){
             
             // Set bounds for dragging
-            if (dragX >= letterBounds.x -20 && dragX <= rightBound){
+            if (pointer.x >= letterBounds.x -20 && dragX <= rightBound){
                 line.x = dragX;
             }
         })

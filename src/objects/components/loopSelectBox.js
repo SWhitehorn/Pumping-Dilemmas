@@ -70,8 +70,8 @@ export default (scene, repeats) => {
                 width: (320 + extraWidth)
             })
             .addBackground(scene.add.rectangle(0, 0, 1, 1, colours.WHITE))
-            .add(scene.rexUI.add.sizer({height: 60}).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tr: 0}, colours.WHITE).setStrokeStyle(3, 0x010A12)), {expand: true})
-            .add(scene.rexUI.add.sizer({height: 30}).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {br: 0}, colours.LIGHTBLUE).setStrokeStyle(3, 0x010A12)), {expand: true})
+            .add(scene.rexUI.add.sizer({height: 60}).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {tr: 0}, colours.WHITE).setStrokeStyle(3, 0x010A12), 'background'), {expand: true, key: 'top'})
+            .add(scene.rexUI.add.sizer({height: 30}).addBackground(scene.add.rexRoundRectangle(0, 0, 1, 1, {br: 0}, colours.LIGHTBLUE).setStrokeStyle(3, 0x010A12)), {expand: true, key:'bottom'})
     }
 
     // Section containing play button

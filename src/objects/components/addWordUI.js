@@ -87,23 +87,39 @@ export default (scene) => {
     
     
     const textBox = scene.add.rectangle(380, 460, (230+(extraWidth*1.2)), 50, colours.WHITE).setStrokeStyle(3, colours.BLACK);
-    scene.textEntry = scene.add.text(380, 460, scene.word, { fontSize: '50px', color: colours.TEXTBLACK, fontFamily: 'Quantico'}).setOrigin(0.5);
+    scene.textEntry = scene.add.text(380, 460, scene.word, { fontSize: '40px', color: colours.TEXTBLACK, fontFamily: 'Quantico'}).setOrigin(0.5);
     
     const maxLetters = scene.scene.key === "Non_RegularLevel" ? 12 : 8
 
     // Text entry
-        scene.input.keyboard.on('keydown', (event) => {
-            if (scene.scene.key === 'OpeningScene' || (!scene.computing)){ // Disable text entry when computation is happening
-                // Backspace: Remove final character
-                if (event.keyCode === 8 && scene.word.length > 0) { 
-                    scene.word = scene.word.substr(0, scene.word.length - 1);
+        // scene.input.keyboard.on('keydown', (event) => {
+        //     if (scene.scene.key === 'OpeningScene' || (!scene.computing)){ // Disable text entry when computation is happening
+        //         // Backspace: Remove final character
+        //         if (event.keyCode === 8 && scene.word.length > 0) { 
+        //             scene.word = scene.word.substr(0, scene.word.length - 1);
                 
-                // Add key to text
-                } else if ((event.keyCode === 32 || (event.keyCode >= 48 && event.keyCode < 90)) 
-                    && scene.word.length < maxLetters) {
-                    scene.word = (scene.word + event.key).toLowerCase();                
-                }
-            }
+        //         // Add key to text
+        //         } else if ((event.keyCode === 32 || (event.keyCode >= 48 && event.keyCode < 90)) 
+        //             && scene.word.length < maxLetters) {
+        //             scene.word = (scene.word + event.key).toLowerCase();                
+        //         }
+        //     }
+        // });
+
+        scene.hiddenInputText = scene.plugins.get('rexhiddeninputtextplugin').add(scene.textEntry, {
+            type: 'text',
+            enterClose: false,
+            cursor: "I",
+
+            onUpdate: ((text, textObject, hiddenInputText) => {
+                
+                text = text.toLowerCase();
+                scene.word = text;
+                return text;
+            })
         });
+        
+        scene. hiddenInputText.setMaxLength(maxLetters);
+        scene.hiddenInputText.open();
     return sizer;
 }

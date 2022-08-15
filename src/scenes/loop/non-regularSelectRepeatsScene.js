@@ -28,6 +28,7 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
 
         super.create({automata:null, word, language});
         this.createUI();
+        
 
         // Remove ability to drag bars
         this.input.setDraggable(this.levelObjects.leftBar, false);
@@ -38,7 +39,13 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
             .setOrigin(0.5).setInteractive().on('pointerup', () => {
             this.scene.stop("Non_RegularSelectRepeats");
             this.scene.start("Non_RegularLevel", {language, word, grammar, numStates, posKey})
-        })
+        });
+        rechoose.on('pointerover', () => {
+            rechoose.setColor(colours.TEXTRED);
+        });
+        rechoose.on('pointerout', () => {
+            rechoose.setColor(colours.TEXTBLACK);
+        });
 
         if (tutorial){
             const message = [
@@ -95,42 +102,58 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
             const moveRight = () => {
                 
                 const xPosRight = this.levelObjects.letters[rightLetter].getTopRight().x;
-                
+                this.levelObjects.rightBar.setFillStyle(colours.RED);
+
                 this.tweens.add({
                     targets: this.levelObjects.rightBar,
                     x: xPosRight,
                     duration: 2000,
                     ease: 'Power2',
                     onComplete: () => {
+                        
+                        // Change colours
+                        this.levelObjects.rightBar.setFillStyle(colours.DARKBLUE);
                         resetBackground(this); 
-                        this.chosenLoops = true;
-                        this.UIElements.increase.visible = true;
-                        this.UIElements.decrease.visible = true;
+                        this.add.image(600, 445, 'computerIcon').setAlpha(0.3).setScale(0.85);
+
+                        // Set UI elements to visible
+                        this.enableControlButtons();
+                        this.UIElements.increaseText.visible = true;
+                        this.UIElements.decreaseText.visible = true;
                         this.UIElements.repeats.visible = true;
                         this.UIElements.play.visible = true;
-                        this.UIElements.play.on('pointerover', () => {
-                            this.UIElements.play.setFillStyle(colours.RED)
+                        
+                        // Disable highlighting on left and right bar
+                        this.levelObjects.leftBar.on('pointerover', () => {
+                            this.levelObjects.rightBar.setFillStyle(colours.DARKBLUE)
                         });
-                        this.UIElements.play.on('pointerout', () => {
-                            this.UIElements.play.setFillStyle(colours.WHITE)
+                        this.levelObjects.rightBar.on('pointerover', () => {
+                            this.levelObjects.rightBar.setFillStyle(colours.DARKBLUE)
                         });
+
+                        this.chosenLoops = true;
+
+
                     }
                 });
             }
 
             
-            const xPos = this.levelObjects.letters[leftLetter].getTopLeft().x - 20
+            const xPos = this.levelObjects.letters[leftLetter].getTopLeft().x - 20;
+            this.levelObjects.leftBar.setFillStyle(colours.RED);
             
             this.tweens.add({
                 targets: this.levelObjects.leftBar,
                 x: xPos,
                 duration: 2000,
                 ease: 'Power2',
-                onComplete: moveRight
+                onComplete: () => {
+                    this.levelObjects.leftBar.setFillStyle(colours.DARKBLUE);
+                    moveRight();
+                }
             });
         }
         
-        console.log(this.numStates);
         const {leftLetter, rightLetter} = this.getLoopPlaces();
 
         this.time.delayedCall(250, moveLeft, [], this)
@@ -180,8 +203,8 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         this.UIElements.repeats.visible = false;
         this.UIElements.play.visible = false;
 
-        this.UIElements.increase = buttons.increase;
-        this.UIElements.decrease = buttons.decrease;
+        this.UIElements.increaseText = buttons.increase;
+        this.UIElements.decreaseText = buttons.decrease;
 
     }
 
@@ -190,16 +213,15 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
      * @returns {Number[]} - Array with two elements, corresponding to left and right
      */
     getLoopPlaces(){
-
+        
         // posKey is an optional string flagging where to locate the loop
         if (this.posKey){
-            
             // Locate loop in middle
             if (this.posKey === 'middle2' | this.posKey === "middle1"){
                 
                 const middle = Math.floor(this.word.length / 2);
 
-                if (this.posKey === 'middle2' | this.word.length % 2 === 0){
+                if (this.posKey === 'middle2'){
                     if (middle < this.numStates){
                         return {leftLetter: middle-1, rightLetter: middle};
                     } else {
@@ -209,7 +231,7 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
                     if (middle < this.numStates){
                         return {leftLetter: middle, rightLetter: middle};
                     } else {
-                        return {leftLetter: this.numStates-2, rightLetter: this.numStates-1}
+                        return {leftLetter: this.numStates-1, rightLetter: this.numStates-1}
                     }
                 }
                 
@@ -236,7 +258,6 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
 
         // Choose randomly if conditions fail
         let leftLetter = randomNumber(0, this.numStates);
-        console.log(leftLetter);
         const max = Math.floor(this.word.length / 2);
         const num = randomNumber(0, max);
         let rightLetter = leftLetter + num;

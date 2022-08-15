@@ -15,11 +15,6 @@ export default class AddWordLevel extends Level {
         }
     }
 
-    preload(){
-        super.preload();
-        this.load.image('nextPage', '../assets/arrow-down-left.png');
-    }
-
     create({automata, language, grammar, message}){
 
         super.create(automata, language);
@@ -92,9 +87,9 @@ export default class AddWordLevel extends Level {
     }
 
     textBoxCallback(){
-        console.log('callback');
         this.help.visible = true;
-        this.time.delayedCall(200, popUp, [["Enter a word to show that this automaton does not accurately capture " + this.language], this, true], this)
+        this.time.delayedCall(200, popUp, [["Enter a word to show that this automaton does not accurately capture " + this.language], this, true], this);
+        this.hiddenInputText.open();
     }
 
 }
