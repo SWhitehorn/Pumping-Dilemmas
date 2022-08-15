@@ -66,7 +66,8 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
         // Base case 
         if (i === this.inputWord.length){
                 
-            this.textX = this.levelObjects.letters.at(-1).getTopLeft().x;
+            this.textX = this.levelObjects.letters.at(this.numStates-1).getTopRight().x;
+            this.add.image(this.textX, this.textY+22, 'dashedLine').setScale(0.75);
             this.addSlidingWindow();
             this.finishedAddingWord = true;
             return;

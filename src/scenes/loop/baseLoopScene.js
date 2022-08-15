@@ -47,6 +47,10 @@ export default class LoopLevel extends Level {
         // letters: array of text objects, unchanging
         // computedLetters: array of text objects, changes with player selection
         this.levelObjects = {letters: [], computedLetters: []}
+
+        if (!this.numStates){
+            this.numStates = Object.keys(this.automata.states).length;
+        }
         
         //Flags
         this.interactive = false;
@@ -185,11 +189,10 @@ export default class LoopLevel extends Level {
 
     addElements(){
         
-        const numStates = Object.keys(this.automata.states).length;
-        this.textX = this.levelObjects.letters.at(numStates-1).getTopRight().x;
+        this.textX = this.levelObjects.letters.at(this.numStates-1).getTopRight().x;
 
+        
         this.add.image(this.textX, this.textY+22, 'dashedLine').setScale(0.75);
-
         this.addSlidingWindow();
         this.finishedAddingWord = true;
         this.UIElements.play.visible = true;
@@ -307,8 +310,7 @@ export default class LoopLevel extends Level {
         });
         
         // Add right bar
-        const numStates = Object.keys(this.automata.states).length;
-        const rightTop = this.levelObjects.letters.at(numStates-1).getTopRight();
+        const rightTop = this.levelObjects.letters.at(this.numStates-1).getTopRight();
         this.levelObjects.rightBar = this.add.rexRoundRectangle(this.textX, rightTop.y, 10, 50, 
             {
                 tr: 8, br: 8
