@@ -18,8 +18,7 @@ export default (scene, point, input, transitionPoint) => {
     const COLOR_DARK = colours.DARKBLUE;
 
     // Option for each of the letters in the alphabet
-    let options = [...scene.alphabet, 'ε', 'Remove']
-    
+    let options = scene.deterministic ? [...scene.alphabet, 'Remove'] : [...scene.alphabet, 'ε', 'Remove']
     const width = (options.length-1) * 15;
     
     // Returns text object
