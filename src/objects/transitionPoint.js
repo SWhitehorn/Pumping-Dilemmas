@@ -147,20 +147,23 @@ export default class TransitionPoint {
         // Transition over input is not defined, create new transition
         } else {
             if (this.hasEmptyTransition()){
+                // Clear inputs
                 this.inputs = [];
                 
                 // Delete ε-transitions
                 if (transitions['ε']){
-                    transitions['ε'].splice(index, 1);
+                    transitions['ε'].splice(transitions['ε'].indexOf(this.endName), 1);
                     if (transitions['ε'].length === 0){
                         delete transitions['ε']; 
                     }
                 }
-                
             }
             
             transitions[letter] = [this.endName];
             this.inputs.push(letter);
+
+            console.log(transitions[letter]);
+            console.log(this.inputs);
         }
     }
 

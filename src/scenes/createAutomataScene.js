@@ -32,7 +32,7 @@ export default class CreateLevel extends Level {
      * @param {Input}
      * @extends Level.create 
      */
-    create({automata, words, alphabet, language, deterministic=true}){
+    create({automata, words, alphabet, language, deterministic=true, loop=false}){
         
         // Store original word and automata to allow for reseting
         this.words = words;
@@ -45,7 +45,7 @@ export default class CreateLevel extends Level {
         this.draw = false; // Flag for whether the player is currently drawing transition
         this.interactive = true; // Flag for whether player can interact with automata
         this.deterministic = deterministic; // Flag for whether FA has to be deterministic
-        
+        this.loop = loop; // Flags what to do after tests
         
         this.addUIElements();
 
@@ -260,7 +260,8 @@ export default class CreateLevel extends Level {
                 alphabet:this.alphabet, 
                 language:this.language, 
                 inputAutomata:this.inputAutomata, 
-                deterministic:this.deterministic
+                deterministic:this.deterministic,
+                loop: this.loop
             }); 
         } else {
             let message;

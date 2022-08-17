@@ -23,7 +23,7 @@ export default class TestCreateLevel extends Level {
         }
     }
 
-    create({automata, words, alphabet, language, inputAutomata, message=null, deterministic}){
+    create({automata, words, alphabet, language, inputAutomata, message=null, deterministic, loop=false}){
         
         changeBackground(this);
 
@@ -35,6 +35,7 @@ export default class TestCreateLevel extends Level {
         this.passedTests = false;
         this.end = false;
         this.firstTest = true; // Set to false after first test
+        this.loop = loop;
 
 
         this.levelObjects = {letters: [], computedLetters: []}
@@ -155,8 +156,14 @@ export default class TestCreateLevel extends Level {
     endingScreen(){
         
         if (this.passedTests){
-            popUp(["All words correct!"], this)
-            this.time.delayedCall(2000, this.nextLevel, [true], this)
+            
+            if (this.loop){
+                this.startLoop(this.word)
+            } else {
+                popUp(["All words correct!"], this)
+                this.time.delayedCall(2000, this.nextLevel, [true], this)
+            }
+            
         } else {
             const message = '"' + this.word + '"' + " classified incorrectly"
             popUp([message, "Try a different automata!"], this)
@@ -203,6 +210,16 @@ export default class TestCreateLevel extends Level {
         this.levelObjects.letters.forEach((letter) => {
             letter.destroy();
         });
+    }
+
+    /** Moves to loop level with current word */
+    startLoop(word){
+        this.scene.stop('CreateLevel');
+        this.scene.start("ComputerLoopLevel", {
+            automata: this.automata,
+            word: word,
+            language: this.language, 
+        })
     }
 
 }

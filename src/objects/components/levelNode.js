@@ -161,7 +161,7 @@ export default class LevelNode {
             },
             create: {
                 scene: 'CreateLevel', 
-                data: {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language, deterministic:this.data.deterministic}
+                data: {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language, deterministic:this.data.deterministic, loop:this.data.loop}
             },
             writeWord: {
                 scene: "AddWordLevel",

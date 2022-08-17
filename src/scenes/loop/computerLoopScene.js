@@ -18,13 +18,20 @@ import textBox from "/src/objects/components/textBox.js";
     create({automata, word, language, repeats, lines}){
 
         super.create({automata, word, language, repeats});
-        
+
         // Flags
         this.runTests = false;
         this.testsStarted = false;
+
+        this.numStates = Object.keys(this.automata.states).length;
         
         this.lines = lines; // String to display in popUp (null if not defined);
-        this.repeats = repeats; 
+        
+        if (!repeats) {
+            this.repeats = [2, 0]
+        } else {
+            this.repeats = repeats; 
+        }
         
         this.nextTest = undefined;
         this.tests = undefined;

@@ -23,7 +23,11 @@ export default class AddWordLevel extends Level {
         this.word = ""
         
         // Create membership tester
-        this.CYK = new CYK(grammar);
+        if (grammar){
+            this.CYK = new CYK(grammar);
+        } else {
+            this.CYK = null;
+        }
 
         const UI = addWordUI(this).layout();
 
@@ -63,7 +67,7 @@ export default class AddWordLevel extends Level {
 
         super.endComputation();
 
-        const inLang = this.CYK.testMembership(this.currWord)
+        const inLang = this.testMembership();
 
         if (accepted && inLang || !accepted && !inLang){
             const messages = ["The automata works for " + '"' + this.currWord + '"', "Try a different word!"]
@@ -90,6 +94,21 @@ export default class AddWordLevel extends Level {
         this.help.visible = true;
         this.time.delayedCall(200, popUp, [["Enter a word to show that this automaton does not accurately capture " + this.language], this, true], this);
         this.hiddenInputText.open();
+    }
+
+    testMembership(){
+        
+        if (this.CYK){
+            return this.CYK.testMembership(this.currWord)
+        } else {
+            if (this.language === "L = { 𝘸c𝘸 | 𝘸\u{2208}{a,b}*, 𝘸 has an odd number of 'a's}"){
+                let wordParts = this.currWord.split('c');
+                return wordParts[0] === wordParts[1] 
+                    && (wordParts[0].match(/a/g) || []).length % 2 === 1 
+                    && (wordParts[1].match(/a/g) || []).length % 2 === 1 
+            }
+        }
+        
     }
 
 }

@@ -140,7 +140,7 @@ export default {
     // Starts and ends with same letter
     createNode4: {
         x: 2800, y: 700,
-        children: ['createNode6'],
+        children: ['createNode7'],
         data: data.create4Data,
         type: 'create',
         name: 'createNode4'
@@ -149,15 +149,67 @@ export default {
     // |w| is a multiple of four
     createNode6: {
         x: 2800, y: 900,
-        children: ['writeNode0'],
+        children: ['createNode8'],
         data: data.create6Data,
         type: 'create',
         name: 'createNode6'
     },
-    
+
+    // Second to last symbol is b
+    createNode7: {
+        x: 3000, y: 700,
+        children: ['nonDeterministicNode0'],
+        data: data.create7Data,
+        name: 'createNode7',
+        type: 'create'
+    },
+
+    createNode8: {
+        x: 3000, y: 900,
+        children: ['nonDeterministicNode0'],
+        data: data.create8Data,
+        name: 'createNode8',
+        type: 'create'
+    },
+
+    nonDeterministicNode0: {
+        x:3200, y: 800,
+        children: ['nonDeterministicNode1', 'createNode9'],
+        tutorial: true,
+        name: 'nonDeterministicNode0',
+        type: 'opening',
+        data: data.nonDeterministicData0,
+    },
+
+    nonDeterministicNode1: {
+        x:3200, y: 1000,
+        children: ['createNode10'],
+        tutorial: true,
+        name: 'nonDeterministicNode1',
+        type: 'opening',
+        data: data.nonDeterministicData1,
+    },
+
+    // Ends in ab
+    createNode9: {
+        x: 3400, y: 800,
+        children: ['writeNode0'],
+        data: data.create9Data,
+        name: 'createNode9',
+        type: 'create',
+    },
+
+    createNode10: {
+        x: 3200, y: 1200,
+        children: [],
+        name: 'createNode10',
+        data: data.create10Data,
+        type:'create',
+    },
+
     // a^n b^n
     writeNode0: {
-        x: 3000, y: 800,
+        x: 3600, y: 800,
         children: ['writeNode1'],
         data: data.add0Data,
         name: 'writeNode0',
@@ -167,191 +219,143 @@ export default {
 
     // wwᴿ
     writeNode1: {
-        x: 3200, y: 800,
-        children: ['loopNode6'],
+        x: 3800, y: 800,
+        children: ['createNode61'],
         data: data.add1Data,
         name: "writeNode1",
         type: 'writeWord'
     },
 
     // Ends in aa or bb
-    loopNode6: {
-        x: 3400, y: 800,
-        children: ['loopNode7'],
+    createNode61: {
+        x: 4000, y: 800,
+        children: ['writeNode2'],
         data: data.loop6Data,
-        type: 'loop',
-        name: 'loopNode6'
+        type: 'create',
+        name: 'createNode61'
     },
 
-    loopNode7: {
-        x: 3600, y: 800,
-        children: ['writeNode2'],
+    writeNode2: {
+        x: 4200, y: 800,
+        children: ['createNode62', 'writeNode3'],
+        data: data.add2Data,
+        name: "writeNode2",
+        type: "writeWord"
+    },
+
+    writeNode3: {
+        x: 4200, y: 600,
+        children: [],
+        data: data.add3Data,
+        name: "writeNode3",
+        type: "writeWord"
+    },
+    
+    // Every odd position is a b
+    createNode62: {
+        x: 4400, y: 800,
+        children: ['nonRegNode2'],
         data: data.loop7Data,
-        type: 'loop',
-        name: 'loopNode7'
+        type: 'create',
+        name: 'createNode62'
     },
 
     // a^n b^n
-    writeNode2: {
-        x: 3800, y: 800,
-        children: ['writeNode3'],
-        data: data.add2Data,
-        name: 'writeNode2',
+    nonRegNode2: {
+        x: 4600, y: 800,
+        children: ['nonRegNode3'],
+        data: data.nonReg2Data,
+        name: 'nonRegNode2',
         type: 'nonRegular',
         tutorial: true
     },
 
     // wwᴿ, 2 states
-    writeNode3: {
-        x: 4000, y: 800,
-        children: ['writeNode4', 'createNode7'],
-        data: data.add3Data,
-        name: 'writeNode3',
+    nonRegNode3: {
+        x: 4800, y: 800,
+        children: ['nonRegNode4', 'createNode11'],
+        data: data.nonReg3Data,
+        name: 'nonRegNode3',
         type: 'nonRegular',
     },
 
     // wwᴿ, 4  states
-    writeNode4: {
-        x: 4000, y: 1000,
+    nonRegNode4: {
+        x: 4800, y: 1000,
         children: [],
-        data: data.add4Data,
-        name: 'writeNode4',
+        data: data.nonReg4Data,
+        name: 'nonRegNode4',
         type: 'nonRegular',
     },
 
-    createNode7: {
-        x: 4200, y: 800,
-        children: ['createNode8', 'nonDeterministicNode0'],
-        data: data.create7Data,
-        name: 'createNode7',
-        type: 'create'
-    },
-
-    createNode8: {
-        x: 4200, y: 600,
-        children: [],
-        data: data.create8Data,
-        name: 'createNode8',
-        type: 'create'
-    },
-
-    nonDeterministicNode0: {
-        x:4400, y: 800,
-        children: ['nonDeterministicNode1'],
-        tutorial: true,
-        name: 'nonDeterministicNode0',
-        type: 'opening',
-        data: data.nonDeterministicData0,
-    },
-
-    nonDeterministicNode1: {
-        x:4400, y: 1000,
-        children: ['createNode9', 'createNode11'],
-        tutorial: true,
-        name: 'nonDeterministicNode1',
-        type: 'opening',
-        data: data.nonDeterministicData1,
-    },
-
-    createNode9: {
-        x: 4400, y: 1200,
-        children: [],
-        data: data.create9Data,
-        name: 'createNode9',
-        type: 'create',
-    },
-
-    createNode10: {
-        x: 4400, y: 1400,
-        children: [],
-        name: 'createNode10',
-        data: data.create10Data,
-        type:'create',
-    },
-
+    // 0 or more concatenations of 'ab' and 'aba' 
     create11Node: {
-        x: 4600, y: 800,
-        children: ['writeNode5'],
-        name: 'createNode10',
+        x: 5000, y: 800,
+        children: ['nonRegNode5'],
+        name: 'createNode11',
         data: data.create11Data,
         type:'create',
     },
 
-    writeNode5: {
-        x: 4800, y: 800,
-        children: ['writeNode6'],
-        data: data.add5Data,
-        name: 'writeNode5',
+    nonRegNode5: {
+        x: 5200, y: 800,
+        children: ['nonRegNode6', 'nonRegNode7', 'nonRegNode5a'],
+        data: data.nonReg5Data,
+        name: 'nonRegNode5',
+        type: 'nonRegular'
+    },
+
+    nonRegNode5a: {
+        x: 5200, y: 1000,
+        children: [],
+        data: data.nonReg5aData,
+        name: 'nonRegNode5a',
         type: 'nonRegular'
     },
     
-    writeNode6: {
-        x: 5000, y: 700,
-        children: ['createNode11'],
-        data: data.add6Data,
-        name: 'writeNode6',
-        type: 'nonRegular'
-    },
-
-    writeNode7: {
-        x: 5000, y: 900,
+    nonRegNode6: {
+        x: 5400, y: 700,
         children: ['createNode12'],
-        data: data.add7Data,
-        name: 'writeNode7',
+        data: data.nonReg6Data,
+        name: 'nonRegNode6',
         type: 'nonRegular'
     },
 
-    createNode11: {
-        x: 5200, y: 700,
-        children: ['writeNode8'],
-        data: data.create11Data,
-        name: 'createNode11',
-        type: 'create'
+    nonRegNode7: {
+        x: 5400, y: 900,
+        children: ['createNode12'],
+        data: data.nonReg7Data,
+        name: 'nonRegNode7',
+        type: 'nonRegular'
     },
 
     createNode12: {
-        x: 5200, y: 900,
-        children: ['writeNode8'],
+        x: 5600, y: 800,
+        children: ['nonRegNode8'],
         data: data.create12Data,
         name: 'createNode12',
         type: 'create'
     },
 
-    writeNode8: {
-        x: 5400, y: 800,
-        children: [],
-        data: data.add8Data,
-        name: 'writeNode8',
-        type: 'nonRegular'
-    },
-
-    writeNode9: {
-        x: 5600, y: 800,
-        children: [],
-        data: data.add9Data,
-        name: 'writeNode9',
-        type: 'nonRegular'
-    },
-
-    writeNode10: {
+    nonRegNode8: {
         x: 5800, y: 800,
-        children: [],
-        data: data.add10Data,
-        name: 'writeNode10',
+        children: ['nonRegNode9'],
+        data: data.nonReg8Data,
+        name: 'nonRegNode8',
         type: 'nonRegular'
     },
 
-    writeNode11: {
+    nonRegNode9: {
         x: 6000, y: 800,
         children: ['createNode13', 'createNode14'],
-        data: data.add11Data,
-        name: 'writeNode11',
+        data: data.nonReg9Data,
+        name: 'nonRegNode9',
         type: 'nonRegular'
     },
 
     createNode13: {
         x: 6200, y: 700,
-        children: [],
+        children: ['nonRegNode10'],
         data: data.create13Data,
         name: 'createNode13',
         type: 'create'
@@ -359,11 +363,29 @@ export default {
 
     createNode14: {
         x: 6200, y: 900,
-        children: [],
+        children: ['nonRegNode10'],
         data: data.create14Data,
         name: 'createNode14',
         type: 'create'
     },
+
+    nonRegNode10: {
+        x: 6400, y: 800,
+        children: ['nonRegNode11'],
+        data: data.nonReg10Data,
+        name: 'nonRegNode10',
+        type: 'nonRegular'
+    },
+
+    nonRegNode11: {
+        x: 6600, y: 800,
+        children: [],
+        data: data.nonReg11Data,
+        name: 'nonRegNode11',
+        type: 'nonRegular'
+    },
+
+    
 
 
 

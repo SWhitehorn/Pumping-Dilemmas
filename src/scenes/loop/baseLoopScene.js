@@ -1,7 +1,7 @@
 import Level from "../levelTemplate.js";
 import "/src/typedefs/typedefs.js"
 import colours from "/src/utils/colours.js"
-import { calculateStartingX, resetBackground } from "/src/utils/utils.js"
+import { calculateStartingX, resetBackground, changeBackground } from "/src/utils/utils.js"
 import loopSelectBox from "/src/objects/components/loopSelectBox.js";
 import popUp from "/src/objects/components/popUp.js";
 
@@ -47,10 +47,6 @@ export default class LoopLevel extends Level {
         // letters: array of text objects, unchanging
         // computedLetters: array of text objects, changes with player selection
         this.levelObjects = {letters: [], computedLetters: []}
-
-        if (!this.numStates){
-            this.numStates = Object.keys(this.automata.states).length;
-        }
         
         //Flags
         this.interactive = false;
@@ -84,6 +80,7 @@ export default class LoopLevel extends Level {
 
         // Add letters individually
         this.startingX = calculateStartingX(this.word);
+        changeBackground(this);
         this.drawLetters(0);
     } 
 
@@ -199,6 +196,7 @@ export default class LoopLevel extends Level {
         this.UIElements.repeats.visible = true;
         this.enableControlButtons();
         this.selectedWord = this.addSections(this.numRepeats);
+        resetBackground(this);
         this.startComputation();
     }
 

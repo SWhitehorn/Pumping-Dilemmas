@@ -79,6 +79,9 @@ export default class LevelSelect extends Phaser.Scene {
             Object.values(this.nodes).forEach((node) => {
                 node.enable();
             })
+
+            console.log(this.nodes['createNode9'])
+            this.nodes['createNode9'].enable();
             
             // Add start arrow
             const tri = new Phaser.Geom.Triangle.BuildEquilateral(start.x-30, start.y, 16);
@@ -104,7 +107,7 @@ export default class LevelSelect extends Phaser.Scene {
      * Adds non-node objects to screen
      */
     addUI(){
-        this.UI.back = this.add.image(750, 30, 'backArrow').setInteractive().setScrollFactor(0);
+        this.UI.back = this.add.image(774, 24, 'backArrow').setInteractive().setScrollFactor(0);
         this.UI.back.visible = false;
         this.UI.back.on('pointerup', () => {
                 this.cameras.main.pan(400, 800, 750);

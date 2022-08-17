@@ -276,17 +276,18 @@ export default class Automata {
             }
 
             // Colour state green or red is word is empty, having taken tranition
-            if (!word && !("ε" in state.transitions)){
+            if (!word){
                 
                 // Change to green if accepting, red if not
                 if (state.accepting){
+                    
                     state.graphic.setFillStyle(colours.GREEN, 1);
                     state.graphic.inner.setFillStyle(colours.GREEN, 1);
                     this.foundAccepting = true;
                     this.endComputation(true);
                     return;
                 }
-                else{
+                else if (!("ε" in state.transitions)){
                     state.graphic.setFillStyle(colours.RED, 1); 
                     this.scene.time.delayedCall(500, this.resetPreviousState, [currState, word, key], this);
                     return;
