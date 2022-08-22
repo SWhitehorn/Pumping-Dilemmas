@@ -52,18 +52,13 @@ export default class LevelNode {
         this.active = true;
         return this;
     }
-    /** Enables the child nodes of current node */
-    enableNextNodes(){
-        
-        if (this.passed){
-            this.graphic.setFillStyle(0x80ff77);
-        }
+    /** Connect the child nodes of current node */
+    connectNextNodes(){
         
         const startPoint = this.getPosition();
         for (let node of this.children){
             let child = this.scene.nodes[node];
-            child.enable();
-
+            
             let endPoint = child.getPosition();
             let midPoint = this.getControlPoint(child);
 
@@ -75,6 +70,17 @@ export default class LevelNode {
         }
 
         return this;
+    }
+
+    enableNextNodes(){
+        if (this.passed){
+            this.graphic.setFillStyle(0x80ff77);
+        } 
+        
+        for (let node of this.children){
+            let child = this.scene.nodes[node];
+            child.enable();
+        }
     }
 
     /**
