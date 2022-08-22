@@ -17,16 +17,25 @@ export default {
         name: 'createTutorial',
         type: 'createTutorial',
         data: data.createTutorialData,
-        children: ['createNode0']
+        children: ['createNode0', 'createNode02']
     },
 
     // Starts with ba
     createNode0: {
-        x: 800, y: 800,
+        x: 800, y: 900,
         children: ['createNode3'],
         data: data.create0Data,
         type: 'create',
         name: 'createNode0',
+    },
+
+    // Starts with ba
+    createNode02: {
+        x: 800, y: 700,
+        children: ['createNode3'],
+        data: data.create02Data,
+        type: 'create',
+        name: 'createNode02',
     },
 
     // Ends in ab

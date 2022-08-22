@@ -55,7 +55,10 @@ export default class LevelNode {
     /** Enables the child nodes of current node */
     enableNextNodes(){
         
-        this.graphic.setFillStyle(0x80ff77);
+        if (this.passed){
+            this.graphic.setFillStyle(0x80ff77);
+        }
+        
         const startPoint = this.getPosition();
         for (let node of this.children){
             let child = this.scene.nodes[node];
@@ -161,7 +164,7 @@ export default class LevelNode {
             },
             create: {
                 scene: 'CreateLevel', 
-                data: {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language, deterministic:this.data.deterministic, loop:this.data.loop}
+                data: {inputAutomata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language, deterministic:this.data.deterministic, loop:this.data.loop}
             },
             writeWord: {
                 scene: "AddWordLevel",
@@ -181,7 +184,7 @@ export default class LevelNode {
             },
             createTutorial: {
                 scene: 'CreateTutorial',
-                data: {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language}
+                data: {automata:this.data.automata, words:this.data.words, alphabet: this.data.alphabet, language:this.data.language, message: this.data.message}
             }
 
         }

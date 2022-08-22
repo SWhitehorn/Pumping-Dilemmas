@@ -97,7 +97,6 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
 
     /** Adds tweens to move the bars */
     moveBars(){
-        changeBackground(this);
         const moveLeft = () => {
             
             const moveRight = () => {

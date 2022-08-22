@@ -28,13 +28,10 @@ export default class Transitions{
         
         // Required for access to scene methods e.g. adding shapes
         this.scene = scene;
+        this.interactive = scene.interactive;
         
         // Object storing data about the transitions between states, indexed by startState + endState
         this.transitionObjects = {};
-
-        this.interactive = false;
-
-        
         this.drawTransitions();
     }
     
@@ -51,7 +48,9 @@ export default class Transitions{
         // Iterate through transitions of each state 
         for (let startName in this.automata.states){            
             let state = this.automata.states[startName];
+            
             for (let input in state.transitions){
+                
                 state.transitions[input].forEach((endName) => { 
                     
                     // Key for transition is start state concatenated with end state
@@ -207,7 +206,7 @@ export default class Transitions{
             line.draw(this.graphics);
             
             this.addDirectionArrow(line, endState);
-
+            
             // Add interactive component to line
             if (this.interactive){
                 this.setLineInteractivity(line, startState, endState, key, input, endName);
@@ -365,7 +364,7 @@ export default class Transitions{
      * @param {string} endName - String with name of target state
      */
     setLineInteractivity(line, startState, endState, key, input, endName){
-    
+        
         const mid = this.getControlPoint(line, key);
         
         // Create transition point
@@ -517,6 +516,7 @@ export default class Transitions{
      */
     newTransition(key, input){
         this.transitionObjects[key] = {'line': null, 'label': input, 'point': null, 'update': false};
+        this.automata.addKey(key);
     }
 
     /**

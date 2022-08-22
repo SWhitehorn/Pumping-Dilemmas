@@ -110,7 +110,7 @@ export const changeBackground = (scene) => {
     scene.cameras.main.setBackgroundColor(0xb3bfc7);
     scene.bgIcons = [];
 
-    for (let i = 0; i < 8; i++){
+    for (let i = 0; i < 9; i++){
         let x = 50 + (i * 85) + randomNumber(-20, 20);
         let y = (i % 2 === 0 ? randomNumber(50, 350) : randomNumber(200, 450))
 

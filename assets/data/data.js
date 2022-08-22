@@ -387,35 +387,72 @@ create2Data: {
 createTutorialData: {
     automata: {
         states: {
-            q1: {x: 290, y: 460, 
+            q1: {x: 400, y: 300, 
                 accepting: false,
                 transitions: {},
                 name: 'q1'
             },
-            q2: {x: 315, y: 460, 
-                accepting: false,
-                transitions: {},
+            q2: {x: 650, y: 300, 
+                accepting: true,
+                transitions: {a : ['q2'], b: ['q2']},
                 name: 'q2'
             },
-            q3: {x: 475, y: 460, 
-                accepting: true,
-                transitions: {},
+            q3: {x: 150, y: 300, 
+                accepting: false,
+                transitions: {a : ['q3'], b: ['q3']},
                 name: 'q3'
             },
         },
-        start: {name: 'q1'}
+        start: {name: 'q1', direction: 'top'}
     },
     words: [{word: 'abb', result: true}, {word: 'bab', result: false}, {word: "a", result: true}, {word: 'b', result: false}, {word: 'aaaa', result: true}],
     alphabet: ['a', 'b'],
-    language: "L = {w \u{2208} {a,b}* | w starts with a}"
+    language: "L = {w \u{2208} {a,b}* | w starts with a}",
+    message: [
+        "Connect the states of the automaton so that it accepts words beginning with an 'a'.",
+        "Connect the states by clicking on the start state, then clicking on the target state.",
+        "Change the label for the transition by clicking on the drop down menu, or adjust the line by dragging the menu.",
+        "Press the play button to test your automaton!"
+    ]
+},
+
+create02Data: {
+    automata: {
+        states: {
+            q1: {x:100, y:150, 
+                accepting: false, 
+                transitions: {b: ['q4']},
+                name: 'q1'
+            },
+            q2: {x:315, y:460, 
+                accepting: false, 
+                transitions: {},
+                name: 'q2'
+            },
+            q3: {x:700, y:150, 
+                accepting: true, 
+                transitions: {a: ['q4'], b: ['q4'] },
+                name: 'q3'
+            },
+            q4: {x:400, y:350, 
+                accepting: false, 
+                transitions: {a: ['q4'], b: ['q4']},
+                name: 'q4'
+            }
+        },
+        start: {name: 'q1'}
+    },
+    words: [{word: 'aba', result: true}, {word: 'abab', result: false}, {word: "b", result: false}, {word: 'abbbba', result: true}, {word: 'bba', result: false}, {word: 'aabba', result: false}],
+    alphabet: ['a', 'b'],
+    language: "L = { ab\u{207F}a | n \u{2265} 0}",
 },
 
 create0Data: {
     automata: {
         states: {
-            q1: {x: 290, y: 460, 
+            q1: {x: 100, y: 150, 
                 accepting: false,
-                transitions: {},
+                transitions: {a: ['q3']},
                 name: 'q1'
             },
             q2: {x: 315, y: 460, 
@@ -423,14 +460,14 @@ create0Data: {
                 transitions: {},
                 name: 'q2'
             },
-            q3: {x: 340, y: 460, 
+            q3: {x: 400, y: 350, 
                 accepting: false,
-                transitions: {},
+                transitions: {a: ['q3'], b: ['q3']},
                 name: 'q3'
             },
-            q4: {x: 475, y: 460, 
+            q4: {x: 700, y: 150, 
                 accepting: true,
-                transitions: {},
+                transitions: {a: ['q4'], b: ['q4']},
                 name: 'q4'
             },
         },
@@ -438,7 +475,7 @@ create0Data: {
     },
     words: [{word: 'ba', result: true}, {word: 'abab', result: false}, {word: "b", result: false}, {word: 'baba', result: true}, {word: 'bbba', result: false}],
     alphabet: ['a', 'b'],
-    language: "L = {w\u{2208}{a,b}* | w starts with ba}"
+    language: "L = {w\u{2208}{a,b}* | w starts with ba}",
 },
 
 create4Data: {

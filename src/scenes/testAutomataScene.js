@@ -23,7 +23,7 @@ export default class TestCreateLevel extends Level {
         }
     }
 
-    create({automata, words, alphabet, language, inputAutomata, message=null, deterministic, loop=false}){
+    create({automata, words, alphabet, language, message=null, deterministic, loop=false}){
         
         changeBackground(this);
 
@@ -46,7 +46,6 @@ export default class TestCreateLevel extends Level {
         this.word = this.test.value.word;
 
         this.alphabet = alphabet;
-        this.inputAutomata = inputAutomata;
         this.language = language;
         this.message = message;
         this.deterministic = deterministic;
@@ -178,7 +177,7 @@ export default class TestCreateLevel extends Level {
             this.scene.start("LevelSelect", {passed:true})
         } else {
             this.scene.start('CreateLevel', {
-                automata:this.inputAutomata, 
+                inputAutomata:this.automata, 
                 words:this.inputWords, 
                 alphabet:this.alphabet, 
                 language:this.language,

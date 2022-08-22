@@ -7,7 +7,7 @@ export default (messages, scene, long=false) => {
 
     const toast = scene.rexUI.add.toast({
         x:400, 
-        y:250, 
+        y:110, 
         background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, colours.WHITE).setStrokeStyle(3, 0x010A12),
         text: scene.add.text(0,0, "", {
             fontSize: "24px", 

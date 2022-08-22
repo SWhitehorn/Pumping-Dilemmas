@@ -43,6 +43,15 @@ export default (scene) => {
     let sizer = lowerUIBox(scene);
     
     sizer.add(createMiddle(sizer), {expand: true, key: 'middle'})
-    .add(createRight(sizer), {expand:true, key: 'right'});    
+    .add(createRight(sizer), {expand:true, key: 'right'});   
+    
+    const icon = sizer.getElement('right').getElement('label').getElement('icon');
+    icon.on('pointerover', () => {
+        icon.setFillStyle(colours.RED);
+    })
+    icon.on('pointerout', () => {
+        icon.setFillStyle(colours.WHITE);
+    })
+
     return sizer.layout();
 }

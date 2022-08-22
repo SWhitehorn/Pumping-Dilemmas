@@ -24,7 +24,7 @@ export default class Automata {
         this.start = data.start;
         this.scene = scene;
         this.controlPoints = {};
-
+        this.created = true;
     }
 
     /**
@@ -107,12 +107,12 @@ export default class Automata {
      * @param {string} firstStateName - Name of first state
      * @param {string} secondStateName - Name of second state
      * @param {string} input - Symbol to define over
+     * @param {State} [firstState] - State object to use directly
      * @returns {Boolean} True if input was successfully added, false if already present 
      */
-    addTransition(firstStateName, secondStateName, input){
+    addTransition(firstStateName, secondStateName, input, firstState){
         
-        // Add input to transitions of first state
-        const startState = this.states[firstStateName];
+        let startState = firstState ? firstState : this.states[firstStateName];
         
         if (startState.transitions.hasOwnProperty(input)){
             

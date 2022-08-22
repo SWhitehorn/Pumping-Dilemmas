@@ -53,7 +53,11 @@ import textBox from "/src/objects/components/textBox.js";
 
         if (this.lines) {
             
-            popUp(["Drag the bars to select a part of the word corresponding to a loop in the automaton", "Click the arrows under the number to try repeating or removing your selection", "Then click play when ready to test your selection!"], this, true);
+            popUp([
+                "Drag the bars to select a part of the word corresponding to a loop in the automaton", 
+                "Click the arrows under the number to try repeating or removing your selection", 
+                "This should always end in an accepting state",
+                "Click play when ready to test your selection!"], this, true);
             
             this.help = this.add.text(25, 25, "?", {color: colours.TEXTWHITE, fontSize: '30px', fontFamily: 'Quantico'})
             .setOrigin(0.5).setInteractive().on('pointerup', () => {

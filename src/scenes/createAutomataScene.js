@@ -32,11 +32,10 @@ export default class CreateLevel extends Level {
      * @param {Input}
      * @extends Level.create 
      */
-    create({automata, words, alphabet, language, deterministic=true, loop=false}){
+    create({inputAutomata, words, alphabet, language, deterministic=true, loop=false}){
         
         // Store original word and automata to allow for reseting
         this.words = words;
-        this.inputAutomata = structuredClone(automata);
 
         this.alphabet = alphabet;
         this.language = language;
@@ -49,7 +48,11 @@ export default class CreateLevel extends Level {
         
         this.addUIElements();
 
-        super.create(structuredClone(automata), language); // Draw states, add language banner
+        console.log(inputAutomata);
+
+        let automata = inputAutomata.created ? inputAutomata : structuredClone(inputAutomata);
+
+        super.create(automata, language); // Draw states, add language banner
         this.transitions.setInteractive();
         
         this.input.mouse.disableContextMenu(); // Allow for right clicking
@@ -259,7 +262,6 @@ export default class CreateLevel extends Level {
                 words:this.words, 
                 alphabet:this.alphabet, 
                 language:this.language, 
-                inputAutomata:this.inputAutomata, 
                 deterministic:this.deterministic,
                 loop: this.loop
             }); 
