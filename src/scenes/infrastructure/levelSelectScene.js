@@ -126,10 +126,10 @@ export default class LevelSelect extends Phaser.Scene {
             this.nodes['createTutorial'].selectNode();
         });
 
-        this.UI.extras = this.add.text(80, 875, "Extras", { fontFamily: 'Quantico', fontSize: '30px', color: '#ffffff' }).setOrigin(0.5).setInteractive();
-        this.UI.extras.on('pointerup', () => {
-            this.scene.start('IntroScene');
-        });
+        // this.UI.extras = this.add.text(80, 875, "Extras", { fontFamily: 'Quantico', fontSize: '30px', color: '#ffffff' }).setOrigin(0.5).setInteractive();
+        // this.UI.extras.on('pointerup', () => {
+        //     this.scene.start('IntroScene');
+        // });
 
         this.UI.start.on('pointerover', () => {
             this.UI.start.setColor(colours.TEXTRED);
@@ -139,12 +139,12 @@ export default class LevelSelect extends Phaser.Scene {
             this.UI.start.setColor(colours.TEXTWHITE)
         });
 
-        this.UI.extras.on('pointerover', () => {
-            this.UI.extras.setColor(colours.TEXTRED)
-        });
-        this.UI.extras.on('pointerout', () => {
-            this.UI.extras.setColor(colours.TEXTWHITE)
-        });
+        // this.UI.extras.on('pointerover', () => {
+        //     this.UI.extras.setColor(colours.TEXTRED)
+        // });
+        // this.UI.extras.on('pointerout', () => {
+        //     this.UI.extras.setColor(colours.TEXTWHITE)
+        // });
     }    
 
 }
