@@ -540,7 +540,6 @@ create5Data: {
     words: [{word: 'ab', result: true}, {word: 'aab', result: false}, {word: "b", result: true}, {word: 'ε', result: true}, {word: 'bba', result: false}, {word: 'bbab', result: true}],
     alphabet: ['a', 'b'],
     language: "L = {w\u{2208}{a,b}* | Every 'a' is followed by a 'b'}",
-    loop: true
 },
 
 create6Data: {
