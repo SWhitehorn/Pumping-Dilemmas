@@ -80,6 +80,7 @@ export default class LevelSelect extends Phaser.Scene {
             
             Object.values(this.nodes).forEach((node) => {
                 node.connectNextNodes();
+                node.enableNextNodes();
             });
 
             
