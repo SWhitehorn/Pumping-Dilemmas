@@ -76,6 +76,7 @@ export default class LevelSelect extends Phaser.Scene {
             
             const start = this.nodes['createTutorial'];
             start.enable();
+            this.nodes['loopTutorial'].enable();
             
             Object.values(this.nodes).forEach((node) => {
                 node.connectNextNodes();
