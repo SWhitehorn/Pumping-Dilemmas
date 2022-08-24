@@ -405,7 +405,7 @@ createTutorialData: {
         },
         start: {name: 'q1', direction: 'top'}
     },
-    words: [{word: 'abb', result: true}, {word: 'bab', result: false}, {word: "a", result: true}, {word: 'b', result: false}, {word: 'aaaa', result: true}],
+    words: [{word: 'abb', result: true}, {word: 'bab', result: false}, {word: "a", result: true}],
     alphabet: ['a', 'b'],
     language: "L = {w \u{2208} {a,b}* | w starts with a}",
     message: [

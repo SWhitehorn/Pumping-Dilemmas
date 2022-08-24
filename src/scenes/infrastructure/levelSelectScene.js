@@ -76,7 +76,6 @@ export default class LevelSelect extends Phaser.Scene {
             
             const start = this.nodes['createTutorial'];
             start.enable();
-            this.nodes['loopTutorial'].enable();
             
             Object.values(this.nodes).forEach((node) => {
                 node.connectNextNodes();
@@ -117,13 +116,15 @@ export default class LevelSelect extends Phaser.Scene {
                 this.prevNode.graphic.setFillStyle(colours.WHITE, 1);
                 this.prevNode = null;
                 this.UI.back.visible = false;
+                this.UI.title.visible = true;
             });    
 
-
-        this.add.rexRoundRectangle(400, 800, 225, 75, 25, colours.DARKBLUE, 1).setStrokeStyle(3, colours.WHITE);
-        this.UI.start = this.add.text(400, 800, "Start", { fontFamily: 'Quantico', fontSize: '70px', color: colours.TEXTWHITE }).setOrigin(0.5).setInteractive();
+        this.UI.title = this.add.text(400, 700, "Pumping Dilemmas", { fontFamily: 'Quantico', fontSize: '80px', color: colours.TEXTWHITE }).setOrigin(0.5)
+        this.add.rexRoundRectangle(400, 850, 225, 75, 25, colours.DARKBLUE, 1).setStrokeStyle(3, colours.WHITE);
+        this.UI.start = this.add.text(400, 850, "Start", { fontFamily: 'Quantico', fontSize: '70px', color: colours.TEXTWHITE }).setOrigin(0.5).setInteractive();
         this.UI.start.on('pointerup', () => {
             this.nodes['createTutorial'].selectNode();
+            this.UI.title.visible = false;
         });
 
         // this.UI.extras = this.add.text(80, 875, "Extras", { fontFamily: 'Quantico', fontSize: '30px', color: '#ffffff' }).setOrigin(0.5).setInteractive();

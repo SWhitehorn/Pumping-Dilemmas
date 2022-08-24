@@ -147,7 +147,7 @@ export default class TestCreateLevel extends Level {
     }
 
     displayMessage(){
-        textBox(this, this.message, 100);
+        textBox(this, this.message, 120);
     }
 
     textBoxCallback(){

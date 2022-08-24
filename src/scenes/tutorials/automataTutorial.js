@@ -33,7 +33,7 @@ export default class CreateTutorial extends CreateLevel {
     moveToTests(){
         if (this.validFA()) {
             
-            const lines = ["Tests are displayed at the bottom. A green icon means the word should be accepted; a red icon means it should be rejected."]
+            const lines = ["Tests are displayed at the bottom.", "A green icon means the word should be accepted; a red icon means it should be rejected." ,"Press >> to fast forward the tests."]
             
             this.automata.bakeAutomata();
             this.scene.start('TestCreateLevel', {
