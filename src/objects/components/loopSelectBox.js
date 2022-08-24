@@ -96,7 +96,8 @@ export default (scene, repeats) => {
                         .setStrokeStyle(2, colours.BLACK, 1).setInteractive().on('pointerup', () => {
                             scene.pressPlay();
                         }),
-                    }
+                },
+                    
                 ), {proportion: 0, expand: false, padding: {left: 20}, key: 'label'})
     }
 

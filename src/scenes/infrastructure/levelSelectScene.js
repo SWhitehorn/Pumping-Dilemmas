@@ -120,8 +120,8 @@ export default class LevelSelect extends Phaser.Scene {
             });    
 
 
-        this.add.rexRoundRectangle(125, 800, 225, 75, 25, colours.DARKBLUE, 1).setStrokeStyle(3, colours.WHITE);
-        this.UI.start = this.add.text(125, 800, "Start", { fontFamily: 'Quantico', fontSize: '70px', color: colours.TEXTWHITE }).setOrigin(0.5).setInteractive();
+        this.add.rexRoundRectangle(400, 800, 225, 75, 25, colours.DARKBLUE, 1).setStrokeStyle(3, colours.WHITE);
+        this.UI.start = this.add.text(400, 800, "Start", { fontFamily: 'Quantico', fontSize: '70px', color: colours.TEXTWHITE }).setOrigin(0.5).setInteractive();
         this.UI.start.on('pointerup', () => {
             this.nodes['createTutorial'].selectNode();
         });

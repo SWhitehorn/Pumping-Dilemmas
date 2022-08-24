@@ -35,6 +35,7 @@ import textBox from "/src/objects/components/textBox.js";
         
         this.nextTest = undefined;
         this.tests = undefined;
+
     }
 
     update(){
@@ -72,6 +73,31 @@ import textBox from "/src/objects/components/textBox.js";
         } else {
             popUp(["Drag the bars to select a part of the word corresponding to a loop in the automaton"], this, true)
         }
+        
+        this.speedUp = this.add.text(590, 450, "", { fontSize: '30px', color: colours.TEXTWHITE, fontFamily: 'Quantico'} ).setOrigin(0.5);
+        this.speedUp.selected = false;
+    
+        this.speedUp.setInteractive().on('pointerup', () => {
+            this.automata.changeComputationSpeed();
+            
+            if (this.speedUp.selected){
+                this.speedUp.setColor(colours.TEXTWHITE);
+            } else {
+                this.speedUp.setColor(colours.TEXTRED);
+            }
+
+            this.speedUp.selected = !this.speedUp.selected;
+        });
+
+        this.speedUp.on('pointerover', () => {
+            this.speedUp.setColor(colours.TEXTRED);
+        });
+
+        this.speedUp.on('pointerout', () => {
+            if (!this.speedUp.selected){
+                this.speedUp.setColor(colours.TEXTWHITE)
+            }
+        });
         super.addElements();
     }
 
@@ -119,6 +145,8 @@ import textBox from "/src/objects/components/textBox.js";
     pressPlay(){
         
         if (this.finishedAddingWord && this.decomposeWord()[1] !== ""){
+
+            this.runningTests = true;
             
             if (this.loopLength > Object.keys(this.automata.states).length){
                 const message = `The loop must be within the first ${Object.keys(this.automata.states).length} letters`
@@ -128,6 +156,11 @@ import textBox from "/src/objects/components/textBox.js";
                 
                 this.UIElements.increase.visible = false;
                 this.UIElements.decrease.visible = false;
+                this.UIElements.play.visible = false;
+
+                this.speedUp.text = ">>"
+                
+                this.UIElements.box.getElement('right').getElement('label').setText(">>")
                 
                 this.automata.stopComputation();
                 
@@ -142,6 +175,13 @@ import textBox from "/src/objects/components/textBox.js";
     
             
         }
+    }
+
+    resetSpeedButton(){
+        this.speedUp.text = ""
+        this.speedUp.setColor(colours.TEXTWHITE);
+        this.speedUp.selected = false;
+        this.automata.resetComputationSpeed();
     }
 
  }

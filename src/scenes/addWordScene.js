@@ -44,6 +44,9 @@ export default class AddWordLevel extends Level {
 
     update(){
         this.textEntry.text = this.word;
+        if (!this.hiddenInputText.isOpened){
+            this.hiddenInputText.open();
+        }
     }
 
     /**

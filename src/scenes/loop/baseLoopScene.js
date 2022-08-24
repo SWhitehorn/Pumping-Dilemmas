@@ -151,8 +151,15 @@ export default class LoopLevel extends Level {
         if (!accepted && this.testsStarted){
             this.time.delayedCall(500, this.automata.clearStates, [], this.automata)
             popUp(["Not accepted!", "Try a different selection"], this);
+            
             this.UIElements.increase.visible = true;
             this.UIElements.decrease.visible = true;
+            this.UIElements.play.visible = true;
+            
+            if (this.speedUp){
+                this.resetSpeedButton();
+            }
+            
             resetBackground(this);
             this.runTests = false;
             this.testsStarted = false;
@@ -244,12 +251,16 @@ export default class LoopLevel extends Level {
             this.loopLength = wordParts[0].length + wordParts[1].length;
             
             // Check that selected section is not empty
-            if (wordParts[1] === ""){
-                this.UIElements.play.visible = false;
-            } else {
-                this.UIElements.play.visible = true;
+            if (!this.runningTests){
+                
+                if (wordParts[1] === ""){
+                    this.UIElements.play.visible = false;
+                } else {
+                   this.UIElements.play.visible = true;
+                }
+    
             }
-
+            
             return wordParts[0] + wordParts[1].repeat(numRepeats) + wordParts[2];
     }
 
@@ -359,7 +370,7 @@ export default class LoopLevel extends Level {
         
         this.UIElements.increase.visible = true;
         this.UIElements.decrease.visible = true;
-
+        
         this.UIElements.increase.on('pointerup', () => {
             
             // Cap at 3

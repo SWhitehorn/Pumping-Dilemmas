@@ -37,9 +37,10 @@ export default class TestCreateLevel extends Level {
         this.firstTest = true; // Set to false after first test
         this.loop = loop;
 
+        this.letterDelay = 300;
 
         this.levelObjects = {letters: [], computedLetters: []}
-        this.inputWords = words
+        this.inputWords = words;
 
         this.tests = this.wordGenerator(words)
         this.test = this.tests.next();
@@ -50,7 +51,34 @@ export default class TestCreateLevel extends Level {
         this.message = message;
         this.deterministic = deterministic;
 
+        
+
         this.UI = testAutomataUI(this).layout();
+        this.speedUp = this.UI.getElement('right').getElement('label').getElement('text');
+        this.speedUp.selected = false;
+    
+        this.speedUp.setInteractive().on('pointerup', () => {
+            this.automata.changeComputationSpeed();
+            this.changeDrawingSpeed();
+            
+            if (this.speedUp.selected){
+                this.speedUp.setColor(colours.TEXTWHITE);
+            } else {
+                this.speedUp.setColor(colours.TEXTRED);
+            }
+
+            this.speedUp.selected = !this.speedUp.selected;
+        });
+
+        this.speedUp.on('pointerover', () => {
+            this.speedUp.setColor(colours.TEXTRED);
+        });
+
+        this.speedUp.on('pointerout', () => {
+            if (!this.speedUp.selected){
+                this.speedUp.setColor(colours.TEXTWHITE)
+            }
+        });
         
     }
 
@@ -108,14 +136,14 @@ export default class TestCreateLevel extends Level {
                 this.firstTest = false;
                 this.time.delayedCall(500, this.displayMessage, [], this);
             } else {
-                this.time.delayedCall(500, this.startComputation, [], this);
+                this.time.delayedCall(this.computationDelay, this.startComputation, [], this);
             }
             
             return;
         } 
 
         this.levelObjects.letters.push(this.add.text(this.startingX+(i*35), this.textY, this.word[i], { fontSize: '50px', color: colours.BLACK, fontFamily: 'Quantico'}))
-        this.time.delayedCall(400, this.drawLetters, [i+1], this);
+        this.time.delayedCall(this.letterDelay, this.drawLetters, [i+1], this);
     }
 
     displayMessage(){
@@ -199,6 +227,15 @@ export default class TestCreateLevel extends Level {
             this.runTests = false;
         }
 
+    }
+
+    changeDrawingSpeed(){
+        if (this.letterDelay === 300){
+            this.letterDelay = 150;
+        } else {
+            this.letterDelay = 300;
+        }
+        
     }
 
     /**

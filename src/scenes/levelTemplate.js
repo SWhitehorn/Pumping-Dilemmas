@@ -108,7 +108,7 @@ export default class Level extends Phaser.Scene {
             this.automata.foundAccepting = false;
             this.automata.currentPaths = 0;
             const startName = this.automata.getStart(true)
-            this.time.delayedCall(500, this.automata.resetPreviousState, [startName, this.word], this.automata);
+            this.time.delayedCall(this.automata.computationDelay, this.automata.resetPreviousState, [startName, this.word], this.automata);
         }
         
         // Handle empty word

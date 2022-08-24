@@ -25,6 +25,7 @@ export default class Automata {
         this.scene = scene;
         this.controlPoints = {};
         this.created = true;
+        this.computationDelay = 500;
     }
 
     /**
@@ -41,6 +42,20 @@ export default class Automata {
 
     getAllStates(){
         return this.states;
+    }
+
+    /** Toggles between fast and default computation */
+    changeComputationSpeed(){
+        if (this.computationDelay === 500){
+            this.computationDelay = 200;
+        } else {
+            this.computationDelay = 500;
+        }
+    }
+
+    /** Resets computation speed to default */
+    resetComputationSpeed(){
+        this.computationDelay = 500;
     }
 
     /**
@@ -222,7 +237,7 @@ export default class Automata {
             if (prevState.accepting){
                 prevState.graphic.inner.setFillStyle(colours.RED, 1);
             }
-            this.scene.time.delayedCall(500, this.resetPreviousState, [prevStateName, word, null, true], this);
+            this.scene.time.delayedCall(this.computationDelay, this.resetPreviousState, [prevStateName, word, null, true], this);
             return;
         }
         
@@ -289,7 +304,7 @@ export default class Automata {
                 }
                 else if (!("ε" in state.transitions)){
                     state.graphic.setFillStyle(colours.RED, 1); 
-                    this.scene.time.delayedCall(500, this.resetPreviousState, [currState, word, key], this);
+                    this.scene.time.delayedCall(this.computationDelay, this.resetPreviousState, [currState, word, key], this);
                     return;
                 }
             }
@@ -302,7 +317,7 @@ export default class Automata {
                     state.graphic.inner.setFillStyle(colours.YELLOW, 1);
                 }
                 // Delay next step of compuation to allow for visual display
-                this.scene.time.delayedCall(500, this.resetPreviousState, [currState, word, key], this);
+                this.scene.time.delayedCall(this.computationDelay, this.resetPreviousState, [currState, word, key], this);
             }
     }
     
