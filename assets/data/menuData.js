@@ -95,7 +95,7 @@ export default {
 
     loopNode1: {
         x: 2000, y: 800, 
-        children: ['loopNode2'], 
+        children: ['loopNode2', 'loopNode4'], 
         data: data.loop1Data, 
         type: 'loop', 
         name: "loopNode1",
@@ -103,21 +103,21 @@ export default {
 
     // (ab U ba)* 
     loopNode2: {
-        x: 2000, y: 800,
-        children: ['loopNode4', 'loopNode2a'],
+        x: 2000, y: 600,
+        children: [],
         data: data.loop5Data,
         type: 'loop',
         name: "loopNode2"
     },
 
-    // (ab U ba)* 
-    loopNode2a: {
-        x: 2000, y: 600,
-        children: [],
-        data: data.loop2Data_a,
-        type: 'loop',
-        name: "loopNode2a"
-    },
+    // // (ab U ba)* 
+    // loopNode2: {
+    //     x: 2000, y: 600,
+    //     children: [],
+    //     data: data.loop2Data_a,
+    //     type: 'loop',
+    //     name: "loopNode2"
+    // },
 
     // w has an odd number of 'a's and each a is followed by at least one b
     loopNode3: {
