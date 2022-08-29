@@ -80,7 +80,7 @@ export default class LevelSelect extends Phaser.Scene {
             Object.values(this.nodes).forEach((node) => {
                 node.connectNextNodes();
             });
-
+            
             // Add start arrow
             const tri = new Phaser.Geom.Triangle.BuildEquilateral(start.x-30, start.y, 16);
             Phaser.Geom.Triangle.RotateAroundXY(tri, start.x-30, start.y, 1.571);
