@@ -13,7 +13,6 @@ export default class Automata {
     THICKNESS = 3;
     SIZE = 30;
 
-
     /**
      * Construct new automata based on data
      * @param {Automata} data - Data used to create automata 
@@ -40,6 +39,10 @@ export default class Automata {
         }
     }
 
+    /**
+     * Returns all states of automata
+     * @returns {Object} Object containing all states of automata
+     */
     getAllStates(){
         return this.states;
     }
@@ -114,7 +117,6 @@ export default class Automata {
         if (end.keys.indexOf(key) !== -1){
             end.keys.splice(end.keys.indexOf(key), 1);
         } 
-
     }
 
     /**
@@ -171,7 +173,7 @@ export default class Automata {
     }
 
     /** 
-     * First half of computation, resets previous state and checks for empty word 
+     * Reset previous state and checks for empty word 
      * @param {string} currState - name of current state 
      * @param {String} word - Current word for computation
      * @param {String} [key] - Key for previous transition
@@ -197,7 +199,6 @@ export default class Automata {
         // Check if word is empty. If so, end computation
         if (!word | end){
             if ("ε" in prevState.transitions){
-                console.log('taking final leap');
                 for (let state of prevState.transitions['ε']){
                     this.takeComputationPath(state, currState, word);
                 }
@@ -205,19 +206,19 @@ export default class Automata {
                 this.terminatePath();
             }
             
-            
         } else {
             this.scene.time.delayedCall(60, this.computation, [currState, word], this);
         }
     }
 
     /** 
-     * Peform a single step of computation 
+     * Branches computation based on transitions of current state
      * @param {String} prevState - Name of the previous state of the computation 
      * @param {String} word - Current word for computation
      * */
     computation(prevStateName, word){        
         
+        // Computation has been accepted on another path, no further steps needed
         if (this.foundAccepting){
             return;
         }
@@ -227,12 +228,13 @@ export default class Automata {
         // Get first symbol of word
         let symbol = word[0];
         word = word.slice(1);
+        
         let prevState = this.getState(prevStateName);
         
-        // Exit if transition over symbol is not defined
+        // Exit if transition over symbol is not defined and no ε to take
         if (!(symbol in prevState.transitions) && !("ε" in prevState.transitions)){
             
-            // Colour state red
+            // Colour state red to mark rejection
             prevState.graphic.setFillStyle(colours.RED, 1);
             if (prevState.accepting){
                 prevState.graphic.inner.setFillStyle(colours.RED, 1);
@@ -241,7 +243,9 @@ export default class Automata {
             return;
         }
         
+
         if (symbol in prevState.transitions){
+            
             // Index transitions of state based on symbol
             let states = prevState.transitions[symbol]; 
             
@@ -255,6 +259,8 @@ export default class Automata {
         }
 
         if ("ε" in prevState.transitions){
+            
+            // Reattach first symbol to word
             word = symbol + word;
             
             this.currentPaths += (prevState.transitions['ε'].length-1);
@@ -265,15 +271,10 @@ export default class Automata {
             }
         }
 
-        // Draw computed word for level one
-        if (this.scene.scene.key === "Level1"){
-            this.scene.drawComputedWord();
-        }
-    
     }
 
     /**
-     * 
+     * Takes the given transition
      * @param {String} currState - State name after reading transition
      * @param {String} prevStateName - State name before reading transition
      * @param {String} word - Current word
@@ -285,6 +286,7 @@ export default class Automata {
             // Highlight transition
             const key = createKey(prevStateName, currState);
             const label = this.scene.transitions.transitionObjects[key].label;
+            
             // Ensure that label is not a dropDownMenu object
             if (label.type === "Text"){
                 label.setColor(colours.TEXTRED);
@@ -295,14 +297,13 @@ export default class Automata {
                 
                 // Change to green if accepting, red if not
                 if (state.accepting){
-                    
                     state.graphic.setFillStyle(colours.GREEN, 1);
                     state.graphic.inner.setFillStyle(colours.GREEN, 1);
                     this.foundAccepting = true;
                     this.endComputation(true);
                     return;
-                }
-                else if (!("ε" in state.transitions)){
+
+                } else if (!("ε" in state.transitions)){
                     state.graphic.setFillStyle(colours.RED, 1); 
                     this.scene.time.delayedCall(this.computationDelay, this.resetPreviousState, [currState, word, key], this);
                     return;
@@ -311,12 +312,13 @@ export default class Automata {
             
             // Continue computation
             else if (!this.foundAccepting){
+                
                 // Highlight current state in yellow;
                 state.graphic.setFillStyle(colours.YELLOW, 1);
                 if (state.accepting){ // Check if state has inner ring
                     state.graphic.inner.setFillStyle(colours.YELLOW, 1);
                 }
-                // Delay next step of compuation to allow for visual display
+                
                 this.scene.time.delayedCall(this.computationDelay, this.resetPreviousState, [currState, word, key], this);
             }
     }
@@ -342,6 +344,7 @@ export default class Automata {
         this.scene.computing = false;
     }
 
+    /** Stops all computation */
     stopComputation(){
         this.clearStates();
         this.scene.time.removeAllEvents();
@@ -421,6 +424,7 @@ export default class Automata {
 
     }
 
+    /** Resets state to original position and removes all transitions */
     resetState(state){
         state.graphic.x = state.x;
         state.graphic.y = state.y;
@@ -444,6 +448,7 @@ export default class Automata {
         
     }
 
+    /** Called when computation path ends */
     terminatePath(){
         if (this.currentPaths === 0){
             this.endComputation();

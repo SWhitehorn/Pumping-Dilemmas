@@ -1,3 +1,6 @@
+// This code has been adapted from https://github.com/linuskmr/cyk, licensed under the MIT License. 
+// Changes have been made to integrate it with project. 
+
 /**
  * Class for testing membership of CFG
  * @class

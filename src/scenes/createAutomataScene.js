@@ -28,9 +28,7 @@ export default class CreateLevel extends Level {
     }
 
     /**
-     * 
      * @param {Input}
-     * @extends Level.create 
      */
     create({inputAutomata, words, alphabet, language, deterministic=true, loop=false}){
         
