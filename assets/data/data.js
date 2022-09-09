@@ -617,20 +617,15 @@ loop6Data: {
 loop7Data: {
     automata: {
         states: {
-            q1: {x: 290, y: 460, 
-                accepting: false,
+            q1: {x: 450, y: 460, 
+                accepting: true,
                 transitions: {},
                 name: 'q1'
             },
-            q2: {x: 315, y: 460, 
-                accepting: false,
-                transitions: {},
-                name: 'q2'
-            },
-            q3: {x: 475, y: 460, 
+            q2: {x: 475, y: 460, 
                 accepting: true,
                 transitions: {},
-                name: 'q3'
+                name: 'q2'
             },
         },
         start: {name: 'q1'}
