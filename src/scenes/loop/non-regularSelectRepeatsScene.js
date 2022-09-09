@@ -125,7 +125,7 @@ export default class Non_RegularSelectRepeats extends LoopLevel {
                         
                         // Disable highlighting on left and right bar
                         this.levelObjects.leftBar.on('pointerover', () => {
-                            this.levelObjects.rightBar.setFillStyle(colours.DARKBLUE)
+                            this.levelObjects.leftBar.setFillStyle(colours.DARKBLUE)
                         });
                         this.levelObjects.rightBar.on('pointerover', () => {
                             this.levelObjects.rightBar.setFillStyle(colours.DARKBLUE)
