@@ -32,7 +32,7 @@ export default class LoopLevel extends Level {
 
     preload(){
         super.preload();
-        this.load.image('dashedLine', '/assets/dashedLine.png');
+        this.load.image('dashedLine', 'https://raw.githubusercontent.com/SWhitehorn/Pumping-Dilemmas/main/assets/dashedLine.png');
     }
 
     /**

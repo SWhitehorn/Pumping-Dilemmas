@@ -12,7 +12,7 @@ export default class LoopTutorial extends Level {
 
     preload(){
         super.preload();
-        this.load.image('nextPage', '../assets/arrow-down-left.png');
+        this.load.image('nextPage', 'https://raw.githubusercontent.com/SWhitehorn/Pumping-Dilemmas/main/assets/arrow-down-left.png');
     }
 
     create({automata, word, language, repeats}){
