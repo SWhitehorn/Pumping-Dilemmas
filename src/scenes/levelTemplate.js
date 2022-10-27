@@ -33,9 +33,9 @@ export default class Level extends Phaser.Scene {
     }
     
     preload(){
-        this.load.image('backArrow', '../assets/backArrow.png');
-        this.load.image('computerIcon', '/assets/computer-80.png');
-        this.load.image('nextPage', '../assets/arrow-down-left.png');
+        this.load.image('backArrow', 'https://raw.githubusercontent.com/SWhitehorn/Pumping-Dilemmas/main/assets/backArrow.png');
+        this.load.image('computerIcon', 'https://raw.githubusercontent.com/SWhitehorn/Pumping-Dilemmas/main/assets/computer-80.png');
+        this.load.image('nextPage', 'https://raw.githubusercontent.com/SWhitehorn/Pumping-Dilemmas/main/assets/arrow-down-left.png');
         
         this.load.scenePlugin('rexuiplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 'rexUI', 'rexUI');
         this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);

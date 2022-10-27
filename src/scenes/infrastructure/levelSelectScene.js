@@ -36,7 +36,7 @@ export default class LevelSelect extends Phaser.Scene {
     }
 
     preload(){
-        this.load.image('backArrow', '../assets/backArrow.png');
+        this.load.image('backArrow', 'https://raw.githubusercontent.com/SWhitehorn/Pumping-Dilemmas/main/assets/backArrow.png');
         this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
 
         this.plugins.get('rexwebfontloaderplugin').addToScene(this);
