@@ -1,19 +1,19 @@
-import LevelSelect from "/src/scenes/infrastructure/levelSelectScene.js";
-import IntroScene from "/src/scenes/infrastructure/introScene.js"
-import CreateLevel from "/src/scenes/createAutomataScene.js"
-import AddWordLevel from "/src/scenes/addWordScene.js"
-import ControlLoopLevel from "/src/scenes/loop/controlLoopScene.js";
-import ComputerLoopLevel from "/src/scenes/loop/computerLoopScene.js";
-import Non_RegularLevel from "/src/scenes/non-regularChooseWord.js";
-import Non_RegularSelectRepeats from "/src/scenes/loop/non-regularSelectRepeatsScene.js";
-import LoopLevel from "/src/scenes/loop/baseLoopScene.js";
-import LevelCreator from "/src/scenes/infrastructure/newLevelCreatorScene.js";
-import LevelEnd from "/src/scenes/infrastructure/levelEndScene.js";
-import TestCreateLevel from "/src/scenes/testAutomataScene.js";
-import colours from "/src/utils/colours.js";
-import OpeningScene from "/src/scenes/tutorials/openingScene.js";
-import LoopTutorial from "/src/scenes/tutorials/loopTutorialScene.js";
-import CreateTutorial from "/src/scenes/tutorials/automataTutorial.js";
+import LevelSelect from "./scenes/infrastructure/levelSelectScene.js";
+import IntroScene from "./scenes/infrastructure/introScene.js"
+import CreateLevel from "./scenes/createAutomataScene.js"
+import AddWordLevel from "./scenes/addWordScene.js"
+import ControlLoopLevel from "./scenes/loop/controlLoopScene.js";
+import ComputerLoopLevel from "./scenes/loop/computerLoopScene.js";
+import Non_RegularLevel from "./scenes/non-regularChooseWord.js";
+import Non_RegularSelectRepeats from "./scenes/loop/non-regularSelectRepeatsScene.js";
+import LoopLevel from "./scenes/loop/baseLoopScene.js";
+import LevelCreator from "./scenes/infrastructure/newLevelCreatorScene.js";
+import LevelEnd from "./scenes/infrastructure/levelEndScene.js";
+import TestCreateLevel from "./scenes/testAutomataScene.js";
+import colours from "./utils/colours.js";
+import OpeningScene from "./scenes/tutorials/openingScene.js";
+import LoopTutorial from "./scenes/tutorials/loopTutorialScene.js";
+import CreateTutorial from "./scenes/tutorials/automataTutorial.js";
 
 
 const scenes = [
@@ -46,5 +46,9 @@ const config = {
     }
     
 };
+
+const path = window.location.pathname;
+console.log(path);
+
 
 const game = new Phaser.Game(config);

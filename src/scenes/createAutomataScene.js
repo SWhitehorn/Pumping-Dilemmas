@@ -1,8 +1,8 @@
 import Level from "./levelTemplate.js";
-import { getNextLetter, createKey, withinBounds } from "/src/utils/utils.js";
-import "/src/typedefs/typedefs.js";
-import createAutomataUI from "/src/objects/components/createAutomataUI.js";
-import popUp from "/src/objects/components/popUp.js";
+import { getNextLetter, createKey, withinBounds } from "../utils/utils.js";
+import "../typedefs/typedefs.js";
+import createAutomataUI from "../objects/components/createAutomataUI.js";
+import popUp from "../objects/components/popUp.js";
 
 /**
  * @typedef {Object} Input

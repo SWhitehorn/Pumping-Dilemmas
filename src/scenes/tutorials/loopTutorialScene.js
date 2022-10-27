@@ -1,6 +1,6 @@
-import textBox from "/src/objects/components/textBox.js";
-import Level from "/src/scenes/levelTemplate.js";
-import loopSelectBox from "/src/objects/components/loopSelectBox.js";
+import textBox from "../../objects/components/textBox.js";
+import Level from "../../scenes/levelTemplate.js";
+import loopSelectBox from "../../objects/components/loopSelectBox.js";
 
 export default class LoopTutorial extends Level {
 

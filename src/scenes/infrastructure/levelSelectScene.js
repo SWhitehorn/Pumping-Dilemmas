@@ -1,9 +1,9 @@
-import "/src/typedefs/typedefs.js"
+import "../../typedefs/typedefs.js"
 import colours from "/src/utils/colours.js"
 
-import LevelNode from "/src/objects/components/levelNode.js"
-import menuData from "/assets/data/menuData.js"
-import { resetBackground } from "/src/utils/utils.js"
+import LevelNode from "../../objects/components/levelNode.js"
+import menuData from "../../../assets/data/menuData.js"
+import { resetBackground } from "../../utils/utils.js"
 
 /**
  * @typedef {Object} Input
@@ -19,7 +19,7 @@ export default class LevelSelect extends Phaser.Scene {
     prevNode = null;
 
     constructor(){
-        
+
         const sceneConfig = {
             key: 'LevelSelect',
             pack: {

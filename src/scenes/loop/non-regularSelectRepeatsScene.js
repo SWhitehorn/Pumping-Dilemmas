@@ -1,12 +1,12 @@
 import LoopLevel from "./baseLoopScene.js";
-import { randomNumber } from "/src/utils/utils.js"
-import "/src/typedefs/typedefs.js"
-import colours from "/src/utils/colours.js"
-import CYK from "/src/utils/CYK.js"
-import popUp from "/src/objects/components/popUp.js"
-import textBox from "/src/objects/components/textBox.js";
-import { calculateStartingX, changeBackground, resetBackground } from "/src/utils/utils.js"
-import nonRegSplitsUI from "/src/objects/components/nonRegSplitsUI.js";
+import { randomNumber } from "../../utils/utils.js"
+import "../../typedefs/typedefs.js"
+import colours from "../../utils/colours.js"
+import CYK from "../../utils/CYK.js"
+import popUp from "../../objects/components/popUp.js"
+import textBox from "../../objects/components/textBox.js";
+import { calculateStartingX, changeBackground, resetBackground } from "../../utils/utils.js"
+import nonRegSplitsUI from "../../objects/components/nonRegSplitsUI.js";
 
 export default class Non_RegularSelectRepeats extends LoopLevel {
 

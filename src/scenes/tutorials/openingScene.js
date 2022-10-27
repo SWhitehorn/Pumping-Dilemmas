@@ -1,6 +1,6 @@
-import textBox from "/src/objects/components/textBox.js";
-import Level from "/src/scenes/levelTemplate.js";
-import addWordUI from "/src/objects/components/addWordUI.js";
+import textBox from "../../objects/components/textBox.js";
+import Level from "../../scenes/levelTemplate.js";
+import addWordUI from "../../objects/components/addWordUI.js";
 
 export default class OpeningScene extends Level {
 

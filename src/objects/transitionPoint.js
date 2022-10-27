@@ -1,6 +1,6 @@
-import "/src/typedefs/typedefs.js"
-import colours from "/src/utils/colours.js"
-import { sameState } from "/src/utils/utils.js"
+import "../typedefs/typedefs.js"
+import colours from "../utils/colours.js"
+import { sameState } from "../utils/utils.js"
 
 /**
  * Class defining points on transition. Used to store data about transition.

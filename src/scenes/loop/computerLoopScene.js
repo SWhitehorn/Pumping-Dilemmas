@@ -1,9 +1,9 @@
-import "/src/typedefs/typedefs.js"
-import colours from "/src/utils/colours.js"
+import "../../typedefs/typedefs.js"
+import colours from "../../utils/colours.js"
 import LoopLevel from "./baseLoopScene.js";
 import popUp from "../../objects/components/popUp.js";
-import { changeBackground } from "/src/utils/utils.js";
-import textBox from "/src/objects/components/textBox.js";
+import { changeBackground } from "../../utils/utils.js";
+import textBox from "../../objects/components/textBox.js";
 
 /** 
  * Level where computer chooses the number of loops

@@ -1,8 +1,8 @@
-import colours from "/src/utils/colours.js";
-import Transitions from "/src/objects/transitions.js";
-import Automata from "/src/objects/automata.js";
-import "/src/typedefs/typedefs.js"
-import topUIBox from "/src/objects/components/topUIBox.js";
+import colours from "../utils/colours.js";
+import Transitions from "../objects/transitions.js";
+import Automata from "../objects/automata.js";
+import "../typedefs/typedefs.js"
+import topUIBox from "../objects/components/topUIBox.js";
 
 /**
  * Template for levels, handles common features. Extended by others to provide specific functionality.

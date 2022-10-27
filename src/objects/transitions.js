@@ -1,9 +1,9 @@
-import "/src/typedefs/typedefs.js"
-import colours from "/src/utils/colours.js"
+import "../typedefs/typedefs.js"
+import colours from "../utils/colours.js"
 
 import TransitionPoint from "./transitionPoint.js";
 import Automata from "./automata.js";
-import { sameState, splitKey } from "/src/utils/utils.js";
+import { sameState, splitKey } from "../utils/utils.js";
 import createMenu from "./components/letterMenu.js";
 
 /**
