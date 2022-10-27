@@ -47,8 +47,4 @@ const config = {
     
 };
 
-const path = window.location.pathname;
-console.log(path);
-
-
 const game = new Phaser.Game(config);
