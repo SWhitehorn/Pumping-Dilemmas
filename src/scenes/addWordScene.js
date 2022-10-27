@@ -1,9 +1,9 @@
 import Level from "./levelTemplate.js";
-import colours from "/src/utils/colours.js"
-import addWordUI from "/src/objects/components/addWordUI.js";
-import CYK from "/src/utils/CYK.js"
-import popUp from "/src/objects/components/popUp.js";
-import textBox from "/src/objects/components/textBox.js";
+import colours from "../utils/colours.js"
+import addWordUI from "../objects/components/addWordUI.js";
+import CYK from "../utils/CYK.js"
+import popUp from "../objects/components/popUp.js";
+import textBox from "../objects/components/textBox.js";
 
 export default class AddWordLevel extends Level {
 

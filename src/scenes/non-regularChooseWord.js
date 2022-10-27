@@ -1,9 +1,9 @@
 import Level from "./levelTemplate.js";
-import colours from "/src/utils/colours.js";
-import { randomNumber } from "/src/utils/utils.js";
-import CYK from "/src/utils/CYK.js";
-import addWordUI from "/src/objects/components/addWordUI.js"
-import textBox from "/src/objects/components/textBox.js";
+import colours from "../utils/colours.js";
+import { randomNumber } from "../utils/utils.js";
+import CYK from "../utils/CYK.js";
+import addWordUI from "../objects/components/addWordUI.js"
+import textBox from "../objects/components/textBox.js";
 
 export default class Non_RegularLevel extends Level {
 

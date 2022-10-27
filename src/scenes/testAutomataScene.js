@@ -1,12 +1,12 @@
 import Level from "./levelTemplate.js";
-import "/src/typedefs/typedefs.js";
-import colours from "/src/utils/colours.js";
-import { calculateStartingX } from "/src/utils/utils.js";
-import lowerUIBox from "/src/objects/components/lowerUIBox.js";
-import testAutomataUI from "/src/objects/components/testAutomataUI.js";
-import popUp from "/src/objects/components/popUp.js";
-import { changeBackground, resetBackground } from "/src/utils/utils.js";
-import textBox from "/src/objects/components/textBox.js";
+import "../typedefs/typedefs.js";
+import colours from "../utils/colours.js";
+import { calculateStartingX } from "../utils/utils.js";
+import lowerUIBox from "../objects/components/lowerUIBox.js";
+import testAutomataUI from "../objects/components/testAutomataUI.js";
+import popUp from "../objects/components/popUp.js";
+import { changeBackground, resetBackground } from "../utils/utils.js";
+import textBox from "../objects/components/textBox.js";
 
 export default class TestCreateLevel extends Level {
 

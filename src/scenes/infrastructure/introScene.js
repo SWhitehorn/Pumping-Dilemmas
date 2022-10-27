@@ -1,4 +1,4 @@
-import data from "/assets/data/data.js"
+import data from "../../../assets/data/data.js"
 
 
 export default class IntroScene extends Phaser.Scene {

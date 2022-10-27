@@ -1,5 +1,5 @@
 import lowerUIBox from "./lowerUIBox.js";
-import colours from "/src/utils/colours.js";
+import colours from "../../utils/colours.js";
 import popUp from "./popUp.js";
 
 /**

@@ -1,4 +1,4 @@
-import "/src/typedefs/typedefs.js"
+import "../../typedefs/typedefs.js"
 import LoopLevel from "./baseLoopScene.js";
 
 /** 

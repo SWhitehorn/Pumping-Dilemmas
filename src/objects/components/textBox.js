@@ -1,4 +1,4 @@
-import colours from "/src/utils/colours.js";
+import colours from "../../utils/colours.js";
 import addWordUI from "./addWordUI.js";
 
 /**

@@ -1,7 +1,7 @@
-import colours from "/src/utils/colours.js"
+import colours from "../../utils/colours.js"
 import TransitionPoint from "../transitionPoint.js";
-import "/src/typedefs/typedefs.js"
-import { sameState } from "/src/utils/utils.js"
+import "../../typedefs/typedefs.js"
+import { sameState } from "../../utils/utils.js"
 
 /**
  * Creates a drop down menu for selecting letters.

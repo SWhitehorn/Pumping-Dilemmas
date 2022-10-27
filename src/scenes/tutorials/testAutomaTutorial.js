@@ -1,4 +1,4 @@
-import TestCreateLevel from "/src/scenes/testAutomataScene.js";
+import TestCreateLevel from "../../scenes/testAutomataScene.js";
 
 export default class TestAutomataTutorial extends TestCreateLevel {
 

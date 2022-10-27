@@ -1,4 +1,4 @@
-import colours from "/src/utils/colours.js";
+import colours from "../../utils/colours.js";
 
 export default (scene) => {
     return scene.rexUI.add.sizer({

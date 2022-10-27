@@ -1,5 +1,5 @@
-import "/src/typedefs/typedefs.js"
-import colours from "/src/utils/colours.js"
+import "../../typedefs/typedefs.js"
+import colours from "../../utils/colours.js"
 
 export default class LevelEnd extends Phaser.Scene {
 

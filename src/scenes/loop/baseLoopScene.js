@@ -1,9 +1,9 @@
 import Level from "../levelTemplate.js";
-import "/src/typedefs/typedefs.js"
-import colours from "/src/utils/colours.js"
-import { calculateStartingX, resetBackground, changeBackground } from "/src/utils/utils.js"
-import loopSelectBox from "/src/objects/components/loopSelectBox.js";
-import popUp from "/src/objects/components/popUp.js";
+import "../../typedefs/typedefs.js"
+import colours from "../../utils/colours.js"
+import { calculateStartingX, resetBackground, changeBackground } from "../../utils/utils.js"
+import loopSelectBox from "../../objects/components/loopSelectBox.js";
+import popUp from "../../objects/components/popUp.js";
 
 /**
  * @typedef {Object} Input
