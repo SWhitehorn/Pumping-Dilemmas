@@ -1,5 +1,5 @@
 import "../../typedefs/typedefs.js"
-import colours from "/src/utils/colours.js"
+import colours from "../../utils/colours.js"
 
 import LevelNode from "../../objects/components/levelNode.js"
 import menuData from "../../../assets/data/menuData.js"
