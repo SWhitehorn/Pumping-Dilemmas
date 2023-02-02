@@ -141,7 +141,7 @@ export default class CreateLevel extends Level {
 
         TP.dragging = true;
         TP.active = true;
-        object.disableClick();
+        //object.disableClick();
 
         // Object is a state
       } else {
@@ -177,7 +177,7 @@ export default class CreateLevel extends Level {
           50,
           () => {
             object.parentPoint.dragging = false;
-            object.enableClick();
+            //object.enableClick();
           },
           [],
           this
